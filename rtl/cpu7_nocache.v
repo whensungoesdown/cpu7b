@@ -1,75 +1,46 @@
 `include "common.vh"
 `include "decoded.vh"
 
-module cpu7(
-    input               clk,
-    input               resetn,            //low active
+module cpu7_nocache(
+    input                 clk,
+    input                 resetn,            //low active
+    
+    
+    output                inst_req       ,
+    output  [ 31:0]       inst_addr      ,
+    output                inst_cancel    ,
+    input                 inst_addr_ok   ,
+    input   [`GRLEN-1:0]  inst_rdata     ,
+    input                 inst_valid     ,
+    input   [  1:0]       inst_count     ,
+    input                 inst_uncache   ,
+    input   [  5:0]       inst_exccode   ,
+    input                 inst_exception ,
 
-    input   [7 :0]      intrpt,
-    
-    `LSOC1K_DECL_BHT_RAMS_M,
-    
-    output              inst_req      ,
-    output  [ 31:0]     inst_addr     ,
-    output              inst_cancel   ,
-    input               inst_addr_ok  ,
-    input   [127:0]     inst_rdata    ,
-    input               inst_valid    ,
-    input   [  1:0]     inst_count    ,
-    input               inst_uncache  ,
-    input   [  5:0]     inst_exccode  ,
-    input               inst_exception,
 
-    input               inst_tlb_req  ,
-    input   [`GRLEN-1:0] inst_tlb_vaddr,
-    input               inst_tlb_cacop,
+    // Cache Pipeline Bus
+    output                data_req       , 
+    output  [`GRLEN-1:0]  data_pc        , 
+    output                data_wr        , 
+    output  [3 :0]        data_wstrb     , 
+    output  [`GRLEN-1:0]  data_addr      , 
+    output                data_cancel_ex2,
+    output                data_cancel    , 
+    output  [`GRLEN-1:0]  data_wdata     , 
+    output                data_recv      , 
+    output                data_prefetch  , 
+    output                data_ll        , 
+    output                data_sc        , 
 
-    output [`PIPELINE2DCACHE_BUS_WIDTH-1:0] pipeline2dcache_bus,
-    input  [`DCACHE2PIPELINE_BUS_WIDTH-1:0] dcache2pipeline_bus,
-    output                       csr_wen  , // uty: todo need remove these csr_
-    output [`LSOC1K_CSR_BIT-1:0] csr_waddr,
-    output [`GRLEN-1         :0] csr_wdata,
-    output                       wb_eret  ,
-    input  [`GRLEN-1         :0] llbctl   ,
-    
-    output              tlb_req         ,
-    output              cache_req       ,
-    output  [4 :0]      cache_op        ,
-    output [`D_TAG_LEN-1:0] cache_op_tag,
-    input               cache_op_recv   ,
-    input               cache_op_finish ,
+    input   [`GRLEN-1:0]  data_rdata     , 
+    input                 data_addr_ok   , 
+    input                 data_data_ok   , 
+    input   [ 5:0]        data_exccode   , 
+    input                 data_exception , 
+    input   [`GRLEN-1:0]  data_badvaddr  , 
+    input                 data_req_empty , 
+    input                 data_scsucceed 
 
-    // tlb-cache interface
-    output  [`PABITS-1:0]      itlb_paddr,
-    output              itlb_finish,
-    output              itlb_hit,
-    input               itlb_cache_recv,
-    output              itlb_uncache,
-    output  [ 5:0]      itlb_exccode,
-    
-    
-    output  [`PABITS-1:0]      dtlb_paddr,
-    output              dtlb_finish,
-    output              dtlb_hit,
-    input               data_tlb_req,
-    input               data_tlb_wr   ,
-    input   [`GRLEN-1:0]data_tlb_vaddr,
-    input               dtlb_cache_recv,
-    input               dtlb_no_trans  ,
-    input               dtlb_p_pgcl    ,
-    output              dtlb_uncache,
-    output  [ 5:0]      dtlb_exccode,
-
-    //debug interface
-    output  [`GRLEN-1:0]   debug0_wb_pc,
-    output                 debug0_wb_rf_wen,
-    output  [ 4:0]         debug0_wb_rf_wnum,
-    output  [`GRLEN-1:0]   debug0_wb_rf_wdata,
-    
-    output  [`GRLEN-1:0]   debug1_wb_pc,
-    output                 debug1_wb_rf_wen,
-    output  [ 4:0]         debug1_wb_rf_wnum,
-    output  [`GRLEN-1:0]   debug1_wb_rf_wdata
 );
 
    wire                              ifu_exu_valid_d;
@@ -104,28 +75,6 @@ module cpu7(
    wire                              exu_ifu_ertn_e;
    
    
-   // Cache Pipeline Bus
-   wire               data_req       ;
-   wire  [`GRLEN-1:0] data_pc        ;
-   wire               data_wr        ;
-   wire  [3 :0]       data_wstrb     ;
-   wire  [`GRLEN-1:0] data_addr      ;
-   wire               data_cancel_ex2;
-   wire               data_cancel    ;
-   wire  [`GRLEN-1:0] data_wdata     ;
-   wire               data_recv      ;
-   wire               data_prefetch  ;
-   wire               data_ll        ;
-   wire               data_sc        ;
-
-   wire  [`GRLEN-1:0] data_rdata     ;
-   wire               data_addr_ok   ;
-   wire               data_data_ok   ;
-   wire  [ 5:0]       data_exccode   ;
-   wire               data_exception ;
-   wire  [`GRLEN-1:0] data_badvaddr  ;
-   wire               data_req_empty ;
-   wire               data_scsucceed ;
 
 
 
@@ -257,73 +206,5 @@ module cpu7(
       );
 
    
-
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_REQ      ] = data_req       ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_PC       ] = data_pc        ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_WR       ] = data_wr        ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_WSTRB    ] = data_wstrb     ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_ADDR     ] = data_addr      ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_WDATA    ] = data_wdata     ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_RECV     ] = data_recv      ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_CANCEL   ] = data_cancel    ;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_EX2CANCEL] = data_cancel_ex2;
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_PREFETCH ] = data_prefetch  ; // TODO
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_LL       ] = data_ll        ; // TODO
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_SC       ] = data_sc        ; // TODO
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_ATOM     ] = 1'b0           ; // TODO
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_ATOMOP   ] = 5'b0           ; // TODO
-   assign pipeline2dcache_bus[`PIPELINE2DCACHE_BUS_ATOMSRC  ] = `GRLEN'b0          ; // TODO
-
-   assign data_rdata      = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_RDATA    ];
-   assign data_addr_ok    = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_ADDROK   ];
-   assign data_data_ok    = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_DATAOK   ];
-   assign data_exccode    = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_EXCCODE  ];
-   assign data_exception  = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_EXCEPTION];
-   assign data_badvaddr   = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_BADVADDR ];
-   assign data_req_empty  = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_REQEMPTY ];
-   assign data_scsucceed  = dcache2pipeline_bus[`DCACHE2PIPELINE_BUS_SCSUCCEED];
-
-
-
-   
-   //
-   // a trick to get rid of the tlb and make the cache work
-   //
-   
-   assign cache_op_tag = {`D_TAG_LEN{1'b0}}; // TODO
-
-
-//   assign itlb_finish  = 1'b1;
-   dff_s #(1) itlb_finish_reg (
-      .din (inst_tlb_req),
-      .clk (clk),
-      .q   (itlb_finish),
-      .se(), .si(), .so());
-   assign itlb_hit     = 1'b1;
-   assign itlb_uncache = 1'b0;
-//   assign itlb_paddr   = inst_tlb_vaddr[`PABITS-1:0];
-   dff_s #(`PABITS) itlb_paddr_reg (
-      .din (inst_tlb_vaddr[`PABITS-1:0]),
-      .clk (clk),
-      .q   (itlb_paddr),
-      .se(), .si(), .so());
-
-   
-   dff_s #(1) dtlb_finish_reg (
-      .din (data_tlb_req),
-      .clk (clk),
-      .q   (dtlb_finish),
-      .se(), .si(), .so());
-//   assign dtlb_finish  = 1'b1;
-   assign dtlb_hit     = 1'b1;
-   assign dtlb_uncache = 1'b0;
-   dff_s #(`PABITS) dtlb_paddr_reg (
-      .din (data_tlb_vaddr[`PABITS-1:0]),
-      .clk (clk),
-      .q   (dtlb_paddr),
-      .se(), .si(), .so());
-   //assign dtlb_paddr   = data_tlb_vaddr[`PABITS-1:0]; 
-
-
    
 endmodule // cpu7

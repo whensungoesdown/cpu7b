@@ -5,14 +5,10 @@
 # File (.qsf), and the list of source files used.
 ###################################################################
 
-PROJECT = soc_top
+PROJECT = top
 SOURCE_FILES =  ../../rtl/alu.v \
-                ../../rtl/atom_alu.v \
                 ../../rtl/branch.v \
-                ../../rtl/cache_interface.v \
-                ../../rtl/cache.vh \
                 ../../rtl/common.vh \
-                ../../rtl/core_top.v \
                 ../../rtl/cpu7_csr_byplog.v \
                 ../../rtl/cpu7_csr.v \
                 ../../rtl/cpu7_exu_eclbyplog_rs1.v \
@@ -25,28 +21,23 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/cpu7_ifu_incr30.v \
                 ../../rtl/cpu7_ifu.v \
                 ../../rtl/cpu7_lsu.v \
-                ../../rtl/cpu7.v \
-                ../../rtl/dcache.v \
+                ../../rtl/cpu7_nocache.v \
                 ../../rtl/decoded.vh \
                 ../../rtl/decoder.v \
-                ../../rtl/frontend_rams.vh \
-                ../../rtl/icache.v \
-                ../../rtl/lru_unit.v \
                 ../../rtl/mul32x32.v \
                 ../../rtl/mul64x64.v \
-                ../../rtl/mycpu_top.v \
-                ../../rtl/prefetch_d.v \
-                ../../rtl/ram_wrapper.v \
                 ../../rtl/reg_file.v \
                 ../../rtl/swrvr_clib.v \
                 ../../rtl/swrvr_dlib.v \
-                ../../rtl/tlb_defines.vh \
-		../../chip/soc_demo/sim/config.vh \
-		../../chip/soc_demo/sim/soc_top.v
+                ../../rtl/defines.vh \
+                ../../rtl/axi_sram_bridge.v \
+                ../../rtl/axi_interface.v \
+                ../../rtl/cpu.v \
+		../../rtl/top.v
 
 
 SOURCE_FILES_PARAMETER = $(addprefix --source=, $(SOURCE_FILES))
-ASSIGNMENT_FILES = soc_top.qpf soc_top.qsf 
+ASSIGNMENT_FILES = top.qpf top.qsf 
 
 
 FAMILY = "Cyclone IV E"

@@ -57,7 +57,7 @@ module top(
 
    
 
-   cpu fake_cpu(
+   cpu u_cpu(
       .clk          (clk             ),
       .resetn       (resetn          ),
       

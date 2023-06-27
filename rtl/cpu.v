@@ -48,35 +48,110 @@ module cpu(
    output                       bready
    );
 
-   wire axi_rd_req;
-   wire axi_rd_ret;
-
-//   assign rready = 1'b1;
+//   wire axi_rd_req;
+//   wire axi_rd_ret;
+//
+////   assign rready = 1'b1;
+//   
+//   assign axi_rd_req = arvalid && arready;
+//   assign axi_rd_ret = rvalid && rlast && rready;// && (rid[3:1]==3'b000);
+//
+//
+//   wire          inst_req;
+//   wire [31:0]   inst_addr;
+//   wire [31:0]   inst_rdata;
+//   wire          inst_valid;
+//
+//   wire [31:0]   inst_addr_nxt;
+//
+//   assign inst_req = resetn; // always high after reset
+//  
+//   dffrle_s #(32) inst_addr_reg (
+//      .din   (inst_addr_nxt),
+//      .clk   (clk),
+//      .en    (inst_valid),
+//      .rst_l (resetn),
+//      .q     (inst_addr), 
+//      .se(), .si(), .so());
+//   
+//   //assign inst_addr = 31'h10;
+//   assign inst_addr_nxt = inst_addr + 32'h4;
    
-   assign axi_rd_req = arvalid && arready;
-   assign axi_rd_ret = rvalid && rlast && rready;// && (rid[3:1]==3'b000);
 
 
-   wire          inst_req;
-   wire [31:0]   inst_addr;
-   wire [31:0]   inst_rdata;
-   wire          inst_valid;
 
-   wire [31:0]   inst_addr_nxt;
-
-   assign inst_req = resetn; // always high after reset
-  
-   dffrle_s #(32) inst_addr_reg (
-      .din   (inst_addr_nxt),
-      .clk   (clk),
-      .en    (inst_valid),
-      .rst_l (resetn),
-      .q     (inst_addr), 
-      .se(), .si(), .so());
+   wire                   inst_req      ;
+   wire [`GRLEN-1:0]      inst_addr     ;
+   wire                   inst_cancel   ;
+   wire                   inst_addr_ok  ;
+   wire [`GRLEN-1:0]      inst_rdata    ;
+   wire                   inst_recv     ;
+   wire                   inst_valid    ;
+   wire [  1:0]           inst_count    ;
+   wire                   inst_uncache  ;
+   wire                   inst_exception;
+   wire [  5:0]           inst_exccode  ;
    
-   //assign inst_addr = 31'h10;
-   assign inst_addr_nxt = inst_addr + 32'h4;
-   
+   wire                   data_req;
+   wire [`GRLEN-1:0]      data_pc;
+   wire                   data_wr;
+   wire [3 :0]            data_wstrb;
+   wire [`GRLEN-1:0]      data_addr;
+   wire                   data_cancel_ex2;
+   wire                   data_cancel;
+   wire [`GRLEN-1:0]      data_wdata;
+   wire                   data_recv;
+   wire                   data_prefetch;
+   wire                   data_ll;
+   wire                   data_sc;
+
+   wire [`GRLEN-1:0]      data_rdata;
+   wire                   data_addr_ok;
+   wire                   data_data_ok;
+   wire [ 5:0]            data_exccode;
+
+
+
+
+   cpu7_nocache cpu(
+        .clk              (aclk                 ),
+        .resetn           (aresetn              ),
+        .intrpt	          (intrpt               ),
+
+        .inst_req         (inst_req             ),
+        .inst_addr        (inst_addr            ),
+        .inst_cancel      (inst_cancel          ),
+        .inst_addr_ok     (inst_addr_ok         ),
+        .inst_rdata       (inst_rdata           ),
+        .inst_valid       (inst_valid           ),
+        .inst_count       (inst_count           ),
+        .inst_uncache     (inst_uncache         ),
+        .inst_exccode     (inst_exccode         ),
+        .inst_exception   (inst_exception       ),
+
+
+        .data_req         (data_req             ), 
+        .data_pc          (data_pc              ),
+        .data_wr          (data_wr              ),
+        .data_wstrb       (data_wstrb           ),
+        .data_addr        (data_addr            ),
+        .data_cancel_ex2  (data_cancel_ex2      ),
+        .data_cancel      (data_cancel          ),
+        .data_wdata       (data_wdata           ),
+        .data_recv        (data_recv            ),
+        .data_prefetch    (data_prefetch        ),
+        .data_ll          (data_ll              ),
+        .data_sc          (data_sc              ),
+                                          
+        .data_rdata       (data_rdata           ),
+        .data_addr_ok     (data_addr_ok         ),
+        .data_data_ok     (data_data_ok         ),
+        .data_exccode     (data_exccode         )
+
+
+    );
+
+
    
    axi_interface u_axi_interface(
       .aclk        (clk        ),
