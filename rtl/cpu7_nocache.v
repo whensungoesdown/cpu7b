@@ -192,17 +192,7 @@ module cpu7_nocache(
       .exu_ifu_except          (exu_ifu_except       ),
       //ertn
       .exu_ifu_era             (exu_ifu_era          ),
-      .exu_ifu_ertn_e          (exu_ifu_ertn_e       ),
-
-      .debug0_wb_pc            (debug0_wb_pc         ),
-      .debug0_wb_rf_wen        (debug0_wb_rf_wen     ),
-      .debug0_wb_rf_wnum       (debug0_wb_rf_wnum    ),
-      .debug0_wb_rf_wdata      (debug0_wb_rf_wdata   ),
-      
-      .debug1_wb_pc            (debug1_wb_pc         ),
-      .debug1_wb_rf_wen        (debug1_wb_rf_wen     ),
-      .debug1_wb_rf_wnum       (debug1_wb_rf_wnum    ),
-      .debug1_wb_rf_wdata      (debug1_wb_rf_wdata   )
+      .exu_ifu_ertn_e          (exu_ifu_ertn_e       )
       );
 
    

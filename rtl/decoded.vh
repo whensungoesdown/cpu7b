@@ -1,4 +1,4 @@
-`include "tlb_defines.vh"
+//`include "tlb_defines.vh"
 
 `define LSOC1K_DECODE_RES_BIT  60
 `define LSOC1K_GR_WEN          0

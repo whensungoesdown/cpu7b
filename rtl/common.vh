@@ -1,6 +1,9 @@
+`define LA32
+
+`define GRLEN                    32
 //
 // `define GS264C_64BIT
-`include "tlb_defines.vh"
+//`include "tlb_defines.vh"
 
 
 // Coprocessor 0 Registers
@@ -438,7 +441,7 @@
 `define SUPERVISOR_MODE 3
 
 // cache
-`include "./cache.vh"
+//`include "./cache.vh"
 
 // CACHEop encoding
 `define CACHE_OPNUM    2
@@ -480,6 +483,6 @@
 `define LSOC1K_PRU_HINT  4
 
 // Front End RAMs
-`include "frontend_rams.vh"
+//`include "frontend_rams.vh"
 
 

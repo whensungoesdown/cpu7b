@@ -32,6 +32,7 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/defines.vh \
                 ../../rtl/axi_sram_bridge.v \
                 ../../rtl/axi_interface.v \
+                ../../rtl/sram.v \
                 ../../rtl/cpu.v \
 		../../rtl/top.v
 

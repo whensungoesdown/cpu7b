@@ -57,18 +57,8 @@ module cpu7_exu(
    output                               exu_ifu_except,
    // ertn
    output [`GRLEN-1:0]                  exu_ifu_era,
-   output                               exu_ifu_ertn_e,
+   output                               exu_ifu_ertn_e
    
-   //debug interface
-   output [`GRLEN-1:0]                  debug0_wb_pc,
-   output                               debug0_wb_rf_wen,
-   output [ 4:0]                        debug0_wb_rf_wnum,
-   output [`GRLEN-1:0]                  debug0_wb_rf_wdata,
-
-   output [`GRLEN-1:0]                  debug1_wb_pc,
-   output                               debug1_wb_rf_wen,
-   output [ 4:0]                        debug1_wb_rf_wnum,
-   output [`GRLEN-1:0]                  debug1_wb_rf_wdata
    );
 
 
@@ -291,7 +281,7 @@ module cpu7_exu(
    // pipeline registers, then write back to rf  
    
    // alu
-   alu alu(   
+   alu u_alu(   
       .a                        (ecl_alu_a_e          ),
       .b                        (ecl_alu_b_e          ),
       .double_word              (ecl_alu_double_word_e),
@@ -426,20 +416,4 @@ module cpu7_exu(
    
    
    
-   // wrong test
-   assign debug0_wb_pc = ifu_exu_pc_w;
-   assign debug0_wb_rf_wen = ecl_irf_wen_w;
-   assign debug0_wb_rf_wnum = ecl_irf_rd_w;
-   assign debug0_wb_rf_wdata = ecl_irf_rd_data_w;  
-   
-//   assign debug0_wb_pc = `GRLEN'b0;
-//   assign debug0_wb_rf_wen = 1'b0;
-//   assign debug0_wb_rf_wnum = 5'b0;
-//   assign debug0_wb_rf_wdata = `GRLEN'b0;
-//
-//   assign debug1_wb_pc = `GRLEN'b0;
-//   assign debug1_wb_rf_wen = 1'b0;
-//   assign debug1_wb_rf_wnum = 5'b0;
-//   assign debug1_wb_rf_wdata = `GRLEN'b0;
-
 endmodule // cpu7_exu
