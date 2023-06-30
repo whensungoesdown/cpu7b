@@ -114,8 +114,8 @@ module cpu(
 
 
    cpu7_nocache cpu(
-        .clk              (aclk                 ),
-        .resetn           (aresetn              ),
+        .clk              (clk                 ),
+        .resetn           (resetn              ),
 
         .inst_req         (inst_req             ),
         .inst_addr        (inst_addr            ),
