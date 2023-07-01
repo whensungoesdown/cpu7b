@@ -30,6 +30,16 @@ module cpu7_csr(
    wire exception;
    assign exception = ecl_csr_ale_e | ecl_csr_illinst_e; // | other exception
 
+
+   wire                   prmd_pie;
+   wire                   prmd_pie_wdata;
+   wire                   prmd_pie_nxt;
+
+   wire [1:0]             prmd_pplv;
+   wire [1:0]             prmd_pplv_wdata;
+   wire [1:0]             prmd_pplv_nxt;
+
+
    //
    //  CRMD
    //
@@ -128,9 +138,6 @@ module cpu7_csr(
    wire                   prmd_wen;
    assign prmd_wen = (csr_waddr == `LSOC1K_CSR_PRMD) && csr_wen;
 
-   wire                   prmd_pie;
-   wire                   prmd_pie_wdata;
-   wire                   prmd_pie_nxt;
    assign prmd_pie_wdata = csr_wdata[`LSOC1K_PRMD_PIE];
 
    dp_mux2es #(1) prmd_pie_mux(
@@ -147,9 +154,9 @@ module cpu7_csr(
       .se(), .si(), .so());
 
 
-   wire [1:0]             prmd_pplv;
-   wire [1:0]             prmd_pplv_wdata;
-   wire [1:0]             prmd_pplv_nxt;
+
+
+
    assign prmd_pplv_wdata = csr_wdata[`LSOC1K_PRMD_PPLV];
 
    dp_mux2es #(2) prmd_pplv_mux(

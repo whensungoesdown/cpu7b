@@ -2,24 +2,24 @@
 `include "decoded.vh"
 
 module cpu7_ifu(
-   input  wire           clock,
-   input  wire           resetn,
-   input  wire [31:0]    pc_init,
+   input  wire              clock,
+   input  wire              resetn,
+   input  wire [31:0]       pc_init,
 
    // group inst
-   output wire [31:0]    inst_addr,
-   input  wire           inst_addr_ok,
-   output wire           inst_cancel,
-   input  wire [1:0]     inst_count,
-   input  wire           inst_ex,
-   input  wire [5:0]     inst_exccode,
-   input  wire [127:0]   inst_rdata,
-   output wire           inst_req,
-   input  wire           inst_uncache,
-   input  wire           inst_valid,
+   output wire [31:0]       inst_addr,
+   input  wire              inst_addr_ok,
+   output wire              inst_cancel,
+   input  wire [1:0]        inst_count,
+   input  wire              inst_ex,
+   input  wire [5:0]        inst_exccode,
+   input  wire [`GRLEN-1:0] inst_rdata,
+   output wire              inst_req,
+   input  wire              inst_uncache,
+   input  wire              inst_valid,
 
-   input  wire           exu_ifu_br_taken,
-   input  wire [31:0]    exu_ifu_br_target,
+   input  wire              exu_ifu_br_taken,
+   input  wire [31:0]       exu_ifu_br_target,
 
    // exception
    input  wire [`GRLEN-1:0]                 exu_ifu_eentry,

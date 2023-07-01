@@ -53,7 +53,7 @@ module cpu7_nocache(
    wire                              ifu_exu_br_taken_d;
    wire                              ifu_exu_rf_wen_d;     
    wire [4:0]                        ifu_exu_rf_target_d;
-   wire [`LSOC1K_PRU_HINT:0]         ifu_exu_hint_d;       
+   wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d;       
 
    wire [31:0]                       ifu_exu_imm_shifted_d;
    wire [`GRLEN-1:0]                 ifu_exu_c_d;

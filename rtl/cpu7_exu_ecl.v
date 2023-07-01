@@ -93,6 +93,18 @@ module cpu7_exu_ecl(
    );
 
 
+   wire [4:0] rd_m;
+   wire [4:0] rd_w;
+
+   wire wen_m;
+   wire wen_w;
+
+   wire double_read_d;
+   wire double_read_e;
+
+   wire [`GRLEN-1:0] rd_data_m;
+   wire [`GRLEN-1:0] rd_data_w;
+
    wire alu_dispatch_d;
    wire bru_dispatch_d;
    wire lsu_dispatch_d;
@@ -106,6 +118,7 @@ module cpu7_exu_ecl(
    wire kill_d;
   
  
+
    assign kill_d = ecl_bru_valid_e & bru_ecl_br_taken_e; // if branch is taken, kill the instruction at the pipeline _d stage.
    assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
 
@@ -350,8 +363,6 @@ module cpu7_exu_ecl(
    assign ecl_lsu_base_e = byp_rs1_data_e;
    
 
-   wire                       double_read_d;
-   wire                       double_read_e;
    wire [`GRLEN-1:0]          ifu_exu_imm_shifted_e;
    wire [`GRLEN-1:0]          lsu_offset_e;
  
@@ -911,8 +922,6 @@ module cpu7_exu_ecl(
    // LSU takes uncertain cycles. It keeps record of its own rd.
    //
 
-   wire [4:0] rd_m;
-   wire [4:0] rd_w;
    
    dp_mux2es #(5) rd_mux(
       .dout (rd_m),
@@ -933,8 +942,6 @@ module cpu7_exu_ecl(
    // wen mux
    //
    
-   wire wen_m;
-   wire wen_w;
    
 //   dp_mux2es #(1) wen_mux(
 //      .dout (wen_m),
@@ -958,8 +965,6 @@ module cpu7_exu_ecl(
    // rd_data mux
    //
    
-   wire [`GRLEN-1:0] rd_data_m;
-   wire [`GRLEN-1:0] rd_data_w;
    
 
    wire rddata_sel_alu_res_m_l;

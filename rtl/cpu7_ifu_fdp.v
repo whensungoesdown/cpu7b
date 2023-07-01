@@ -12,7 +12,7 @@ module cpu7_ifu_fdp(
    input  wire [1  :0]         inst_count     ,
    input  wire                 inst_ex        ,
    input  wire [5  :0]         inst_exccode   ,
-   input  wire [127:0]         inst_rdata     ,
+   input  wire [`GRLEN-1:0]    inst_rdata     ,
    output wire                 inst_req       ,
    input  wire                 inst_uncache   ,
    input  wire                 inst_valid     ,
