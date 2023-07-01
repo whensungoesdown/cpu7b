@@ -25,9 +25,13 @@
 //      Description: Design control behavioural library
 */                 
 
-`ifdef FPGA_SYN 
-`define NO_SCAN 
-`endif
+// uty: test
+`define NO_SCAN
+ 
+
+//`ifdef FPGA_SYN 
+//`define NO_SCAN 
+//`endif
 
 //`timescale 1ps / 1ps
 
