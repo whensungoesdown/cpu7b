@@ -121,9 +121,10 @@ module axi_interface(
 	   .sel1 (lsu_read));
   
 
-   dffe_s #(`Laraddr) araddr_reg (
+   dffrle_s #(`Laraddr) araddr_reg (
       .din   (araddr_nxt),
       .clk   (aclk),
+      .rst_l (aresetn),
       .en    (inst_req),
       .q     (araddr), 
       .se(), .si(), .so());
