@@ -82,13 +82,37 @@ int main(void)
     in = fopen("main.bin", "rb");
     out = fopen("inst_ram.mif","w");
 
+	//while(!feof(in)) {
+	//    if(fread(mem,1,4,in)!=4) {
+        //    binary_out(out,mem);
+	//	break;
+	//     }
+        //    binary_out(out,mem);
+        //}
+	
+        i = 0;
+
+	fprintf(out, "WIDTH=32;\n");
+	fprintf(out, "DEPTH=8192;\n");
+	fprintf(out, "\n");
+	fprintf(out, "ADDRESS_RADIX=HEX;\n");
+	fprintf(out, "DATA_RADIX=HEX;\n");
+	fprintf(out, "\n");
+	fprintf(out, "CONTENT BEGIN\n");
+
 	while(!feof(in)) {
 	    if(fread(mem,1,4,in)!=4) {
-            binary_out(out,mem);
+	        fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
 		break;
 	     }
-            binary_out(out,mem);
+	     fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
+	     i++;
         }
+
+	fprintf(out, "        [%04x..1FFF]  :    AABBCCDD; \n", i + 1);
+	fprintf(out, "\n");
+	fprintf(out, "END;\n");
+
 	fclose(in);
 	fclose(out);
 
