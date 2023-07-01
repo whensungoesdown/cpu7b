@@ -24,7 +24,7 @@ ${obj_path}/start.o: ${obj_path}/start.s
 	loongarch32r-linux-gnusf-as -mabi=ilp32 ${obj_path}/start.s -o ${obj_path}/start.o
 
 ${obj_path}/inst_ram.coe ${obj_path}/inst_ram.mif: ${obj_path}/main.bin ${obj_path}/main.data ${obj_path}/convert
-	cd ${obj_path} && ./convert 
+	cd ${obj_path} && ./convert && cp inst_ram.mif ../../sram.mif 
 
 ${obj_path}/convert: convert.c
 	gcc ./convert.c -o ${obj_path}/convert 
