@@ -202,7 +202,13 @@ module cpu(
       .inst_req    (inst_req   ),
       .inst_addr   (inst_addr  ),
       .inst_valid  (inst_valid ),
-      .inst_rdata  (inst_rdata )
+      .inst_rdata  (inst_rdata ),
+
+      .data_req	   (data_req   ),
+      .data_wr     (data_wr    ),
+      .data_addr   (data_addr  ),
+      .data_data_ok(data_data_ok),
+      .data_rdata  (data_rdata )
       );
    
 endmodule // cpu
