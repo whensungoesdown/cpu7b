@@ -13,19 +13,16 @@
 	.globl	__main
 _start:
 start:
-    addi.w t0, t0, 1
+    addi.w t0, $r0, 1
     addi.w t0, t0, 2
     addi.w t0, t0, 3
     addi.w t0, t0, 4
     addi.w t0, t0, 5
 
-    bne t0, zero, testbranch
-    addi.w t0, t0, 1
-    addi.w t0, t0, 1
-
-testbranch:
-    addi.w t1, t1, 0x10
-    addi.w t1, t1, 0x10
-    addi.w t1, t1, 0x10
-
     addi.w $r5, $r0, 0x5a
+
+    nop
+    nop
+    nop
+    nop
+    nop

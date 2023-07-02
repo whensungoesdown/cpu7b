@@ -54,3 +54,5 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/inst_addr
 add wave -position end  result:/top_tb/u_top/ram/rdaddress
 add wave -position end  result:/top_tb/u_top/ram/rden
 add wave -position end  result:/top_tb/u_top/ram/q
+
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/registers/regs
