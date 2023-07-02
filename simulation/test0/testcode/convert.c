@@ -111,7 +111,7 @@ int main(void)
         }
 	fprintf(out, "--    data:\n");
 	while(!feof(in2)) {
-	    if(fread(mem,1,4,in)!=4) {
+	    if(fread(mem,1,4,in2)!=4) {
 		if (0 != j) fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
 		break;
 	     }
