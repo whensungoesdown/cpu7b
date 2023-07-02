@@ -80,6 +80,7 @@ int main(void)
 	fclose(out);
 
     in = fopen("main.bin", "rb");
+    in2  = fopen("main.data","rb");
     out = fopen("inst_ram.mif","w");
 
 	//while(!feof(in)) {
@@ -101,19 +102,29 @@ int main(void)
 	fprintf(out, "CONTENT BEGIN\n");
 
 	while(!feof(in)) {
+	    if((j = fread(mem,1,4,in))!=4) {
+		if (0 != j) fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
+		break;
+	     }
+	     fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
+	     i++;
+        }
+	fprintf(out, "--    data:\n");
+	while(!feof(in2)) {
 	    if(fread(mem,1,4,in)!=4) {
-	        fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
+		if (0 != j) fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
 		break;
 	     }
 	     fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
 	     i++;
         }
 
-	fprintf(out, "        [%04x..1FFF]  :    AABBCCDD; \n", i + 1);
+	fprintf(out, "        [%04x..1FFF]  :    AABBCCDD; \n", i);
 	fprintf(out, "\n");
 	fprintf(out, "END;\n");
 
 	fclose(in);
+	fclose(in2);
 	fclose(out);
 
     in  = fopen("main.bin","rb");
