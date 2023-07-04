@@ -46,6 +46,8 @@ module cpu7_lsu(
    wire lsu_ale_m;
    
    wire valid_m;
+
+   wire data_data_ok_m;
    
    dff_s #(1) valid_e2m_reg (
       .din (valid_e),
@@ -53,6 +55,11 @@ module cpu7_lsu(
       .q   (valid_m),
       .se(), .si(), .so());
 
+   dff_s #(1) data_data_ok_e2m_reg (
+      .din (data_data_ok),
+      .clk (clk),
+      .q   (data_data_ok_m),
+      .se(), .si(), .so());
    
    // lsu_op needs dff, the following combinational logic is only used when data_data_ok is signaled at _m
    wire [`LSOC1K_LSU_CODE_BIT-1:0]    lsu_op_m;
@@ -291,7 +298,11 @@ module cpu7_lsu(
 
    // if ale, data req is not sent out, so there will be no data_data_ok back
    // lsu_ale is at _e, wait for the next cycle to signal lsu_finish_m
-   assign lsu_finish_m = data_data_ok | (lsu_ale_m & valid_m); 
+   
+   // bug fix: data_data_ok is actually data_data_ok_e
+   //          lsu_finish_m needs data_data_ok_m
+   //assign lsu_finish_m = data_data_ok | (lsu_ale_m & valid_m); 
+   assign lsu_finish_m = data_data_ok_m | (lsu_ale_m & valid_m); 
 
    
 

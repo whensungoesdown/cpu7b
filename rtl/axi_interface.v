@@ -152,7 +152,8 @@ module axi_interface(
    assign inst_valid = (rready & rvalid) & ifu_fetch;
    assign inst_rdata = (rdata          ) & {`GRLEN{ifu_fetch}};
 
-   assign data_data_ok = (rready & rvalid) & lsu_read;
+   //assign data_data_ok = (rready & rvalid) & lsu_read; // uty: test + (lsu_read | lsu_write);
+   assign data_data_ok = (rready & rvalid) & (lsu_read | lsu_write);
    assign data_rdata   = (rdata          ) & {`GRLEN{lsu_read}};
 
 
