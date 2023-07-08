@@ -27,10 +27,6 @@ add wave -position end  sim:/top_tb/u_top/cpu_rdata
 add wave -position end  sim:/top_tb/u_top/cpu_rvalid
 add wave -position end  sim:/top_tb/u_top/cpu_rready
 
-add wave -position end  sim:/top_tb/u_top/u_cpu/inst_req
-add wave -position end  sim:/top_tb/u_top/u_cpu/inst_addr
-add wave -position end  sim:/top_tb/u_top/u_cpu/inst_rdata
-add wave -position end  sim:/top_tb/u_top/u_cpu/inst_valid
 
 add wave -position end  sim:/top_tb/u_top/u_cpu/cpu/exu/registers/regs
 
