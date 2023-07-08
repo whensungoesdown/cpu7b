@@ -1017,9 +1017,21 @@ module cpu7_exu_ecl(
    //
    // lsu stall request
    //
+
+   // lsu_dispatch_d     : _-______
+   // lsu_ecl_finish_m   : ______-_
+   //
+   // lsu_stall_req      : __-----_
+   // lsu_stall_req_next : _-----__
+   // lsu_stall_req_ful  : _------_
+   //
    
    wire lsu_stall_req;
    wire lsu_stall_req_next;
+
+   wire lsu_stall_req_ful;
+
+   assign lsu_stall_req_ful = lsu_stall_req | lsu_dispatch_d;
 
    //
    // lsu_dispatch_d is the staring signal
@@ -1048,7 +1060,8 @@ module cpu7_exu_ecl(
    //
    // exu_ifu_stall_req
    //
-   assign exu_ifu_stall_req = lsu_stall_req_next | csr_stall_req_next;
+   // uty: review  csr_stall_req_next probably should do the csr_stall_req_ful too
+   assign exu_ifu_stall_req = lsu_stall_req_ful | csr_stall_req_next;
    
 
 
