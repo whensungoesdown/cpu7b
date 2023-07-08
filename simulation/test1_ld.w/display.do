@@ -127,3 +127,31 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rvalid
 add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rvalid
 add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/data_req
 add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write
+
+
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/req_busy
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/req_busy_nxt
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/ifu_fetch
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_read
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/ifu_fetch_f
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_read_m
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write_m
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rvalid
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rready
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/data_req
+
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/data_data_ok_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_rdata_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_finish_m
+add wave -position 131  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_stall_req
+add wave -position 132  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_stall_req_next
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/exu_ifu_except
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_ale_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/ecl_csr_illinst_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_rdata_f
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/dec/fdp_dec_inst
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/ifu_fetch
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/ifu_fetch_f
+
+

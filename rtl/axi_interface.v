@@ -85,6 +85,26 @@ module axi_interface(
 
    );
 
+   
+   //
+   // req_busy        : ___---_
+   //
+   // data_req        : __-____
+   // rvalid & rready : _____-_
+   wire req_busy;
+   wire req_busy_nxt;
+
+   // ((rvalid & rready) & ~data_req) means (rvalid & rready) should be the one
+   // that after data_req goes low
+   // also, while req_busy is 1, data_req shold not be 1 again
+   assign req_busy_nxt = (req_busy | data_req) & (~((rvalid & rready) & ~data_req));
+
+   dffrl_s #(1) req_busy_reg (
+      .din   (req_busy_nxt),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (req_busy), 
+      .se(), .si(), .so());
 
    // 
    // priority lsu_read lsu_write ifu_fetch
@@ -100,9 +120,14 @@ module axi_interface(
    wire                lsu_write_m;
 
 
+   // todo: do fetch later, should be the same mechanism as data req takes
+
    assign ifu_fetch = inst_req & ~lsu_write & ~lsu_read;
    assign lsu_read  = data_req & ~lsu_write;
    assign lsu_write = data_req & data_wr;
+
+   assign lsu_read_m  = req_busy & ~lsu_write_m;
+   assign lsu_write_m = req_busy & data_wr; // uty: bug  data_wr should be kept as data_req does, now data_wr always 0
 
    dffrl_s #(1) ifu_fetch_bf2f_reg (
       .din   (ifu_fetch),
@@ -111,19 +136,19 @@ module axi_interface(
       .q     (ifu_fetch_f), 
       .se(), .si(), .so());
 
-   dffrl_s #(1) lsu_read_e2m_reg (
-      .din   (lsu_read),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      .q     (lsu_read_m), 
-      .se(), .si(), .so());
-
-   dffrl_s #(1) lsu_write_e2m_reg (
-      .din   (lsu_write),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      .q     (lsu_write_m), 
-      .se(), .si(), .so());
+//   dffrl_s #(1) lsu_read_e2m_reg (
+//      .din   (lsu_read),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      .q     (lsu_read_m), 
+//      .se(), .si(), .so());
+//
+//   dffrl_s #(1) lsu_write_e2m_reg (
+//      .din   (lsu_write),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      .q     (lsu_write_m), 
+//      .se(), .si(), .so());
 
 
    wire [`Laraddr-1:0] araddr_nxt;
@@ -177,6 +202,7 @@ module axi_interface(
 
    //assign inst_valid = (rready & rvalid) & ifu_fetch; //ifu_fetch_bf->ifu_fetch_f, inst_valid should use inst_valid_f
    //assign inst_rdata = (rdata          ) & {`GRLEN{ifu_fetch}};
+
    assign inst_valid_f = (rready & rvalid) & ifu_fetch_f;
    assign inst_rdata_f = (rdata          ) & {`GRLEN{ifu_fetch_f}};
 
