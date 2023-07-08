@@ -25,11 +25,11 @@ module cpu7_lsu(
    input                              data_addr_ok,
    output                             data_recv,
    input                              data_scsucceed,
-   input   [`GRLEN-1:0]               data_rdata,
+   input   [`GRLEN-1:0]               data_rdata_m,
    input                              data_exception,
    input   [ 5:0]                     data_excode,
    input   [`GRLEN-1:0]               data_badvaddr,
-   input                              data_data_ok,
+   input                              data_data_ok_m,
 
    //result 
    output                             lsu_addr_finish, // addr ok
@@ -47,7 +47,7 @@ module cpu7_lsu(
    
    wire valid_m;
 
-   wire data_data_ok_m;
+   //wire data_data_ok_m;
    
    dff_s #(1) valid_e2m_reg (
       .din (valid_e),
@@ -55,11 +55,11 @@ module cpu7_lsu(
       .q   (valid_m),
       .se(), .si(), .so());
 
-   dff_s #(1) data_data_ok_e2m_reg (
-      .din (data_data_ok),
-      .clk (clk),
-      .q   (data_data_ok_m),
-      .se(), .si(), .so());
+   //dff_s #(1) data_data_ok_e2m_reg (
+   //   .din (data_data_ok),
+   //   .clk (clk),
+   //   .q   (data_data_ok_m),
+   //   .se(), .si(), .so());
    
    // lsu_op needs dff, the following combinational logic is only used when data_data_ok is signaled at _m
    wire [`LSOC1K_LSU_CODE_BIT-1:0]    lsu_op_m;
@@ -263,7 +263,7 @@ module cpu7_lsu(
 
 
    //result process
-   wire [`GRLEN-1:0] data_rdata_input = data_rdata;
+   wire [`GRLEN-1:0] data_rdata_input = data_rdata_m;
 
    
    wire [4:0] align_mode_m;
@@ -302,11 +302,12 @@ module cpu7_lsu(
    // bug fix: data_data_ok is actually data_data_ok_e
    //          lsu_finish_m needs data_data_ok_m
    //assign lsu_finish_m = data_data_ok | (lsu_ale_m & valid_m); 
-   assign lsu_finish_m = data_data_ok_m | (lsu_ale_m & valid_m); 
+   assign lsu_finish_m = data_data_ok_m | (lsu_ale_m & valid_m); // uty: review why lsu_ale_m here?
 
    
 
    assign data_req      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
+   //assign data_req      = valid_e; // try lsu_ale_e at other places 
    assign data_addr     = addr;
    assign data_wr       = lsu_wr;
 
@@ -370,7 +371,8 @@ module cpu7_lsu(
    wire lsu_recv;
    wire lsu_recv_next;
 
-   assign lsu_recv_next = (lsu_recv | data_addr_ok) & (~data_data_ok);
+   //assign lsu_recv_next = (lsu_recv | data_addr_ok) & (~data_data_ok); // uty: review
+   assign lsu_recv_next = (lsu_recv | data_addr_ok) & (~data_data_ok_m); 
 
    dff_s #(1) lsu_recv_reg (
       .din (lsu_recv_next),

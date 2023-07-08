@@ -54,8 +54,8 @@ module axi_interface(
    input                        inst_cancel,
    output                       inst_addr_ok,
    //output [127:0]               inst_rdata,
-   output [`GRLEN-1:0]          inst_rdata,    // read 32 bits
-   output                       inst_valid,
+   output [`GRLEN-1:0]          inst_rdata_f,    // read 32 bits
+   output                       inst_valid_f,    // uty: test output only do inst_rdata_f inst_valid_f, do the reset later
    output [  1:0]               inst_count,
    output                       inst_uncache,
    output                       inst_exception,
@@ -74,9 +74,9 @@ module axi_interface(
    input                        data_ll,        
    input                        data_sc,        
 
-   output [`GRLEN-1:0]          data_rdata,     
+   output [`GRLEN-1:0]          data_rdata_m,  // uty: test   do the rest later    
    output                       data_addr_ok,   
-   output                       data_data_ok,   
+   output                       data_data_ok_m,   
    output [ 5:0]                data_exccode,   
    output                       data_exception, 
    output [`GRLEN-1:0]          data_badvaddr,  
@@ -90,14 +90,40 @@ module axi_interface(
    // priority lsu_read lsu_write ifu_fetch
    // 
 
+   // they are actually ifu_fetch_e lsu_read_e lsu_write_e
    wire                ifu_fetch;
    wire                lsu_read;
    wire                lsu_write;
+
+   wire                ifu_fetch_f;
+   wire                lsu_read_m;
+   wire                lsu_write_m;
+
 
    assign ifu_fetch = inst_req & ~lsu_write & ~lsu_read;
    assign lsu_read  = data_req & ~lsu_write;
    assign lsu_write = data_req & data_wr;
 
+   dffrl_s #(1) ifu_fetch_bf2f_reg (
+      .din   (ifu_fetch),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (ifu_fetch_f), 
+      .se(), .si(), .so());
+
+   dffrl_s #(1) lsu_read_e2m_reg (
+      .din   (lsu_read),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (lsu_read_m), 
+      .se(), .si(), .so());
+
+   dffrl_s #(1) lsu_write_e2m_reg (
+      .din   (lsu_write),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (lsu_write_m), 
+      .se(), .si(), .so());
 
 
    wire [`Laraddr-1:0] araddr_nxt;
@@ -149,13 +175,18 @@ module axi_interface(
 
    assign rready = 1'b1;
 
-   assign inst_valid = (rready & rvalid) & ifu_fetch;
-   assign inst_rdata = (rdata          ) & {`GRLEN{ifu_fetch}};
+   //assign inst_valid = (rready & rvalid) & ifu_fetch; //ifu_fetch_bf->ifu_fetch_f, inst_valid should use inst_valid_f
+   //assign inst_rdata = (rdata          ) & {`GRLEN{ifu_fetch}};
+   assign inst_valid_f = (rready & rvalid) & ifu_fetch_f;
+   assign inst_rdata_f = (rdata          ) & {`GRLEN{ifu_fetch_f}};
 
    //assign data_data_ok = (rready & rvalid) & lsu_read; // uty: test + (lsu_read | lsu_write);
-   assign data_data_ok = (rready & rvalid) & (lsu_read | lsu_write);
-   assign data_rdata   = (rdata          ) & {`GRLEN{lsu_read}};
-
+   
+   // rready & rvalid belong to the previous request
+   //assign data_data_ok = (rready & rvalid) & (lsu_read | lsu_write); // lsu_read_e lsu_write data_data_ok_e
+   //assign data_rdata   = (rdata          ) & {`GRLEN{lsu_read}};
+   assign data_data_ok_m = (rready & rvalid) & (lsu_read_m | lsu_write_m); // lsu_read_e lsu_write data_data_ok_e
+   assign data_rdata_m   = (rdata          ) & {`GRLEN{lsu_read_m}};
 
 
 

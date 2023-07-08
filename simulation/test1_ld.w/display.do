@@ -19,8 +19,8 @@ add wave -position end  result:/top_tb/u_top/cpu_rready
 
 add wave -position end  result:/top_tb/u_top/u_cpu/inst_req
 add wave -position end  result:/top_tb/u_top/u_cpu/inst_addr
-add wave -position end  result:/top_tb/u_top/u_cpu/inst_rdata
-add wave -position end  result:/top_tb/u_top/u_cpu/inst_valid
+add wave -position end  result:/top_tb/u_top/u_cpu/inst_rdata_f
+add wave -position end  result:/top_tb/u_top/u_cpu/inst_valid_f
 
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_addr
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_f
@@ -90,7 +90,7 @@ add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/byplog_rs1/rs_e
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/rf_target_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_rd_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_finish_m
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_data_ok
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_data_ok_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_ale_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/valid_m
 add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rready
@@ -99,4 +99,31 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_read
 add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/data_req
 add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write
 
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_dispatch_d
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_finish_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/exu_ifu_stall_req
 
+
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/ifu_pcbf_sel_old_bf_l
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/br_taken
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/exu_ifu_ertn_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/exu_ifu_stall_req
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_stall_req_next
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/csr_stall_req_next
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_dispatch_d
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_stall_req
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/lsu_ecl_finish_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_finish_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_data_ok_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_ale_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/valid_m
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_read
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_read_m
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write_m
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rready
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rvalid
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/rvalid
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/data_req
+add wave -position end  result:/top_tb/u_top/u_cpu/u_axi_interface/lsu_write

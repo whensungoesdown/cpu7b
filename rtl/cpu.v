@@ -84,9 +84,9 @@ module cpu(
    wire [`GRLEN-1:0]      inst_addr     ;
    wire                   inst_cancel   ;
    wire                   inst_addr_ok  ;
-   wire [`GRLEN-1:0]      inst_rdata    ;
+   wire [`GRLEN-1:0]      inst_rdata_f  ;
    wire                   inst_recv     ;
-   wire                   inst_valid    ;
+   wire                   inst_valid_f  ;
    wire [  1:0]           inst_count    ;
    wire                   inst_uncache  ;
    wire                   inst_exception;
@@ -105,9 +105,9 @@ module cpu(
    wire                   data_ll;
    wire                   data_sc;
 
-   wire [`GRLEN-1:0]      data_rdata;
+   wire [`GRLEN-1:0]      data_rdata_m;
    wire                   data_addr_ok;
-   wire                   data_data_ok;
+   wire                   data_data_ok_m;
    wire [ 5:0]            data_exccode;
 
 
@@ -121,8 +121,8 @@ module cpu(
         .inst_addr        (inst_addr            ),
         .inst_cancel      (inst_cancel          ),
         .inst_addr_ok     (inst_addr_ok         ),
-        .inst_rdata       (inst_rdata           ),
-        .inst_valid       (inst_valid           ),
+        .inst_rdata_f     (inst_rdata_f         ),
+        .inst_valid_f     (inst_valid_f         ),
         .inst_count       (inst_count           ),
         .inst_uncache     (inst_uncache         ),
         .inst_exccode     (inst_exccode         ),
@@ -142,9 +142,9 @@ module cpu(
         .data_ll          (data_ll              ),
         .data_sc          (data_sc              ),
                                           
-        .data_rdata       (data_rdata           ),
+        .data_rdata_m     (data_rdata_m         ),
         .data_addr_ok     (data_addr_ok         ),
-        .data_data_ok     (data_data_ok         ),
+        .data_data_ok_m   (data_data_ok_m       ),
         .data_exccode     (data_exccode         )
 
 
@@ -153,62 +153,62 @@ module cpu(
 
    
    axi_interface u_axi_interface(
-      .aclk        (clk        ),
-      .aresetn     (resetn     ), 
+      .aclk             (clk            ),
+      .aresetn          (resetn         ), 
 
 
-      .arid	   (arid       ),
-      .araddr	   (araddr     ),
-      .arlen	   (arlen      ),
-      .arsize	   (arsize     ),
-      .arburst	   (arburst    ),
-      .arlock	   (arlock     ),
-      .arcache	   (arcache    ),
-      .arprot	   (arprot     ),
-      .arvalid	   (arvalid    ),
-      .arready	   (arready    ),
+      .arid	        (arid           ),
+      .araddr	        (araddr         ),
+      .arlen	        (arlen          ),
+      .arsize	        (arsize         ),
+      .arburst	        (arburst        ),
+      .arlock	        (arlock         ),
+      .arcache	        (arcache        ),
+      .arprot	        (arprot         ),
+      .arvalid	        (arvalid        ),
+      .arready	        (arready        ),
 
-      .rid	   (rid        ),
-      .rdata	   (rdata      ),
-      .rresp	   (rresp      ),
-      .rlast	   (rlast      ),
-      .rvalid	   (rvalid     ),
-      .rready	   (rready     ),
+      .rid	        (rid            ),
+      .rdata	        (rdata          ),
+      .rresp	        (rresp          ),
+      .rlast	        (rlast          ),
+      .rvalid	        (rvalid         ),
+      .rready	        (rready         ),
 
 
-      .awid	   (awid       ),
-      .awaddr	   (awaddr     ),
-      .awlen	   (awlen      ),
-      .awsize	   (awsize     ),
-      .awburst	   (awburst    ),
-      .awlock	   (awlock     ),
-      .awcache	   (awcache    ),
-      .awprot	   (awprot     ),
-      .awvalid	   (awvalid    ),
-      .awready	   (awready    ),
+      .awid	        (awid           ),
+      .awaddr	        (awaddr         ),
+      .awlen	        (awlen          ),
+      .awsize	        (awsize         ),
+      .awburst	        (awburst        ),
+      .awlock	        (awlock         ),
+      .awcache	        (awcache        ),
+      .awprot	        (awprot         ),
+      .awvalid	        (awvalid        ),
+      .awready	        (awready        ),
 
-      .wid	   (wid        ),
-      .wdata	   (wdata      ),
-      .wstrb	   (wstrb      ),
-      .wlast	   (wlast      ),
-      .wvalid	   (wvalid     ),
-      .wready	   (wready     ),
+      .wid	        (wid            ),
+      .wdata	        (wdata          ),
+      .wstrb	        (wstrb          ),
+      .wlast	        (wlast          ),
+      .wvalid	        (wvalid         ),
+      .wready	        (wready         ),
 
-      .bid	   (bid        ),
-      .bresp	   (bresp      ),
-      .bvalid	   (bvalid     ),
-      .bready	   (bready     ),
+      .bid	        (bid            ),
+      .bresp	        (bresp          ),
+      .bvalid	        (bvalid         ),
+      .bready	        (bready         ),
 
-      .inst_req    (inst_req   ),
-      .inst_addr   (inst_addr  ),
-      .inst_valid  (inst_valid ),
-      .inst_rdata  (inst_rdata ),
+      .inst_req         (inst_req       ),
+      .inst_addr        (inst_addr      ),
+      .inst_valid_f     (inst_valid_f   ),
+      .inst_rdata_f     (inst_rdata_f   ),
 
-      .data_req	   (data_req   ),
-      .data_wr     (data_wr    ),
-      .data_addr   (data_addr  ),
-      .data_data_ok(data_data_ok),
-      .data_rdata  (data_rdata )
+      .data_req	        (data_req       ),
+      .data_wr          (data_wr        ),
+      .data_addr        (data_addr      ),
+      .data_data_ok_m   (data_data_ok_m ),
+      .data_rdata_m     (data_rdata_m   )
       );
    
 endmodule // cpu

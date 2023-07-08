@@ -12,10 +12,10 @@ module cpu7_ifu_fdp(
    input  wire [1  :0]         inst_count     ,
    input  wire                 inst_ex        ,
    input  wire [5  :0]         inst_exccode   ,
-   input  wire [`GRLEN-1:0]    inst_rdata     ,
+   input  wire [`GRLEN-1:0]    inst_rdata_f   ,
    output wire                 inst_req       ,
    input  wire                 inst_uncache   ,
-   input  wire                 inst_valid     ,
+   input  wire                 inst_valid_f   ,
 
    input  wire                 br_taken       ,
    input  wire [31 :0]         br_target      ,
@@ -85,7 +85,7 @@ module cpu7_ifu_fdp(
    // if exu ask ifu to stall, the pc_bf takes bc_f and the instruction passed
    // down the pipe should be invalid
    //assign fdp_dec_valid = inst_valid;
-   assign fdp_dec_valid = inst_valid & ~exu_ifu_stall_req & ~br_taken & ~exu_ifu_except & ~exu_ifu_ertn_e; // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
+   assign fdp_dec_valid = inst_valid_f & ~exu_ifu_stall_req & ~br_taken & ~exu_ifu_except & ~exu_ifu_ertn_e; // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
    // or should not if exception happen
 
    //===================================================
@@ -205,10 +205,10 @@ module cpu7_ifu_fdp(
    // use inst_valid instead of inst_addr_ok, should name it fcl_fdp_pcbf_sel_old_l_bf
    //assign ifu_pcbf_sel_old_bf_l = inst_valid || reset || br_taken || exu_ifu_except;
    //assign ifu_pcbf_sel_old_bf_l = (inst_valid || reset || br_taken || exu_ifu_except) & (~exu_ifu_stall_req);
-   assign ifu_pcbf_sel_old_bf_l = ((inst_valid || reset || br_taken || exu_ifu_ertn_e) & (~exu_ifu_stall_req)) | exu_ifu_except; // exception need ifu to fetch instruction from eentry
+   assign ifu_pcbf_sel_old_bf_l = ((inst_valid_f || reset || br_taken || exu_ifu_ertn_e) & (~exu_ifu_stall_req)) | exu_ifu_except; // exception need ifu to fetch instruction from eentry
    
    //assign ifu_pcbf_sel_pcinc_bf_l = ~(inst_valid && ~br_taken);  /// ??? br_taken never comes along with inst_valid, br_taken_e
-   assign ifu_pcbf_sel_pcinc_bf_l = ~(inst_valid && ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e) | exu_ifu_stall_req;  /// ??? br_taken never comes along with inst_valid, br_taken_e
+   assign ifu_pcbf_sel_pcinc_bf_l = ~(inst_valid_f && ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e) | exu_ifu_stall_req;  /// ??? br_taken never comes along with inst_valid, br_taken_e
    //assign ifu_pcbf_sel_pcinc_bf_l = ~inst_valid;
    assign ifu_pcbf_sel_brpc_bf_l = ~br_taken; 
 
@@ -264,7 +264,7 @@ module cpu7_ifu_fdp(
    // Fetched Instruction Datapath
    //===================================================
    
-   assign inst = inst_rdata[31:0];
+   assign inst = inst_rdata_f[31:0];
 
    assign fdp_dec_inst = inst;
    

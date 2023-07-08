@@ -37,11 +37,11 @@ module cpu7_exu(
    
    output                               data_recv,
    input                                data_scsucceed,
-   input  [`GRLEN-1:0]                  data_rdata,
+   input  [`GRLEN-1:0]                  data_rdata_m,
    input                                data_exception,
    input  [5:0]                         data_excode,
    input  [`GRLEN-1:0]                  data_badvaddr,
-   input                                data_data_ok,
+   input                                data_data_ok_m,
 
    output [`GRLEN-1:0]                  data_pc,
    output                               data_cancel,
@@ -317,11 +317,11 @@ module cpu7_exu(
 
       .data_recv                (data_recv             ),
       .data_scsucceed           (data_scsucceed        ),
-      .data_rdata               (data_rdata            ),
+      .data_rdata_m             (data_rdata_m          ),
       .data_exception           (data_exception        ),
       .data_excode              (data_excode           ),
       .data_badvaddr            (data_badvaddr         ),
-      .data_data_ok             (data_data_ok          ),
+      .data_data_ok_m           (data_data_ok_m        ),
 
 
       // lsu output
