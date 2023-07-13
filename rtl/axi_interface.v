@@ -104,6 +104,27 @@ module axi_interface(
       .clk   (aclk),
       .rst_l (aresetn),
       .q     (req_busy), 
+      .se(), .si(), .so());    // should be req_rd_busy
+
+
+   //
+   // req_wr_busy        : ___---_
+   //
+   // data_req & data_wr : __-____
+   // bvalid & bready    : _____-_
+   wire req_wr_busy;
+   wire req_wr_busy_nxt;
+
+   // ((rvalid & rready) & ~data_req) means (rvalid & rready) should be the one
+   // that after data_req goes low
+   // also, while req_busy is 1, data_req shold not be 1 again
+   assign req_wr_busy_nxt = (req_wr_busy | (data_req & data_wr)) & (~((bvalid & bready) & ~data_req));
+
+   dffrl_s #(1) req_wr_busy_reg (
+      .din   (req_wr_busy_nxt),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (req_wr_busy), 
       .se(), .si(), .so());
 
    // 
@@ -213,7 +234,6 @@ module axi_interface(
    // rready & rvalid belong to the previous request
    //assign data_data_ok = (rready & rvalid) & (lsu_read | lsu_write); // lsu_read_e lsu_write data_data_ok_e
    //assign data_rdata   = (rdata          ) & {`GRLEN{lsu_read}};
-   assign data_data_ok_m = (rready & rvalid) & (lsu_read_m | lsu_write_m); // lsu_read_e lsu_write data_data_ok_e
    assign data_rdata_m   = (rdata          ) & {`GRLEN{lsu_read_m}};
 
 
@@ -223,25 +243,87 @@ module axi_interface(
 
    assign awaddr_nxt = data_addr;
 
+   dffrle_s #(`Lawaddr) awaddr_reg (
+      .din   (awaddr_nxt),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .en    (data_wr),
+      .q     (awaddr), 
+      .se(), .si(), .so());
 
+   // data_req & data_wr : _-_____
+   // awready            : _____-_
+   // awvalid_nxt        : _----__
+   // awvalid_tmp        : __----_
+   // awvalid            : _-----_ 
+   
+
+   assign awvalid_nxt = (awvalid_tmp | (data_req & data_wr)) & (~awready); 
+   dffrl_s #(1) awvalid_reg (
+      .din   (awvalid_nxt),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (awvalid_tmp), 
+      .se(), .si(), .so());
+   
+   assign awvalid = awvalid_tmp | (data_req & data_wr);
+
+
+   wire [`Lwdata-1:0] wdata_nxt;
+
+   assign wdata_nxt = data_wdata;
+
+   dffrle_s #(`Lwdata) wdata_reg (
+      .din   (wdata_nxt),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .en    (data_wr),
+      .q     (wdata), 
+      .se(), .si(), .so());
+
+   // data_req & data_wr : _-_____
+   // wready             : _____-_
+   // wvalid_nxt         : _----__
+   // wvalid_tmp         : __----_
+   // wvalid             : _-----_ 
+   
+
+   assign wvalid_nxt = (wvalid_tmp | (data_req & data_wr)) & (~wready); 
+   dffrl_s #(1) wvalid_reg (
+      .din   (wvalid_nxt),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (wvalid_tmp), 
+      .se(), .si(), .so());
+   
+   assign wvalid = wvalid_tmp | (data_req & data_wr);
+
+
+
+   assign bready = 1'b1;
+
+
+   //assign data_data_ok_m = (rready & rvalid) & (lsu_read_m | lsu_write_m); // lsu_read_e lsu_write data_data_ok_e
+   //// should check bresp value, then signal data_data_ok
+   assign data_data_ok_m = ((rready & rvalid) & lsu_read_m) | ((bready & bvalid) & lsu_write_m); 
    
    // set unimplemented signals to 0 
    assign awid    = `Lawid'b0;
-   assign awaddr  = `Lawaddr'b0;
+   //assign awaddr  = `Lawaddr'b0;
    assign awlen   = `Lawlen'b0;
    assign awsize  = `Lawsize'b0;
    assign awburst = `Lawburst'b0;
    assign awlock  = `Lawlock'b0;
    assign awcache = `Lawcache'b0;
    assign awprot  = `Lawprot'b0;
-   assign awvalid = 1'b0;
+   //assign awvalid = 1'b0;
 
    assign wid     = `Lwid'b0;
-   assign wdata   = `Lwdata'b0;
+   //assign wdata   = `Lwdata'b0;
    assign wstrb   = `Lwstrb'b0;
    assign wlast   = 1'b0;
-   assign wvalid  = 1'b0;
+   //assign wvalid  = 1'b0;
 
-   assign bready  = 1'b0;
+   //assign bready  = 1'b0;
    
 endmodule // axi_interface
