@@ -87,24 +87,24 @@ module axi_interface(
 
    
    //
-   // req_busy        : ___---_
+   // req_rd_busy        : ___---_
    //
-   // data_req        : __-____
-   // rvalid & rready : _____-_
-   wire req_busy;
-   wire req_busy_nxt;
+   // data_req           : __-____
+   // rvalid & rready    : _____-_
+   wire req_rd_busy;
+   wire req_rd_busy_nxt;
 
    // ((rvalid & rready) & ~data_req) means (rvalid & rready) should be the one
    // that after data_req goes low
-   // also, while req_busy is 1, data_req shold not be 1 again
-   assign req_busy_nxt = (req_busy | data_req) & (~((rvalid & rready) & ~data_req));
+   // also, while req_rd_busy is 1, data_req shold not be 1 again
+   assign req_rd_busy_nxt = (req_rd_busy | (data_req & ~data_wr)) & (~((rvalid & rready) & ~data_req));
 
-   dffrl_s #(1) req_busy_reg (
-      .din   (req_busy_nxt),
+   dffrl_s #(1) req_rd_busy_reg (
+      .din   (req_rd_busy_nxt),
       .clk   (aclk),
       .rst_l (aresetn),
-      .q     (req_busy), 
-      .se(), .si(), .so());    // should be req_rd_busy
+      .q     (req_rd_busy), 
+      .se(), .si(), .so());    
 
 
    //
@@ -115,9 +115,6 @@ module axi_interface(
    wire req_wr_busy;
    wire req_wr_busy_nxt;
 
-   // ((rvalid & rready) & ~data_req) means (rvalid & rready) should be the one
-   // that after data_req goes low
-   // also, while req_busy is 1, data_req shold not be 1 again
    assign req_wr_busy_nxt = (req_wr_busy | (data_req & data_wr)) & (~((bvalid & bready) & ~data_req));
 
    dffrl_s #(1) req_wr_busy_reg (
@@ -147,8 +144,8 @@ module axi_interface(
    assign lsu_read  = data_req & ~lsu_write;
    assign lsu_write = data_req & data_wr;
 
-   assign lsu_read_m  = req_busy & ~lsu_write_m;
-   assign lsu_write_m = req_busy & data_wr; // uty: bug  data_wr should be kept as data_req does, now data_wr always 0
+   assign lsu_read_m  = req_rd_busy;
+   assign lsu_write_m = req_wr_busy;
 
    dffrl_s #(1) ifu_fetch_bf2f_reg (
       .din   (ifu_fetch),
@@ -175,7 +172,6 @@ module axi_interface(
    wire [`Laraddr-1:0] araddr_nxt;
    wire                arvalid_nxt;
    wire                arvalid_tmp;
-   wire                inst_req_delay1;
    
    assign arid    = `Larid'h0; 
    assign arlen   = `Larlen'h0;
@@ -185,13 +181,14 @@ module axi_interface(
    assign arcache = `Larcache'h0;
    assign arprot  = `Larprot'h0;
 
-   //assign araddr_nxt = inst_addr;
-   mux2ds #(`GRLEN) mux_araddr (.dout(araddr_nxt),
-	   .in0  (inst_addr),
-	   .in1  (data_addr),
-	   .sel0 (ifu_fetch),
-	   .sel1 (lsu_read));
-  
+//   mux2ds #(`GRLEN) mux_araddr (.dout(araddr_nxt),
+//	   .in0  (inst_addr),
+//	   .in1  (data_addr),
+//	   .sel0 (ifu_fetch),
+//	   .sel1 (lsu_read));
+   // when lsu_write, ifu_fetch and lsu_read are both 0, then araddr_nxt
+   // becomes x
+   assign araddr_nxt = {inst_addr & {32{ifu_fetch}}} | {data_addr & {32{lsu_read}}};
 
    dffrle_s #(`Laraddr) araddr_reg (
       .din   (araddr_nxt),
@@ -240,16 +237,19 @@ module axi_interface(
 
 
    wire [`Lawaddr-1:0] awaddr_nxt;
+   wire                awvalid_nxt;
+   wire                awvalid_tmp;
 
-   assign awaddr_nxt = data_addr;
-
-   dffrle_s #(`Lawaddr) awaddr_reg (
-      .din   (awaddr_nxt),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      .en    (data_wr),
-      .q     (awaddr), 
-      .se(), .si(), .so());
+//   assign awaddr_nxt = data_addr;
+//
+//   dffrle_s #(`Lawaddr) awaddr_reg (
+//      .din   (awaddr_nxt),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      .en    (data_wr),
+//      .q     (awaddr), 
+//      .se(), .si(), .so());
+   assign awaddr = data_addr;     
 
    // data_req & data_wr : _-_____
    // awready            : _____-_
@@ -269,17 +269,21 @@ module axi_interface(
    assign awvalid = awvalid_tmp | (data_req & data_wr);
 
 
+
    wire [`Lwdata-1:0] wdata_nxt;
+   wire               wvalid_nxt;
+   wire               wvalid_tmp;
 
-   assign wdata_nxt = data_wdata;
-
-   dffrle_s #(`Lwdata) wdata_reg (
-      .din   (wdata_nxt),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      .en    (data_wr),
-      .q     (wdata), 
-      .se(), .si(), .so());
+//   assign wdata_nxt = data_wdata;
+//
+//   dffrle_s #(`Lwdata) wdata_reg (
+//      .din   (wdata_nxt),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      .en    (data_wr),
+//      .q     (wdata), 
+//      .se(), .si(), .so());
+   assign wdata = data_wdata;
 
    // data_req & data_wr : _-_____
    // wready             : _____-_

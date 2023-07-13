@@ -206,6 +206,7 @@ module cpu(
 
       .data_req	        (data_req       ),
       .data_wr          (data_wr        ),
+      .data_wdata       (data_wdata     ),
       .data_addr        (data_addr      ),
       .data_data_ok_m   (data_data_ok_m ),
       .data_rdata_m     (data_rdata_m   )
