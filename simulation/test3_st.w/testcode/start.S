@@ -12,8 +12,9 @@ var1:	.word	0x00000033
 	.globl	__main
 _start:
 start:
+    addi.w  $r6, $r0, 0
     lu12i.w $r6, 0x1c000
-    addi.w  $r6, $r6, 0x20 
+    addi.w  $r6, $r6, 0x24 
 #    la $r7, var1
     
     addi.w $r7, $r0, 0x5a

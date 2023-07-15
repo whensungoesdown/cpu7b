@@ -135,6 +135,7 @@ module cpu7_exu(
    
    reg_file registers(
         .clk        (clk                  ),
+	.rst        (~resetn              ),
 
         .waddr1     (ecl_irf_rd_w         ),// I, 5
         .raddr0_0   (ecl_irf_rs1_d        ),// I, 5
