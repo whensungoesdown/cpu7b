@@ -14,3 +14,13 @@ echo "test1_ld.w"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+
+
+
+cd test3_st.w
+echo "test3_st.w"
+./simulate.sh | grep PASS
+echo ""
+cd ..

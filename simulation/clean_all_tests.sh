@@ -14,3 +14,15 @@ echo "test1_ld.w"
 ./clean.sh
 echo ""
 cd ..
+
+
+
+
+
+
+
+cd test3_st.w
+echo "test3_st.w"
+./clean.sh
+echo ""
+cd ..
