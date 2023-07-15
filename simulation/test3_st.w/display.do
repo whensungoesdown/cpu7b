@@ -212,3 +212,15 @@ add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/alu_b_d
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/alu_b_imm
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/irf_ecl_rs2_data_d
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl_irf_rs2_d
+
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/ecl_lsu_rd_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_rd_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/read_result_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_align_res_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_rdata_input
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/shift_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/align_mode_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/addr_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/base_m
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/offset_m
+add wave -position 198  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_scsucceed

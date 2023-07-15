@@ -145,9 +145,9 @@ module cpu(
         .data_rdata_m     (data_rdata_m         ),
         .data_addr_ok     (data_addr_ok         ),
         .data_data_ok_m   (data_data_ok_m       ),
-        .data_exccode     (data_exccode         )
+        .data_exccode     (data_exccode         ),
 
-
+	.data_scsucceed   (1'b0                 ) // figure it out, later
     );
 
 
