@@ -177,8 +177,13 @@ add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/rd_w
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/wen_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/wen_w
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/byplog_rs1/rs_is_nonzero
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/byplog_rs1/bypass
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/byplog_rs1/use_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/byplog_rs1/use_w
 
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/alu_b_d
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/alu_a_d
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/alu_a_pc
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/ifu_exu_pc_d
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/irf_ecl_rs1_data_d
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl_irf_rs1_d
 
