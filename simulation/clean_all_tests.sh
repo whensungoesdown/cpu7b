@@ -33,3 +33,10 @@ echo "test4_beq"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test5_jirl
+echo "test5_jirl"
+./clean.sh
+echo ""
+cd ..
