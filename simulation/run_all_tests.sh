@@ -24,3 +24,10 @@ echo "test3_st.w"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test4_beq
+echo "test4_beq"
+./simulate.sh | grep PASS
+echo ""
+cd ..

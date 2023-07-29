@@ -26,3 +26,10 @@ echo "test3_st.w"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test4_beq
+echo "test4_beq"
+./clean.sh
+echo ""
+cd ..
