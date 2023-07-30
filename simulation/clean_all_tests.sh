@@ -47,3 +47,14 @@ echo "test6_beq_testbyp"
 ./clean.sh
 echo ""
 cd ..
+
+
+
+
+
+
+cd test8_mulw
+echo "test8_mulw"
+./clean.sh
+echo ""
+cd ..

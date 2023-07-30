@@ -45,3 +45,14 @@ echo "test6_beq_testbyp"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+
+
+
+
+cd test8_mulw
+echo "test8_mulw"
+./simulate.sh | grep PASS
+echo ""
+cd ..
