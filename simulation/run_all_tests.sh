@@ -70,3 +70,10 @@ echo "test10_mulhw"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test11_csrrd
+echo "test11_csrrd"
+./simulate.sh | grep PASS
+echo ""
+cd ..

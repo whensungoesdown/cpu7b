@@ -78,11 +78,12 @@ module cpu7_csr(
       .sel1_l (crmd_ie_mux_sel_zero_l),
       .sel2_l (crmd_ie_mux_sel_prmdpie_l));
          
-   dffe_s #(1) crmd_ie_reg (
-      .din (crmd_ie_nxt),
-      .en  (crmd_wen | exception | ecl_csr_ertn_e),
-      .clk (clk),
-      .q   (crmd_ie),
+   dffrle_s #(1) crmd_ie_reg (
+      .din   (crmd_ie_nxt),
+      .rst_l (resetn),
+      .en    (crmd_wen | exception | ecl_csr_ertn_e),
+      .clk   (clk),
+      .q     (crmd_ie),
       .se(), .si(), .so());
    
    
@@ -115,11 +116,12 @@ module cpu7_csr(
       .sel1_l (crmd_plv_mux_sel_zero_l),
       .sel2_l (crmd_plv_mux_sel_prmdpplv_l));
    
-   dffe_s #(2) crmd_plv_reg (
-      .din (crmd_plv_nxt),
-      .en  (crmd_wen | exception | ecl_csr_ertn_e),
-      .clk (clk),
-      .q   (crmd_plv),
+   dffrle_s #(2) crmd_plv_reg (
+      .din   (crmd_plv_nxt),
+      .rst_l (resetn),
+      .en    (crmd_wen | exception | ecl_csr_ertn_e),
+      .clk   (clk),
+      .q     (crmd_plv),
       .se(), .si(), .so());
 
    
@@ -146,11 +148,12 @@ module cpu7_csr(
       .in1  (crmd_ie),
       .sel  (exception));
    
-   dffe_s #(1) prmd_pie_reg (
-      .din (prmd_pie_nxt),
-      .en  (prmd_wen | exception),
-      .clk (clk),
-      .q   (prmd_pie),
+   dffrle_s #(1) prmd_pie_reg (
+      .din   (prmd_pie_nxt),
+      .rst_l (resetn),
+      .en    (prmd_wen | exception),
+      .clk   (clk),
+      .q     (prmd_pie),
       .se(), .si(), .so());
 
 
@@ -165,11 +168,12 @@ module cpu7_csr(
       .in1  (crmd_plv),
       .sel  (exception));
 
-   dffe_s #(2) prmd_pplv_reg (
-      .din (prmd_pplv_nxt),
-      .en  (prmd_wen | exception),
-      .clk (clk),
-      .q   (prmd_pplv),
+   dffrle_s #(2) prmd_pplv_reg (
+      .din   (prmd_pplv_nxt),
+      .rst_l (resetn),
+      .en    (prmd_wen | exception),
+      .clk   (clk),
+      .q     (prmd_pplv),
       .se(), .si(), .so());
    
 
@@ -199,11 +203,12 @@ module cpu7_csr(
       .in1  (ifu_exu_pc_e),
       .sel  (exception));
 
-   dffe_s #(`GRLEN) era_reg (
-      .din (era_nxt),
-      .en  (era_wen | exception),
-      .clk (clk),
-      .q   (era),
+   dffrle_s #(`GRLEN) era_reg (
+      .din   (era_nxt),
+      .rst_l (resetn),
+      .en    (era_wen | exception),
+      .clk   (clk),
+      .q     (era),
       .se(), .si(), .so());
    
    assign csr_era = era;
@@ -219,11 +224,12 @@ module cpu7_csr(
    assign eentry_nxt = csr_wdata;
    assign eentry_wen = (csr_waddr == `LSOC1K_CSR_EBASE) && csr_wen; // EBASE is EENTRY
 
-   dffe_s #(`GRLEN) eentry_reg (
-      .din (eentry_nxt),
-      .en  (eentry_wen),
-      .clk (clk),
-      .q   (eentry),
+   dffrle_s #(`GRLEN) eentry_reg (
+      .din   (eentry_nxt),
+      .rst_l (resetn),
+      .en    (eentry_wen),
+      .clk   (clk),
+      .q     (eentry),
       .se(), .si(), .so());
 
    assign csr_eentry = eentry;
