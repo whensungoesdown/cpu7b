@@ -40,3 +40,10 @@ echo "test5_jirl"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test6_beq_testbyp
+echo "test6_beq_testbyp"
+./clean.sh
+echo ""
+cd ..

@@ -38,3 +38,10 @@ echo "test5_jirl"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test6_beq_testbyp
+echo "test6_beq_testbyp"
+./simulate.sh | grep PASS
+echo ""
+cd ..
