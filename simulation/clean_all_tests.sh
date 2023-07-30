@@ -58,3 +58,10 @@ echo "test8_mulw"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test9_mulhwu
+echo "test9_mulhwu"
+./clean.sh
+echo ""
+cd ..
