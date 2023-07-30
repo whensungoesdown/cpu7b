@@ -63,3 +63,10 @@ echo "test9_mulhwu"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test10_mulhw
+echo "test10_mulhw"
+./simulate.sh | grep PASS
+echo ""
+cd ..

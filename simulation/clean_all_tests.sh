@@ -65,3 +65,10 @@ echo "test9_mulhwu"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test10_mulhw
+echo "test10_mulhw"
+./clean.sh
+echo ""
+cd ..
