@@ -223,7 +223,8 @@ module axi_interface(
    //assign inst_valid = (rready & rvalid) & ifu_fetch; //ifu_fetch_bf->ifu_fetch_f, inst_valid should use inst_valid_f
    //assign inst_rdata = (rdata          ) & {`GRLEN{ifu_fetch}};
 
-   assign inst_valid_f = (rready & rvalid) & ifu_fetch_f;
+   assign inst_valid_f = (rready & rvalid) & ifu_fetch_f 
+                         & ~(|rresp); // rresp should be 0 to indicate no error, only OKAY
    assign inst_rdata_f = (rdata          ) & {`GRLEN{ifu_fetch_f}};
 
    //assign data_data_ok = (rready & rvalid) & lsu_read; // uty: test + (lsu_read | lsu_write);
