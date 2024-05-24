@@ -19,6 +19,8 @@
 `define Lawstate       2
 `define Lawscseti      2
 `define Lawid          4
+// for amba_axi_m2s2, slave awid 5-bit
+`define Ls_awid        5
 `define Lawaddr       32
 `define Lawlen         8
 `define Lawsize        3
@@ -49,12 +51,14 @@
 `define Lwvalid        1
 `define Lwready        1
 `define Lbid           4
+`define Ls_bid         5
 `define Lbresp         2
 `define Lbvalid        1
 `define Lbready        1
 `define Larcmd         4
 `define Larcpuno      10
 `define Larid          4
+`define Ls_arid        5
 `define Laraddr       32
 `define Larlen         8
 `define Larsize        3
@@ -67,6 +71,7 @@
 `define Lrstate        2
 `define Lrscseti       2
 `define Lrid           4
+`define Ls_rid         5
 `ifdef AXI128
  `define Lrdata      128
 `elsif AXI64
