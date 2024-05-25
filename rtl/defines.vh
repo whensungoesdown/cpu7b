@@ -31,6 +31,7 @@
 `define Lawvalid       1
 `define Lawready       1
 `define Lwid           4
+`define Ls_wid         5
 `ifdef AXI128
  `define Lwdata      128
 `elsif AXI64
