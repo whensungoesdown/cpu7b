@@ -316,7 +316,7 @@ module axi_interface(
    assign awid    = `Lawid'b0;
    //assign awaddr  = `Lawaddr'b0;
    assign awlen   = `Lawlen'b0;
-   assign awsize  = `Lawsize'b0;
+   assign awsize  = `Lawsize'h2; // 32 bits
    assign awburst = `Lawburst'b0;
    assign awlock  = `Lawlock'b0;
    assign awcache = `Lawcache'b0;
@@ -326,7 +326,7 @@ module axi_interface(
    assign wid     = `Lwid'b0;
    //assign wdata   = `Lwdata'b0;
    assign wstrb   = `Lwstrb'b0;
-   assign wlast   = 1'b0;
+   assign wlast   = 1'b1;
    //assign wvalid  = 1'b0;
 
    //assign bready  = 1'b0;
