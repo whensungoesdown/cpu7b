@@ -79,3 +79,10 @@ echo "test11_csrrd"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test12_csrwr
+echo "test12_csrwr"
+./clean.sh
+echo ""
+cd ..

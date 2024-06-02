@@ -77,3 +77,10 @@ echo "test11_csrrd"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test12_csrwr
+echo "test12_csrwr"
+./simulate.sh | grep PASS
+echo ""
+cd ..
