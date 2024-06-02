@@ -16,6 +16,7 @@ module cpu7_csr(
    input  [`LSOC1K_CSR_BIT-1:0]         csr_raddr,
    input  [`GRLEN-1:0]                  csr_wdata,
    input  [`LSOC1K_CSR_BIT-1:0]         csr_waddr,
+   input  [`GRLEN-1:0]                  csr_mask,
    input                                csr_wen,
 
    output [`GRLEN-1:0]                  csr_eentry,
@@ -29,6 +30,7 @@ module cpu7_csr(
 
    wire exception;
    assign exception = ecl_csr_ale_e | ecl_csr_illinst_e; // | other exception
+
 
 
    wire                   prmd_pie;
@@ -46,7 +48,9 @@ module cpu7_csr(
    
    wire [`GRLEN-1:0]       crmd;
    wire                    crmd_wen;
+   wire                    crmd_ie_msk;
    assign crmd_wen = (csr_waddr == `LSOC1K_CSR_CRMD) && csr_wen;
+   assign crmd_ie_msk_wen = csr_mask[`CRMD_IE];
 
    
    wire                    crmd_ie;
@@ -81,11 +85,16 @@ module cpu7_csr(
    dffrle_s #(1) crmd_ie_reg (
       .din   (crmd_ie_nxt),
       .rst_l (resetn),
-      .en    (crmd_wen | exception | ecl_csr_ertn_e),
+      .en    ((crmd_wen & crmd_ie_msk_wen) | exception | ecl_csr_ertn_e),
       .clk   (clk),
       .q     (crmd_ie),
       .se(), .si(), .so());
    
+
+   // CRMD.plv
+
+   wire                   crmd_plv_msk_wen;
+   assign crmd_plv_msk_wen = csr_mask[`CRMD_PLV];
    
    wire [1:0]             crmd_plv;
    wire [1:0]             crmd_plv_wdata;
@@ -119,7 +128,7 @@ module cpu7_csr(
    dffrle_s #(2) crmd_plv_reg (
       .din   (crmd_plv_nxt),
       .rst_l (resetn),
-      .en    (crmd_wen | exception | ecl_csr_ertn_e),
+      .en    ((crmd_wen & crmd_plv_msk_wen) | exception | ecl_csr_ertn_e),
       .clk   (clk),
       .q     (crmd_plv),
       .se(), .si(), .so());
@@ -140,6 +149,9 @@ module cpu7_csr(
    wire                   prmd_wen;
    assign prmd_wen = (csr_waddr == `LSOC1K_CSR_PRMD) && csr_wen;
 
+   wire prmd_pie_msk_wen;
+   assign prmd_pie_msk_wen = csr_mask[`LSOC1K_PRMD_PIE];
+
    assign prmd_pie_wdata = csr_wdata[`LSOC1K_PRMD_PIE];
 
    dp_mux2es #(1) prmd_pie_mux(
@@ -151,7 +163,7 @@ module cpu7_csr(
    dffrle_s #(1) prmd_pie_reg (
       .din   (prmd_pie_nxt),
       .rst_l (resetn),
-      .en    (prmd_wen | exception),
+      .en    ((prmd_wen & prmd_pie_msk_wen) | exception),
       .clk   (clk),
       .q     (prmd_pie),
       .se(), .si(), .so());
@@ -159,6 +171,9 @@ module cpu7_csr(
 
 
 
+
+   wire prmd_pplv_msk_wen;
+   assign prmd_pplv_msk_wen = csr_mask[`LSOC1K_PRMD_PPLV];
 
    assign prmd_pplv_wdata = csr_wdata[`LSOC1K_PRMD_PPLV];
 
@@ -171,7 +186,7 @@ module cpu7_csr(
    dffrle_s #(2) prmd_pplv_reg (
       .din   (prmd_pplv_nxt),
       .rst_l (resetn),
-      .en    (prmd_wen | exception),
+      .en    ((prmd_wen & prmd_pplv_msk_wen) | exception),
       .clk   (clk),
       .q     (prmd_pplv),
       .se(), .si(), .so());
@@ -195,7 +210,7 @@ module cpu7_csr(
 
    assign era_wen = (csr_waddr == `LSOC1K_CSR_EPC) && csr_wen;  // EPC is ERA
 
-   assign era_wdata = csr_wdata;
+   assign era_wdata = (era & (~csr_mask)) | (csr_wdata & csr_mask);
 
    dp_mux2es #(`GRLEN) era_mux(
       .dout (era_nxt),
@@ -221,7 +236,8 @@ module cpu7_csr(
    wire [`GRLEN-1:0]       eentry_nxt;
    wire                    eentry_wen;
 
-   assign eentry_nxt = csr_wdata;
+   //assign eentry_nxt = csr_wdata;
+   assign eentry_nxt = (eentry & (~csr_mask)) | (csr_wdata & csr_mask);
    assign eentry_wen = (csr_waddr == `LSOC1K_CSR_EBASE) && csr_wen; // EBASE is EENTRY
 
    dffrle_s #(`GRLEN) eentry_reg (
@@ -248,6 +264,9 @@ module cpu7_csr(
    assign bsec_wen = (csr_waddr == `LSOC1K_CSR_BSEC) && csr_wen;
 
    // bit 0, eeprom flush
+   wire                    bsec_ef_msk_wen;
+   assign bsec_ef_msk_wen = csr_mask[`LSOC1K_BSEC_EF];
+
    wire                    bsec_ef;
    wire                    bsec_ef_wdata;
    wire                    bsec_ef_nxt;
@@ -257,7 +276,7 @@ module cpu7_csr(
    
    dffre_s #(1) bsec_ef_reg (
       .din (bsec_ef_nxt),
-      .en  (bsec_wen),
+      .en  (bsec_wen & bsec_ef_msk_wen),
       .clk (clk),
       .rst (~resetn),
       .q   (bsec_ef),

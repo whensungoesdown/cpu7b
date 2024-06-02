@@ -72,6 +72,7 @@ module cpu7_exu_ecl(
    output [`LSOC1K_CSR_BIT-1:0]         ecl_csr_waddr_m,
    output [`GRLEN-1:0]                  byp_csr_wdata_m,
    output                               ecl_csr_wen_m,
+   output [`GRLEN-1:0]                  ecl_csr_mask_m,
 
    // exception
    output                               exu_ifu_except,
@@ -754,6 +755,7 @@ module cpu7_exu_ecl(
    wire csr_xchg_e;
    
    wire [`GRLEN-1:0] csr_mask_e;
+   wire [`GRLEN-1:0] csr_mask_m;
    
    assign csr_xchg_d = ifu_exu_op_d[`LSOC1K_CSR_XCHG];
    
@@ -763,15 +765,28 @@ module cpu7_exu_ecl(
       .q   (csr_xchg_e),
       .se(), .si(), .so());
    
-   assign csr_mask_e = byp_rs1_data_e;
+
+   // according to the handbook
+   // csrwr is a special csrxchg, that has a full mask.
+
+   //assign csr_mask_e = byp_rs1_data_e;
+   assign csr_mask_e = csr_xchg_e ? byp_rs1_data_e : `GRLEN'hFFFFFFFF;
+
+   dff_s #(`GRLEN) csr_mask_e2m_reg (
+      .din (csr_mask_e),
+      .clk (clk),
+      .q   (csr_mask_m),
+      .se(), .si(), .so());
+
+   assign ecl_csr_mask_m = csr_mask_m;
 
 
    wire [`GRLEN-1:0] csr_wdata_e;
    wire [`GRLEN-1:0] csr_wdata_m;
    
-   //assign csr_wdata_e = byp_rs2_data_e;
-   assign csr_wdata_e = csr_xchg_e ? (csr_mask_e & byp_rs2_data_e) : byp_rs2_data_e;
-   
+   assign csr_wdata_e = byp_rs2_data_e;
+   //assign csr_wdata_e = csr_xchg_e ? (csr_mask_e & byp_rs2_data_e) : byp_rs2_data_e;
+
    dff_s #(`GRLEN) csr_wdata_e2m_reg (
       .din (csr_wdata_e),
       .clk (clk),

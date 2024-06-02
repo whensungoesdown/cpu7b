@@ -122,6 +122,7 @@ module cpu7_exu(
    wire [`LSOC1K_CSR_BIT-1:0]   ecl_csr_raddr_d;
    wire [`LSOC1K_CSR_BIT-1:0]   ecl_csr_waddr_m;
    wire [`GRLEN-1:0]            byp_csr_wdata_m;
+   wire [`GRLEN-1:0]            ecl_csr_mask_m;
    wire                         ecl_csr_wen_m;
    wire                         ecl_csr_ale_e;
    wire                         ecl_csr_illinst_e;
@@ -258,6 +259,7 @@ module cpu7_exu(
       .ecl_csr_raddr_d          (ecl_csr_raddr_d     ),
       .ecl_csr_waddr_m          (ecl_csr_waddr_m     ),
       .byp_csr_wdata_m          (byp_csr_wdata_m     ),
+      .ecl_csr_mask_m           (ecl_csr_mask_m      ),
       .ecl_csr_wen_m            (ecl_csr_wen_m       ),
 
       .exu_ifu_except           (exu_ifu_except      ),
@@ -404,6 +406,7 @@ module cpu7_exu(
       .csr_raddr         (ecl_csr_raddr_d   ),
       .csr_waddr         (ecl_csr_waddr_m   ),
       .csr_wdata         (byp_csr_wdata_m   ),
+      .csr_mask          (ecl_csr_mask_m    ),
       .csr_wen           (ecl_csr_wen_m     ),
 
       .csr_eentry        (exu_ifu_eentry    ),

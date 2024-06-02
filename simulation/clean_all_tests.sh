@@ -86,3 +86,10 @@ echo "test12_csrwr"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test13_csrxchg
+echo "test13_csrxchg"
+./clean.sh
+echo ""
+cd ..
