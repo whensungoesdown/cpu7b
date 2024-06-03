@@ -91,3 +91,10 @@ echo "test13_csrxchg"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test14_csr_crmd
+echo "test14_csr_crmd"
+./simulate.sh | grep PASS
+echo ""
+cd ..

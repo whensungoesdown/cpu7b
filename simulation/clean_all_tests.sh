@@ -93,3 +93,10 @@ echo "test13_csrxchg"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test14_csr_crmd
+echo "test14_csr_crmd"
+./clean.sh
+echo ""
+cd ..
