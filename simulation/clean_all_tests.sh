@@ -100,3 +100,10 @@ echo "test14_csr_crmd"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test15_csr_prmd
+echo "test15_csr_prmd"
+./clean.sh
+echo ""
+cd ..
