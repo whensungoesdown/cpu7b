@@ -114,3 +114,10 @@ echo "test16_ale_exception"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test17_exception_crmd_prmd
+echo "test17_exception_crmd_prmd"
+./clean.sh
+echo ""
+cd ..

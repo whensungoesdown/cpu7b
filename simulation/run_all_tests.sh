@@ -112,3 +112,10 @@ echo "test16_ale_exception"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test17_exception_crmd_prmd
+echo "test17_exception_crmd_prmd"
+./simulate.sh | grep PASS
+echo ""
+cd ..
