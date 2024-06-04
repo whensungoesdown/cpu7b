@@ -105,3 +105,10 @@ echo "test15_csr_prmd"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test16_ale_exception
+echo "test16_ale_exception"
+./simulate.sh | grep PASS
+echo ""
+cd ..

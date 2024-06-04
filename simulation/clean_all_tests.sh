@@ -107,3 +107,10 @@ echo "test15_csr_prmd"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test16_ale_exception
+echo "test16_ale_exception"
+./clean.sh
+echo ""
+cd ..
