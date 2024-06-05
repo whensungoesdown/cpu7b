@@ -37,7 +37,8 @@ module cpu7_lsu(
    output                             lsu_finish_m, // data ok
    output [4:0]                       lsu_ecl_rd_m,
    output                             lsu_ecl_wen_m,
-   output                             lsu_ecl_ale_e
+   output                             lsu_ecl_ale_e,
+   output [`GRLEN-1:0]                lsu_csr_badv_e
    );
 
 
@@ -361,6 +362,7 @@ module cpu7_lsu(
    // ale should go with valid, and valid is actually lsu_dispatch_e, only last one cycle
    assign lsu_ecl_ale_e = lsu_ale_e & valid_e;
 
+   assign lsu_csr_badv_e = addr;
 
 
    assign lsu_addr_finish = lsu_ecl_ale_e && (data_addr_ok || (lsu_op == `LSOC1K_LSU_IDLE));

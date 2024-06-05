@@ -22,6 +22,7 @@ module cpu7_csr(
    output [`GRLEN-1:0]                  csr_eentry,
    output [`GRLEN-1:0]                  csr_era,
    input                                ecl_csr_ale_e,
+   input  [`GRLEN-1:0]                  lsu_csr_badv_e,
    input                                ecl_csr_illinst_e,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
    input                                ecl_csr_ertn_e
@@ -230,6 +231,36 @@ module cpu7_csr(
    
    assign csr_era = era;
 
+
+   //
+   // BADV 0x7
+   //
+
+   wire [`GRLEN-1:0]       badv;
+   wire [`GRLEN-1:0]       badv_wdata;
+   wire [`GRLEN-1:0]       badv_nxt;
+   wire                    badv_wen;
+
+   assign badv_wen = (csr_waddr == `LSOC1K_CSR_BADV) && csr_wen;
+
+   assign badv_wdata = (badv & (~csr_mask)) | (csr_wdata & csr_mask);
+
+   dp_mux2es #(`GRLEN) badv_mux(
+      .dout (badv_nxt),
+      .in0  (badv_wdata),
+      .in1  (lsu_csr_badv_e),
+      .sel  (ecl_csr_ale_e));  // illinst does not set BADV
+
+   dffrle_s #(`GRLEN) badv_reg (
+      .din   (badv_nxt),
+      .rst_l (resetn),
+      .en    (badv_wen | (ecl_csr_ale_e /*| other_excep*/)),
+      .clk   (clk),
+      .q     (badv),
+      .se(), .si(), .so());
+   
+
+
    //
    //  EENTRY 0xc
    //
@@ -299,6 +330,7 @@ module cpu7_csr(
    assign csr_rdata = {`GRLEN{csr_raddr == `LSOC1K_CSR_CRMD}}  & crmd   |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_PRMD}}  & prmd   |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_EPC}}   & era    |
+		      {`GRLEN{csr_raddr == `LSOC1K_CSR_BADV}}  & badv   |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_EBASE}} & eentry |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_BSEC}}  & bsec   |
 		      `GRLEN'b0;

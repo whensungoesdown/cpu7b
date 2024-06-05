@@ -119,3 +119,10 @@ echo "test17_exception_crmd_prmd"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test18_csr_badv
+echo "test18_csr_badv"
+./simulate.sh | grep PASS
+echo ""
+cd ..
