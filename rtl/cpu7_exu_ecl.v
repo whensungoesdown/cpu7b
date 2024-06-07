@@ -78,6 +78,8 @@ module cpu7_exu_ecl(
    output                               exu_ifu_except,
    output                               ecl_csr_ale_e,
    output                               ecl_csr_illinst_e,
+   input                                csr_ecl_timer_intr,
+
    // ertn
    output                               exu_ifu_ertn_e,
    output                               ecl_csr_ertn_e,
@@ -1068,7 +1070,9 @@ module cpu7_exu_ecl(
    // excetpion
    //
 
-   assign exu_ifu_except = lsu_ecl_ale_e | ecl_csr_illinst_e;
+   // exu_ifu_except should only be signaled 1 cycle to notify ifu, otherwise
+   // ifu stalls 
+   assign exu_ifu_except = lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr;
    assign ecl_csr_ale_e = lsu_ecl_ale_e;
    
 

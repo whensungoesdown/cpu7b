@@ -30,7 +30,7 @@
 ../../rtl/axi_sram_bridge.v 
 ../../rtl/axi_interface.v 
 ../../rtl/sram.v 
-../../rtl/cpu7_csr_timer.v
 ../../rtl/cpu.v 
 ../../rtl/top.v
-../../tb/test12_csrwr_top_tb.v
+../../rtl/cpu7_csr_timer.v 
+../../tb/test19_csr_tcfg_top_tb.v

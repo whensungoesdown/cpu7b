@@ -30,6 +30,7 @@
 ../../rtl/axi_sram_bridge.v 
 ../../rtl/axi_interface.v 
 ../../rtl/sram.v 
+../../rtl/cpu7_csr_timer.v
 ../../rtl/cpu.v 
 ../../rtl/top.v
 ../../tb/test16_ale_exception_top_tb.v

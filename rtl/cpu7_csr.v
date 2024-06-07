@@ -25,12 +25,15 @@ module cpu7_csr(
    input  [`GRLEN-1:0]                  lsu_csr_badv_e,
    input                                ecl_csr_illinst_e,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
-   input                                ecl_csr_ertn_e
+   input                                ecl_csr_ertn_e,
+   output                               csr_ecl_timer_intr
    );
 
 
+
    wire exception;
-   assign exception = ecl_csr_ale_e | ecl_csr_illinst_e; // | other exception
+
+   assign exception = ecl_csr_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr; // timer_intr; // | other exception
 
 
 
@@ -284,7 +287,145 @@ module cpu7_csr(
    assign csr_eentry = eentry;
 
 
+
+
+
+   //
+   // TCFG  0x41
+   //
+
+   wire [`GRLEN-1:0]       tcfg;
+   wire                    tcfg_wen;
    
+   assign tcfg_wen = (csr_waddr == `LSOC1K_CSR_TCFG) && csr_wen;
+
+
+
+   // TCFG.EN
+   
+
+   wire                    tcfg_en_msk_wen;
+   assign tcfg_en_msk_wen = csr_mask[`LSOC1K_TCFG_EN] && tcfg_wen;
+
+   wire                    tcfg_en; 
+   wire                    tcfg_en_nxt;
+
+   assign tcfg_en_nxt = csr_wdata[`LSOC1K_TCFG_EN];
+
+   dffrle_s #(1) tcfg_en_reg (
+      .din   (tcfg_en_nxt),
+      .rst_l (resetn),
+      .en    (tcfg_en_msk_wen),
+      .clk   (clk),
+      .q     (tcfg_en),
+      .se(), .si(), .so());
+
+
+   // TCFG.PERIODIC
+   wire                    tcfg_periodic_msk_wen;
+   assign tcfg_periodic_msk_wen = csr_mask[`LSOC1K_TCFG_PERIODIC] && tcfg_wen;
+
+   wire                    tcfg_periodic; 
+   wire                    tcfg_periodic_nxt;
+
+   assign tcfg_periodic_nxt = csr_wdata[`LSOC1K_TCFG_PERIODIC];
+
+   dffrle_s #(1) tcfg_periodic_reg (
+      .din   (tcfg_periodic_nxt),
+      .rst_l (resetn),
+      .en    (tcfg_periodic_msk_wen),
+      .clk   (clk),
+      .q     (tcfg_periodic),
+      .se(), .si(), .so());
+
+
+   // TCFG.INITVAL
+  
+   wire [`TIMER_BIT-1:0]           tcfg_initval;
+   wire [`TIMER_BIT-1:0]           tcfg_initval_nxt;
+   wire                            tcfg_initval_msk_wen;
+   
+   assign tcfg_initval_msk_wen = (|csr_mask[`TIMER_BIT-1:2]) && tcfg_wen;
+   assign tcfg_initval_nxt = (tcfg_initval & (~csr_mask[`TIMER_BIT-1:2])) | (csr_wdata[`TIMER_BIT-1:2] & csr_mask[`TIMER_BIT-1:2]);
+
+   dffrle_s #(`TIMER_BIT) tcfg_initval_reg (
+      .din   (tcfg_initval_nxt),
+      .rst_l (resetn),
+      .en    (tcfg_initval_msk_wen),
+      .clk   (clk),
+      .q     (tcfg_initval),
+      .se(), .si(), .so());
+
+
+   assign tcfg = {
+	         `GRLEN-`TIMER_BIT-2'b0,
+	         tcfg_initval,
+		 tcfg_periodic,
+		 tcfg_en
+		 };
+
+
+   wire timer_intr;
+   wire [`TIMER_BIT+2-1:0] timeval;
+   
+   cpu7_csr_timer u_csr_timer(
+      .clk              (clk            ),
+      .resetn           (resetn         ),
+      .init             (tcfg_wen       ), // every tcfg write consider an init
+      .en               (tcfg_en_msk_wen ? tcfg_en_nxt : tcfg_en),  // write data not latched yet
+      .periodic         (tcfg_periodic_msk_wen ? tcfg_periodic_nxt : tcfg_periodic),
+      .initval          (tcfg_initval_msk_wen ? tcfg_initval_nxt : tcfg_initval),
+      .timeval          (timeval),
+      .intr             (timer_intr)
+   );
+
+
+
+   //
+   // TVAL  0x42
+   //
+
+   wire [`GRLEN-1:0]           tval;
+
+   assign tval = {
+                 `GRLEN-`TIMER_BIT-2'b0,
+	         timeval
+	         };
+	         
+
+   //
+   // TICLR  0x44
+   //
+
+   wire [`GRLEN-1:0]       ticlr;
+   wire                    ticlr_wen;
+
+   assign ticlr = `GRLEN'b0; // manual says ticlr always read out all 0
+   assign ticlr_wen = (csr_waddr == `LSOC1K_CSR_TICLR) && csr_wen;   
+
+   wire                    ticlr_clr;
+   wire                    ticlr_clr_nxt;
+   wire                    ticlr_clr_en;
+
+   wire clear_timer;
+
+   assign clear_timer = csr_wdata[`LSOC1K_TICLR_CLR] & csr_mask[`LSOC1K_TICLR_CLR] &  ticlr_wen;
+
+   assign ticlr_clr_nxt = timer_intr | (~clear_timer);
+   assign ticlr_clr_en = timer_intr | clear_timer;
+
+   dffre_s #(1) ticlr_clr_reg (
+      .din (ticlr_clr_nxt),
+      .en  (ticlr_clr_en),
+      .clk (clk),
+      .rst (~resetn),
+      .q   (ticlr_clr),
+      .se(), .si(), .so());
+
+
+   assign csr_ecl_timer_intr = ticlr_clr & crmd_ie;
+
+
 
    //
    //  SELF DEFINED: BSEC (BOOT SECURITY) 0x100
@@ -332,6 +473,9 @@ module cpu7_csr(
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_EPC}}   & era    |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_BADV}}  & badv   |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_EBASE}} & eentry |
+		      {`GRLEN{csr_raddr == `LSOC1K_CSR_TCFG}}  & tcfg   |
+		      {`GRLEN{csr_raddr == `LSOC1K_CSR_TVAL}}  & tval   |
+		      {`GRLEN{csr_raddr == `LSOC1K_CSR_TICLR}} & ticlr  |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_BSEC}}  & bsec   |
 		      `GRLEN'b0;
 

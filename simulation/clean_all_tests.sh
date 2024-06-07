@@ -128,3 +128,10 @@ echo "test18_csr_badv"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test19_csr_tcfg
+echo "test19_csr_tcfg"
+./clean.sh
+echo ""
+cd ..

@@ -228,7 +228,9 @@
 // TCFG 0x0_4_1
 `define LSOC1K_TCFG_EN       0
 `define LSOC1K_TCFG_PERIODIC 1
-`define LSOC1K_TCFG_INITVAL  `GRLEN-1:2
+//`define LSOC1K_TCFG_INITVAL  `GRLEN-1:2
+
+`define TIMER_BIT            30		
 
 // TVAL 0x0_4_2
 `define LSOC1K_TVAL_TIMEVAL `GRLEN-1:0
@@ -484,5 +486,6 @@
 
 // Front End RAMs
 //`include "frontend_rams.vh"
+
 
 

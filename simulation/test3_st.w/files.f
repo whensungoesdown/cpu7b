@@ -31,5 +31,6 @@
 ../../rtl/axi_interface.v 
 ../../rtl/sram.v 
 ../../rtl/cpu.v 
+../../rtl/cpu7_csr_timer.v
 ../../rtl/top.v
 ../../tb/test3_st.w_top_tb.v

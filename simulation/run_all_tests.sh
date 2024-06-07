@@ -126,3 +126,10 @@ echo "test18_csr_badv"
 ./simulate.sh | grep PASS
 echo ""
 cd ..
+
+
+cd test19_csr_tcfg
+echo "test18_csr_tcfg"
+./simulate.sh | grep PASS
+echo ""
+cd ..
