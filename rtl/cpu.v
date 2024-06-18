@@ -201,6 +201,7 @@ module cpu(
 
       .inst_req         (inst_req       ),
       .inst_addr        (inst_addr      ),
+      .inst_cancel      (inst_cancel    ),
       .inst_valid_f     (inst_valid_f   ),
       .inst_rdata_f     (inst_rdata_f   ),
 

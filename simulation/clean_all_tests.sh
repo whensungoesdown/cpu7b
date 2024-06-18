@@ -135,3 +135,10 @@ echo "test19_csr_tcfg"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test20_csr_tcfg_periodic
+echo "test20_csr_tcfg_periodic"
+./clean.sh
+echo ""
+cd ..

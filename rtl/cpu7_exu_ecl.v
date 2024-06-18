@@ -122,8 +122,8 @@ module cpu7_exu_ecl(
   
  
 
-   assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e)  // if branch is taken, kill the instruction at the pipeline _d stage.
-		 | exu_ifu_except;
+   assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e); // if branch is taken, kill the instruction at the pipeline _d stage.
+
    assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
 
 

@@ -129,7 +129,14 @@ cd ..
 
 
 cd test19_csr_tcfg
-echo "test18_csr_tcfg"
+echo "test19_csr_tcfg"
+./simulate.sh | grep PASS
+echo ""
+cd ..
+
+
+cd test20_csr_tcfg_periodic
+echo "test20_csr_tcfg_periodic"
 ./simulate.sh | grep PASS
 echo ""
 cd ..

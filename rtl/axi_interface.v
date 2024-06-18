@@ -220,10 +220,10 @@ module axi_interface(
 
    assign rready = 1'b1;
 
-   //assign inst_valid = (rready & rvalid) & ifu_fetch; //ifu_fetch_bf->ifu_fetch_f, inst_valid should use inst_valid_f
-   //assign inst_rdata = (rdata          ) & {`GRLEN{ifu_fetch}};
 
-   assign inst_valid_f = (rready & rvalid) & ifu_fetch_f 
+   wire inst_valid;
+
+   assign inst_valid = (rready & rvalid) & ifu_fetch_f 
                          & ~(|rresp); // rresp should be 0 to indicate no error, only OKAY
    assign inst_rdata_f = (rdata          ) & {`GRLEN{ifu_fetch_f}};
 
@@ -234,6 +234,19 @@ module axi_interface(
    //assign data_rdata   = (rdata          ) & {`GRLEN{lsu_read}};
    assign data_rdata_m   = (rdata          ) & {`GRLEN{lsu_read_m}};
 
+
+   wire inst_cancel_q;
+
+   dffrle_s #(1) inst_cancel_reg (
+      .din   (inst_cancel),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .en    (inst_cancel | inst_valid),
+      .q     (inst_cancel_q), 
+      .se(), .si(), .so());
+
+
+   assign inst_valid_f = inst_valid & (~inst_cancel_q);
 
 
 
