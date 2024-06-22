@@ -128,7 +128,11 @@ module cpu7_exu_ecl(
 
    assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
 
-   assign kill_e = exu_ifu_except;
+   // BUG FIX
+   // exu_ifu_except consists of lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr, lsu_ecl_ale_e is signal from _e
+   // so kill_e = exu_ifu_except may cause a loop
+   // modelsim: ** Error: (vsim-3601) Iteration limit reached at time xxx us.
+   assign kill_e = csr_ecl_timer_intr; // exu_ifu_except;
 
    
    //main
