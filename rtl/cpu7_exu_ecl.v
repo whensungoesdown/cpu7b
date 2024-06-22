@@ -119,13 +119,16 @@ module cpu7_exu_ecl(
 
    wire inst_vld_d;
    wire kill_d;
+   wire kill_e;
   
  
 
-   assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e); // if branch is taken, kill the instruction at the pipeline _d stage.
+   assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e) // if branch is taken, kill the instruction at the pipeline _d stage.
+                 | exu_ifu_except;
 
    assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
 
+   assign kill_e = exu_ifu_except;
 
    
    //main
@@ -347,7 +350,7 @@ module cpu7_exu_ecl(
       .q   (lsu_valid_e),
       .se(), .si(), .so());
    
-   assign ecl_lsu_valid_e = lsu_valid_e; 
+   assign ecl_lsu_valid_e = lsu_valid_e & (~kill_e); 
 
 
    wire [`LSOC1K_LSU_CODE_BIT-1:0] lsu_op_d;
@@ -437,7 +440,7 @@ module cpu7_exu_ecl(
       .q   (bru_valid_e),
       .se(), .si(), .so());
 
-   assign ecl_bru_valid_e = bru_valid_e;
+   assign ecl_bru_valid_e = bru_valid_e & (~kill_e);
 
 
 
@@ -559,7 +562,7 @@ module cpu7_exu_ecl(
       .q   (mul_valid_e),
       .se(), .si(), .so());
    
-   assign ecl_mul_valid_e = mul_valid_e;
+   assign ecl_mul_valid_e = mul_valid_e & (~kill_e);
    
    dff_s #(1) mul_valid_e2m_reg (
       .din (mul_valid_e),
@@ -648,6 +651,7 @@ module cpu7_exu_ecl(
    
    wire csr_valid_d;
    wire csr_valid_e;
+   wire ecl_csr_valid_e;
    wire csr_valid_m;
 
    assign csr_valid_d = none_dispatch_d;
@@ -657,9 +661,11 @@ module cpu7_exu_ecl(
       .clk (clk),
       .q   (csr_valid_e),
       .se(), .si(), .so());
+
+   assign ecl_csr_valid_e = csr_valid_e & (~kill_e);
    
    dff_s #(1) csr_valid_e2m_reg (
-      .din (csr_valid_e),
+      .din (ecl_csr_valid_e),
       .clk (clk),
       .q   (csr_valid_m),
       .se(), .si(), .so());
@@ -893,6 +899,7 @@ module cpu7_exu_ecl(
    
    wire alu_wen_d;
    wire alu_wen_e;
+   wire ecl_alu_wen_e;
    wire alu_wen_m;
    
    assign alu_wen_d = ifu_exu_rf_wen_d & alu_dispatch_d;
@@ -902,9 +909,11 @@ module cpu7_exu_ecl(
       .clk (clk),
       .q   (alu_wen_e),
       .se(), .si(), .so());
+
+   assign ecl_alu_wen_e = alu_wen_e & (~kill_e);
    
    dff_s #(1) alu_wen_e2m_reg (
-      .din (alu_wen_e),
+      .din (ecl_alu_wen_e),
       .clk (clk),
       .q   (alu_wen_m),
       .se(), .si(), .so());

@@ -142,3 +142,10 @@ echo "test20_csr_tcfg_periodic"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test21_timer_intr_right_after_branch
+echo "test21_timer_intr_right_after_branch"
+./clean.sh
+echo ""
+cd ..
