@@ -24,6 +24,7 @@ module cpu7_csr(
    input                                ecl_csr_ale_e,
    input  [`GRLEN-1:0]                  lsu_csr_badv_e,
    input                                ecl_csr_illinst_e,
+   input                                exu_ifu_except,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
    input                                ecl_csr_ertn_e,
    output                               csr_ecl_timer_intr
@@ -33,8 +34,8 @@ module cpu7_csr(
 
    wire exception;
 
-   assign exception = ecl_csr_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr; // timer_intr; // | other exception
-
+   //assign exception = ecl_csr_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr; // timer_intr; // | other exception
+   assign exception = exu_ifu_except; // when to store era, the timing is decided by ecl
 
 
    wire                   prmd_pie;

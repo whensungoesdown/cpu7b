@@ -420,6 +420,7 @@ module cpu7_exu(
       .ecl_csr_ale_e     (ecl_csr_ale_e     ),
       .lsu_csr_badv_e    (lsu_csr_badv_e    ),
       .ecl_csr_illinst_e (ecl_csr_illinst_e ),
+      .exu_ifu_except    (exu_ifu_except    ),
       .ifu_exu_pc_e      (ifu_exu_pc_e      ),
       .ecl_csr_ertn_e    (ecl_csr_ertn_e    ),
       .csr_ecl_timer_intr(csr_ecl_timer_intr)

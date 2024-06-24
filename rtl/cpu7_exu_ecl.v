@@ -118,21 +118,22 @@ module cpu7_exu_ecl(
 
 
    wire inst_vld_d;
+   wire inst_vld_e; // interrupt wont change pc_bf until inst_vld_e is 1
+
    wire kill_d;
    wire kill_e;
   
  
 
-   assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e) // if branch is taken, kill the instruction at the pipeline _d stage.
-                 | exu_ifu_except;
 
    assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
 
-   // BUG FIX
-   // exu_ifu_except consists of lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr, lsu_ecl_ale_e is signal from _e
-   // so kill_e = exu_ifu_except may cause a loop
-   // modelsim: ** Error: (vsim-3601) Iteration limit reached at time xxx us.
-   assign kill_e = csr_ecl_timer_intr; // exu_ifu_except;
+   dff_s #(1) inst_vld_d2e_reg (
+      .din (inst_vld_d),
+      .clk (clk),
+      .q   (inst_vld_e),
+      .se(), .si(), .so());
+
 
    
    //main
@@ -1078,6 +1079,53 @@ module cpu7_exu_ecl(
 
 
 
+   //
+   // interrupt
+   //
+
+   // intr wait for inst_vld_e to be 1
+   // meaning, only _e has a valid instruction to signal intrrupt to core
+   // there may be bubble in _e stage
+
+   // scenario 1:
+   //
+   // intr_in            : _-______
+   // inst_vld_e         : _-______
+   //
+   // intr_hold_q        : ________
+   // intr               : _-______
+   //
+
+   // scenario 2:
+   //
+   // intr_in            : _-______
+   // inst_vld_e         : ___-____
+   //
+   // intr_hold_q        : __--____
+   // intr               : ___-____
+   //
+   wire intr_in;
+   wire intr;
+
+   wire intr_hold_in;
+   wire intr_hold_q;
+   wire intr_hold_en;
+
+   assign intr_in = csr_ecl_timer_intr; // | external_interrupt
+   assign intr_hold_in = intr_in & (~inst_vld_e);
+   //assign intr_hold_en = intr_in & (~inst_vld_e); // if intr_in and inst_vld_e come at the same time, no need to hold
+   //assign intr_hold_en = (intr_in | inst_vld_e) & (~(intr_in & inst_vld_e));
+   assign intr_hold_en = intr_in | inst_vld_e;
+
+   assign intr = (intr_in & inst_vld_e) | (intr_hold_q & inst_vld_e);
+
+   dffrle_s #(1) intr_hold_reg (
+      .din   (intr_hold_in),
+      .rst_l (resetn),
+      .en    (intr_hold_en),
+      .clk   (clk),
+      .q     (intr_hold_q),
+      .se(), .si(), .so());
 
    
    //
@@ -1086,9 +1134,17 @@ module cpu7_exu_ecl(
 
    // exu_ifu_except should only be signaled 1 cycle to notify ifu, otherwise
    // ifu stalls 
-   assign exu_ifu_except = lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr;
+   assign exu_ifu_except = lsu_ecl_ale_e | ecl_csr_illinst_e | intr;
    assign ecl_csr_ale_e = lsu_ecl_ale_e;
    
+   assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e) // if branch is taken, kill the instruction at the pipeline _d stage.
+                 | exu_ifu_except; //| intr;
+   // BUG FIX
+   // exu_ifu_except consists of lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr, lsu_ecl_ale_e is signal from _e
+   // so kill_e = exu_ifu_except may cause a loop
+   // modelsim: ** Error: (vsim-3601) Iteration limit reached at time xxx us.
+   assign kill_e = intr; // exu_ifu_except;
+
 
    //
    // exu_ifu_stall_req
