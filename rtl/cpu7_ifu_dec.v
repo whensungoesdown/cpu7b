@@ -31,7 +31,9 @@ module cpu7_ifu_dec(
    output wire                              ifu_exu_br_taken_d,
    output wire                              ifu_exu_rf_wen_d,
    output wire [4:0]                        ifu_exu_rf_target_d,
-   output wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d
+   output wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
+
+   input  wire                              exu_ifu_stall_req
    );
 
 
@@ -89,10 +91,12 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 //assign de_accept   = {0, 0, de_allow_in};
 
 
-   dff_s #(1) valid_d_reg (
-      .din (fdp_dec_valid),
-      .clk (clk),
-      .q   (ifu_exu_valid_d),
+   dffrle_s #(1) valid_d_reg (
+      .din   (fdp_dec_valid),
+      .rst_l (resetn),
+      .clk   (clk),
+      .en    (~exu_ifu_stall_req),
+      .q     (ifu_exu_valid_d),
       .se(), .si(), .so());
 
    assign dec_fdp_valid_d = ifu_exu_valid_d; // code review

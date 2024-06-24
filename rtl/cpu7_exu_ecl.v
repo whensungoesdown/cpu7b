@@ -128,10 +128,12 @@ module cpu7_exu_ecl(
 
    assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
 
-   dff_s #(1) inst_vld_d2e_reg (
-      .din (inst_vld_d),
-      .clk (clk),
-      .q   (inst_vld_e),
+   dffrle_s #(1) inst_vld_d2e_reg (
+      .din   (inst_vld_d),
+      .rst_l (resetn),
+      .clk   (clk),
+      .en    (~exu_ifu_stall_req),
+      .q     (inst_vld_e),
       .se(), .si(), .so());
 
 

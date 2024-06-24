@@ -89,7 +89,7 @@ module cpu7_ifu_fdp(
 
    wire kill_f;
 
-   assign kill_f = exu_ifu_stall_req | br_taken | exu_ifu_except | exu_ifu_ertn_e; 
+   assign kill_f = br_taken | exu_ifu_except | exu_ifu_ertn_e; 
 
    assign fdp_dec_valid = inst_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
 

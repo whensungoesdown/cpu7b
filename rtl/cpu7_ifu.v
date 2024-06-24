@@ -137,7 +137,9 @@ module cpu7_ifu(
       .ifu_exu_br_taken_d   (ifu_exu_br_taken_d  ),
       .ifu_exu_rf_wen_d     (ifu_exu_rf_wen_d    ),
       .ifu_exu_rf_target_d  (ifu_exu_rf_target_d ),
-      .ifu_exu_hint_d       (ifu_exu_hint_d      )
+      .ifu_exu_hint_d       (ifu_exu_hint_d      ),
+
+      .exu_ifu_stall_req    (exu_ifu_stall_req   )
       );
 
    // cpu7_ifu_imd, decode offset imm
