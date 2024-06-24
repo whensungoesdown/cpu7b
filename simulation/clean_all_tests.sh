@@ -149,3 +149,31 @@ echo "test21_timer_intr_right_after_branch"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test22_timer_intr_on_pipeline_bubble
+echo "test22_timer_intr_on_pipeline_bubble"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test23_lsu_stall_ifu_at_e
+echo "test23_lsu_stall_ifu_at_e"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test24_beq_ld.w
+echo "test24_beq_ld.w"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test25_lsu_stall
+echo "test25_lsu_stall"
+./clean.sh
+echo ""
+cd ..
