@@ -17,6 +17,8 @@ module cpu7_ifu_dec(
    input  wire [5 :0]                  fdp_dec_exccode,
    input  wire [`LSOC1K_PRU_HINT-1:0]  fdp_dec_hint,
 
+   output wire                         dec_fdp_valid_d,
+
    input  wire                              int_except,
    // port0
    output wire                              ifu_exu_valid_d,
@@ -92,6 +94,9 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
       .clk (clk),
       .q   (ifu_exu_valid_d),
       .se(), .si(), .so());
+
+   assign dec_fdp_valid_d = ifu_exu_valid_d; // code review
+
 
    dffe_s #(`GRLEN) dec_pc_d_reg (  // pc_d_reg exists in cpu7_ifu_fdp, duplicated
       .din (fdp_dec_pc),

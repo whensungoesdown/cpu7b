@@ -862,7 +862,7 @@ module cpu7_exu_ecl(
    wire csr_stall_req;
    wire csr_stall_req_next;
 
-   assign csr_stall_req_next = (csr_wen_d) | (csr_stall_req & ~csr_wen_m);
+   assign csr_stall_req_next = (csr_wen_e) | (csr_stall_req & ~csr_wen_m);
    
    dffr_s #(1) csr_stall_req_reg (
       .din (csr_stall_req_next),
@@ -1050,7 +1050,7 @@ module cpu7_exu_ecl(
    // lsu stall request
    //
 
-   // lsu_dispatch_d     : _-______
+   // ecl_lsu_valid_e    : _-______
    // lsu_ecl_finish_m   : ______-_
    //
    // lsu_stall_req      : __-----_
@@ -1063,13 +1063,13 @@ module cpu7_exu_ecl(
 
    wire lsu_stall_req_ful;
 
-   assign lsu_stall_req_ful = lsu_stall_req | lsu_dispatch_d;
+   assign lsu_stall_req_ful = lsu_stall_req | ecl_lsu_valid_e;
 
    //
-   // lsu_dispatch_d is the staring signal
+   // ecl_lsu_valid_e is the staring signal
    // lsu_ecl_finish_m ends it
    //
-   assign lsu_stall_req_next =  (lsu_dispatch_d) | (lsu_stall_req & ~lsu_ecl_finish_m); 
+   assign lsu_stall_req_next =  (ecl_lsu_valid_e) | (lsu_stall_req & ~lsu_ecl_finish_m); 
    
    dffr_s #(1) lsu_stall_req_reg (
       .din (lsu_stall_req_next),

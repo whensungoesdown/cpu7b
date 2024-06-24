@@ -9,6 +9,11 @@ add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_e
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_w
 
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/exu_ifu_stall_req
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/era_reg/q
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl_lsu_valid_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu_ecl_ale_e
+
 add wave -position end  result:/top_tb/u_top/ram_raddr
 add wave -position end  result:/top_tb/u_top/ram_rdata
 add wave -position end  result:/top_tb/u_top/ram_ren

@@ -60,6 +60,8 @@ module cpu7_ifu(
    wire [5:0]                       fdp_dec_exccode;
    wire [`LSOC1K_PRU_HINT-1:0]      fdp_dec_hint;
 
+   wire                             dec_fdp_valid_e;
+
    cpu7_ifu_fdp fdp(
       .clock            (clock             ),
       .reset            (~resetn           ),
@@ -96,6 +98,8 @@ module cpu7_ifu(
       .fdp_dec_exccode  (fdp_dec_exccode   ),
       .fdp_dec_hint     (fdp_dec_hint      ),
 
+      .dec_fdp_valid_d  (dec_fdp_valid_d   ),
+
       .ifu_exu_pc_w     (ifu_exu_pc_w      ),
       .ifu_exu_pc_e     (ifu_exu_pc_e      ),
 
@@ -118,6 +122,8 @@ module cpu7_ifu(
       .fdp_dec_exception    (fdp_dec_exception   ),
       .fdp_dec_exccode      (fdp_dec_exccode     ),
       .fdp_dec_hint         (fdp_dec_hint        ),
+
+      .dec_fdp_valid_d      (dec_fdp_valid_d     ),
 
       .int_except           (1'b0                ), // test
       

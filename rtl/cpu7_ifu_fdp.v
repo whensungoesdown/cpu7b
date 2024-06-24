@@ -36,6 +36,8 @@ module cpu7_ifu_fdp(
    output wire [31 :0]                fdp_dec_pc     ,
    output wire                        fdp_dec_taken  ,
    output wire [29 :0]                fdp_dec_target ,
+
+   input  wire                        dec_fdp_valid_d  ,
    
    output wire [`GRLEN-1:0]           ifu_exu_pc_w   ,
    output wire [`GRLEN-1:0]           ifu_exu_pc_e   ,
@@ -158,10 +160,14 @@ module cpu7_ifu_fdp(
       .en  (pc_f2d_en), 
       .se(), .si(), .so());
    
-   dff_s #(`GRLEN) pc_d2e_reg (
+   wire pc_d2e_en;
+   assign pc_d2e_en = dec_fdp_valid_d & ~exu_ifu_stall_req;
+
+   dffe_s #(`GRLEN) pc_d2e_reg (
       .din (pc_d),
       .clk (clock),
       .q   (pc_e),
+      .en  (pc_d2e_en),
       .se(), .si(), .so());
 
    dff_s #(`GRLEN) pc_e2m_reg (
