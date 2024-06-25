@@ -60,7 +60,7 @@ module cpu7_ifu(
    wire [5:0]                       fdp_dec_exccode;
    wire [`LSOC1K_PRU_HINT-1:0]      fdp_dec_hint;
 
-   wire                             dec_fdp_valid_e;
+   wire                             dec_fdp_valid_d;
 
    cpu7_ifu_fdp fdp(
       .clock            (clock             ),
