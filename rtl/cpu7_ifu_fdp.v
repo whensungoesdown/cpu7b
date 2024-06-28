@@ -1,54 +1,40 @@
 `include "common.vh"
  
 module cpu7_ifu_fdp(
-   input  wire                 clk            ,
-   input  wire                 reset          ,
-   input  wire [31 :0]         pc_init        ,
+   input                  clk            ,
+   input                  reset          ,
+   input  [31 :0]         pc_init        ,
 
    // group inst
-   output wire [31 :0]         inst_addr      ,
-   input  wire                 inst_addr_ok   ,
-   output wire                 inst_cancel    ,
-   input  wire [1  :0]         inst_count     ,
-   input  wire                 inst_ex        ,
-   input  wire [5  :0]         inst_exccode   ,
-   input  wire [`GRLEN-1:0]    inst_rdata_f   ,
-   output wire                 inst_req       ,
-   input  wire                 inst_uncache   ,
-   input  wire                 inst_valid_f   ,
+   output [31 :0]         inst_addr      ,
+   input                  inst_addr_ok   ,
+   output                 inst_cancel    ,
+   input  [1  :0]         inst_count     ,
+   input                  inst_ex        ,
+   input  [5  :0]         inst_exccode   ,
+   input  [`GRLEN-1:0]    inst_rdata_f   ,
+   output                 inst_req       ,
+   input                  inst_uncache   ,
+   input                  inst_valid_f   ,
 
-   input  wire                 br_taken       ,
-   input  wire [31 :0]         br_target      ,
+   input                  br_taken       ,
+   input  [31 :0]         br_target      ,
 
    // exception
-   input  wire [`GRLEN-1:0]    exu_ifu_eentry ,
-   input  wire                 exu_ifu_except ,
+   input  [`GRLEN-1:0]    exu_ifu_eentry ,
+   input                  exu_ifu_except ,
    // ertn
-   input  wire [`GRLEN-1:0]    exu_ifu_era    ,
-   input  wire                 exu_ifu_ertn_e ,
+   input  [`GRLEN-1:0]    exu_ifu_era    ,
+   input                  exu_ifu_ertn_e ,
 
-   // group o
-//   output wire                        fdp_dec_valid_f,
-//   output wire                        fdp_dec_ex     ,
-//   output wire [5  :0]                fdp_dec_exccode,
-//   output wire [`LSOC1K_PRU_HINT-1:0] fdp_dec_hint   ,
-//   output wire [31 :0]                fdp_dec_inst_f ,
-//   output wire [31 :0]                fdp_dec_pc     ,
-//   output wire                        fdp_dec_taken  ,
-//   output wire [29 :0]                fdp_dec_target ,
-//
-//   input  wire                        dec_fdp_valid_d  ,
-
-   output wire                        ifu_exu_valid_d,
-   output wire [`GRLEN-1:0]           ifu_exu_pc_d,
-   output wire [`GRLEN-1:0]           ifu_exu_inst_d,
+   output                 ifu_exu_valid_d,
+   output [`GRLEN-1:0]    ifu_exu_pc_d,
+   output [`GRLEN-1:0]    ifu_exu_inst_d,
    
-   output wire [`GRLEN-1:0]           ifu_exu_pc_w   ,
-   output wire [`GRLEN-1:0]           ifu_exu_pc_e   ,
+   output [`GRLEN-1:0]    ifu_exu_pc_w   ,
+   output [`GRLEN-1:0]    ifu_exu_pc_e   ,
 
-   input  wire                        exu_ifu_stall_req
-
-//   output wire                        kill_f
+   input                  exu_ifu_stall_req
    );
 
 
@@ -85,17 +71,6 @@ module cpu7_ifu_fdp(
    wire ifu_pcbf_sel_excpc_bf_l;
    wire ifu_pcbf_sel_ertnpc_bf_l;
 
-   //.o_valid          ({de1_port2_valid,de1_port1_valid,de1_port0_valid}),
-   // only use port0
-   //assign o_valid = 3'b001;
-//   dff_s #(3) ovalid_reg (
-//      .din (3'b001 & {3{inst_valid}}),
-//      .clk (clk),
-//      .q   (o_valid),
-//      .se(), .si(), .so());
-
-//   assign o_valid = {0, 0, inst_valid};
-      
 
    // let the later stage ignore the prediction, stall pipeline until the branch
    // is calculated

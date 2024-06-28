@@ -2,67 +2,55 @@
 `include "decoded.vh"
 
 module cpu7_ifu(
-   input  wire              clock,
-   input  wire              resetn,
-   input  wire [31:0]       pc_init,
+   input                               clock,
+   input                               resetn,
+   input  [31:0]                       pc_init,
 
    // group inst
-   output wire [31:0]       inst_addr,
-   input  wire              inst_addr_ok,
-   output wire              inst_cancel,
-   input  wire [1:0]        inst_count,
-   input  wire              inst_ex,
-   input  wire [5:0]        inst_exccode,
-   input  wire [`GRLEN-1:0] inst_rdata_f,
-   output wire              inst_req, // inst_req_bf
-   input  wire              inst_uncache,
-   input  wire              inst_valid_f,
+   output [31:0]                       inst_addr,
+   input                               inst_addr_ok,
+   output                              inst_cancel,
+   input  [1:0]                        inst_count,
+   input                               inst_ex,
+   input  [5:0]                        inst_exccode,
+   input  [`GRLEN-1:0]                 inst_rdata_f,
+   output                              inst_req, // inst_req_bf
+   input                               inst_uncache,
+   input                               inst_valid_f,
 
-   input  wire              exu_ifu_br_taken,
-   input  wire [31:0]       exu_ifu_br_target,
+   input                               exu_ifu_br_taken,
+   input  [31:0]                       exu_ifu_br_target,
 
    // exception
-   input  wire [`GRLEN-1:0]                 exu_ifu_eentry,
-   input  wire                              exu_ifu_except,
+   input  [`GRLEN-1:0]                 exu_ifu_eentry,
+   input                               exu_ifu_except,
    // ertn
-   input  wire [`GRLEN-1:0]                 exu_ifu_era,
-   input  wire                              exu_ifu_ertn_e,
+   input  [`GRLEN-1:0]                 exu_ifu_era,
+   input                               exu_ifu_ertn_e,
    
    // port0
-   output wire                              ifu_exu_valid_d,
-   output wire [31:0]                       ifu_exu_inst_d,
-   output wire [`GRLEN-1:0]                 ifu_exu_pc_d,
-   output wire [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
-   output wire                              ifu_exu_exception_d,
-   output wire [5 :0]                       ifu_exu_exccode_d,
-   output wire [`GRLEN-3:0]                 ifu_exu_br_target_d,
-   output wire                              ifu_exu_br_taken_d,
-   output wire                              ifu_exu_rf_wen_d,
-   output wire [4:0]                        ifu_exu_rf_target_d,
-   output wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
+   output                              ifu_exu_valid_d,
+   output [31:0]                       ifu_exu_inst_d,
+   output [`GRLEN-1:0]                 ifu_exu_pc_d,
+   output [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
+   output                              ifu_exu_exception_d,
+   output [5 :0]                       ifu_exu_exccode_d,
+   output [`GRLEN-3:0]                 ifu_exu_br_target_d,
+   output                              ifu_exu_br_taken_d,
+   output                              ifu_exu_rf_wen_d,
+   output [4:0]                        ifu_exu_rf_target_d,
+   output [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
 
-   output wire [31:0]                       ifu_exu_imm_shifted_d,
-   output wire [`GRLEN-1:0]                 ifu_exu_c_d,
-   output wire [`GRLEN-1:0]                 ifu_exu_br_offs,
+   output [31:0]                       ifu_exu_imm_shifted_d,
+   output [`GRLEN-1:0]                 ifu_exu_c_d,
+   output [`GRLEN-1:0]                 ifu_exu_br_offs,
 
-   output wire [`GRLEN-1:0]                 ifu_exu_pc_w,
-   output wire [`GRLEN-1:0]                 ifu_exu_pc_e,
+   output [`GRLEN-1:0]                 ifu_exu_pc_w,
+   output [`GRLEN-1:0]                 ifu_exu_pc_e,
 
-   input  wire                              exu_ifu_stall_req
+   input                               exu_ifu_stall_req
    );
 
-//   wire                             fdp_dec_valid_f;
-//   wire [`GRLEN-1:0]                fdp_dec_pc;
-//   wire [31:0]                      fdp_dec_inst_f;
-//   wire                             fdp_dec_br_taken;
-//   wire [`GRLEN-3:0]                fdp_dec_br_target;  
-//   wire                             fdp_dec_exception;
-//   wire [5:0]                       fdp_dec_exccode;
-//   wire [`LSOC1K_PRU_HINT-1:0]      fdp_dec_hint;
-//
-//   wire                             dec_fdp_valid_d;
-//
-//   wire kill_f;
 
    cpu7_ifu_fdp fdp(
       .clk              (clock             ),
@@ -91,17 +79,6 @@ module cpu7_ifu(
       .inst_ex          (inst_ex           ),
       .inst_exccode     (inst_exccode      ),
 
-//      .fdp_dec_valid_f  (fdp_dec_valid_f   ),
-//      .fdp_dec_pc       (fdp_dec_pc        ),
-//      .fdp_dec_inst_f   (fdp_dec_inst_f    ),
-//      .fdp_dec_taken    (fdp_dec_br_taken  ),
-//      .fdp_dec_target   (fdp_dec_br_target ),
-//      .fdp_dec_ex       (fdp_dec_exception ),
-//      .fdp_dec_exccode  (fdp_dec_exccode   ),
-//      .fdp_dec_hint     (fdp_dec_hint      ),
-//
-//      .dec_fdp_valid_d  (dec_fdp_valid_d   ),
-
       .ifu_exu_valid_d  (ifu_exu_valid_d   ),
       .ifu_exu_pc_d     (ifu_exu_pc_d      ),
       .ifu_exu_inst_d   (ifu_exu_inst_d    ),
@@ -110,7 +87,6 @@ module cpu7_ifu(
       .ifu_exu_pc_e     (ifu_exu_pc_e      ),
 
       .exu_ifu_stall_req(exu_ifu_stall_req )
-//      .kill_f           (kill_f            )
       );
 
 
@@ -118,36 +94,10 @@ module cpu7_ifu(
       .clk                   (clock             ),
       .resetn                (resetn            ),
 
-      // output  de_allow_in,
-      // output de_accept
-
-//      .fdp_dec_valid_f      (fdp_dec_valid_f     ),
-//      .fdp_dec_pc           (fdp_dec_pc          ),
-//      .fdp_dec_inst_f       (fdp_dec_inst_f      ),
-//      .fdp_dec_br_target    (fdp_dec_br_target   ),
-//      .fdp_dec_br_taken     (fdp_dec_br_taken    ),
-//      .fdp_dec_exception    (fdp_dec_exception   ),
-//      .fdp_dec_exccode      (fdp_dec_exccode     ),
-//      .fdp_dec_hint         (fdp_dec_hint        ),
-//
-//      .dec_fdp_valid_d      (dec_fdp_valid_d     ),
-//
-//      .int_except           (1'b0                ), // test
-//      
-//      .ifu_exu_valid_d      (ifu_exu_valid_d     ),
       .ifu_exu_inst_d       (ifu_exu_inst_d      ),
-//      .ifu_exu_pc_d         (ifu_exu_pc_d        ),
       .ifu_exu_op_d         (ifu_exu_op_d        ),
-//      .ifu_exu_exception_d  (ifu_exu_exception_d ),
-//      .ifu_exu_exccode_d    (ifu_exu_exccode_d   ),
-//      .ifu_exu_br_target_d  (ifu_exu_br_target_d ),
-//      .ifu_exu_br_taken_d   (ifu_exu_br_taken_d  ),
       .ifu_exu_rf_wen_d     (ifu_exu_rf_wen_d    ),
       .ifu_exu_rf_target_d  (ifu_exu_rf_target_d )
-//      .ifu_exu_hint_d       (ifu_exu_hint_d      ),
-//
-//      .exu_ifu_stall_req    (exu_ifu_stall_req   ),
-//      .kill_f               (kill_f              )
       );
 
    // cpu7_ifu_imd, decode offset imm
