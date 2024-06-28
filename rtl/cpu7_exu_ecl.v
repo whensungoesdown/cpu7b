@@ -117,8 +117,10 @@ module cpu7_exu_ecl(
    wire ertn_dispatch_d; //ERET
 
 
-   wire inst_vld_d;
+   wire inst_vld_kill_d;
    wire inst_vld_e; // interrupt wont change pc_bf until inst_vld_e is 1
+   // inst_vld_e should be named ifu_exu_valid_e, because if does not comprise
+   // ~kill_e like inst_vld_kill_f inst_vld_kill_d do
 
    wire kill_d;
    wire kill_e;
@@ -126,10 +128,10 @@ module cpu7_exu_ecl(
  
 
 
-   assign inst_vld_d = ifu_exu_valid_d & (~kill_d);
+   assign inst_vld_kill_d = ifu_exu_valid_d & (~kill_d);
 
-   dffrle_s #(1) inst_vld_d2e_reg (
-      .din   (inst_vld_d),
+   dffrle_s #(1) inst_vld_kill_d2e_reg (
+      .din   (inst_vld_kill_d),
       .rst_l (resetn),
       .clk   (clk),
       .en    (~exu_ifu_stall_req),
@@ -139,13 +141,13 @@ module cpu7_exu_ecl(
 
    
    //main
-   assign alu_dispatch_d  = !ifu_exu_op_d[`LSOC1K_LSU_RELATED] && !ifu_exu_op_d[`LSOC1K_BRU_RELATED] && !ifu_exu_op_d[`LSOC1K_MUL_RELATED] && !ifu_exu_op_d[`LSOC1K_DIV_RELATED] && !ifu_exu_op_d[`LSOC1K_CSR_RELATED] && inst_vld_d; // && !port0_exception; // alu0 is binded to port0
-   assign lsu_dispatch_d  = ifu_exu_op_d[`LSOC1K_LSU_RELATED] && inst_vld_d; // && !port0_exception;
-   assign bru_dispatch_d  = ifu_exu_op_d[`LSOC1K_BRU_RELATED] && inst_vld_d; // && !port0_exception;
-   assign mul_dispatch_d  = ifu_exu_op_d[`LSOC1K_MUL_RELATED] && inst_vld_d; // && !port0_exception;
-   assign div_dispatch_d  = ifu_exu_op_d[`LSOC1K_DIV_RELATED] && inst_vld_d; // && !port0_exception;
-   assign none_dispatch_d = (ifu_exu_op_d[`LSOC1K_CSR_RELATED] || ifu_exu_op_d[`LSOC1K_TLB_RELATED] || ifu_exu_op_d[`LSOC1K_CACHE_RELATED]) && inst_vld_d; // || port0_exception ;
-   assign ertn_dispatch_d = ifu_exu_op_d[`LSOC1K_ERET] && inst_vld_d;
+   assign alu_dispatch_d  = !ifu_exu_op_d[`LSOC1K_LSU_RELATED] && !ifu_exu_op_d[`LSOC1K_BRU_RELATED] && !ifu_exu_op_d[`LSOC1K_MUL_RELATED] && !ifu_exu_op_d[`LSOC1K_DIV_RELATED] && !ifu_exu_op_d[`LSOC1K_CSR_RELATED] && inst_vld_kill_d; // && !port0_exception; // alu0 is binded to port0
+   assign lsu_dispatch_d  = ifu_exu_op_d[`LSOC1K_LSU_RELATED] && inst_vld_kill_d; // && !port0_exception;
+   assign bru_dispatch_d  = ifu_exu_op_d[`LSOC1K_BRU_RELATED] && inst_vld_kill_d; // && !port0_exception;
+   assign mul_dispatch_d  = ifu_exu_op_d[`LSOC1K_MUL_RELATED] && inst_vld_kill_d; // && !port0_exception;
+   assign div_dispatch_d  = ifu_exu_op_d[`LSOC1K_DIV_RELATED] && inst_vld_kill_d; // && !port0_exception;
+   assign none_dispatch_d = (ifu_exu_op_d[`LSOC1K_CSR_RELATED] || ifu_exu_op_d[`LSOC1K_TLB_RELATED] || ifu_exu_op_d[`LSOC1K_CACHE_RELATED]) && inst_vld_kill_d; // || port0_exception ;
+   assign ertn_dispatch_d = ifu_exu_op_d[`LSOC1K_ERET] && inst_vld_kill_d;
 
 
    ////register interface
@@ -162,7 +164,7 @@ module cpu7_exu_ecl(
    wire illinst_e;
 
    // illegal instruction exception
-   assign illinst_d = ifu_exu_op_d[`LSOC1K_INE] && inst_vld_d;
+   assign illinst_d = ifu_exu_op_d[`LSOC1K_INE] && inst_vld_kill_d;
    
    dff_s #(1) illinst_d2e_reg (
       .din (illinst_d),
