@@ -41,10 +41,24 @@ _f _d _e _m _w
                  |      |
                  |      |
           +--------------------+
-          |                    |
-          |      axi-sram      |
-          |                    |
+          |                    |      +----------+
+          |                    |      |          |
+      ----|                    |------|          |
+ (DMA)    |     axi_matrix     |      | VGA RAM  |
+      ----|        2x2         |------|          |
+          |                    |      |          |
+          |                    |      +----------+
           +--------------------+
+                 |      |
+                 |      |
+               +----------+              
+               |          |
+               |          |
+               |   SRAM   |
+               |          |
+               |          |
+               +----------+
+
 
 `````
 
@@ -113,7 +127,38 @@ _f _d _e _m _w
   ERTN
 `````
 
-### Implementing...
+## CSR registers
+
+`````
+  0x0  CRMD.ie CRMD.plv
+  
+  0x1  PRMD.pie PRMD.pplv
+
+  0x6  ERA
+  
+  0x7  BADV
+
+  0xc  EENTRY
+
+  0x41 TCFG
+
+  0x42 TVAL
+  
+  0x43 TICLR
+`````
+
+## Exceptions
+
+- Load/Store Address Misaligned
+
+- Illegal Instruction
+
+- TIMER INTERRUPT
+
+-----------------------------------------
+
+
+### To do ...
 
 - Integer Divide Instructions
 
@@ -153,23 +198,6 @@ _f _d _e _m _w
   IDLE
 `````
 
-## CSR registers
-
-`````
-  CRMD.ie CRMD.plv
-  
-  PRMD.pie PRMD.pplv
-
-  EENTRY
-
-  ERA
-`````
-
-## Exceptions
-
-- Load/Store Address Misaligned
-
-- Illegal Instruction
 
 
 
@@ -179,7 +207,7 @@ _f _d _e _m _w
 
 
 
-### Build cpu7
+### Build cpu7b
 
 
 `````shell
@@ -192,7 +220,7 @@ u@uu:~/prjs/cpu7b/systhesis/altera$ make
 ### Run all the tests
 
 `````shell
-u@uu:~/prjs/cpu7b/simulation$ ./run_all_tests.sh 
+u@unamed:~/prjs/cpu7b/simulation$ ./run_all_tests.sh 
 run tests
 
 test0
@@ -202,6 +230,69 @@ test1_ld.w
 # PASS!
 
 test3_st.w
+# PASS!
+
+test4_beq
+# PASS!
+
+test5_jirl
+# PASS!
+
+test6_beq_testbyp
+# PASS!
+
+test8_mulw
+# PASS!
+
+test9_mulhwu
+# PASS!
+
+test10_mulhw
+# PASS!
+
+test11_csrrd
+# PASS!
+
+test12_csrwr
+# PASS!
+
+test13_csrxchg
+# PASS!
+
+test14_csr_crmd
+# PASS!
+
+test15_csr_prmd
+# PASS!
+
+test16_ale_exception
+# PASS!
+
+test17_exception_crmd_prmd
+# PASS!
+
+test18_csr_badv
+# PASS!
+
+test19_csr_tcfg
+# PASS!
+
+test20_csr_tcfg_periodic
+# PASS!
+
+test21_timer_intr_right_after_branch
+# PASS!
+
+test22_timer_intr_on_pipeline_bubble
+# PASS!
+
+test23_lsu_stall_ifu_at_e
+# PASS!
+
+test24_beq_ld.w
+# PASS!
+
+test25_lsu_stall
 # PASS!
 
 `````
