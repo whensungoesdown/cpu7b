@@ -28,11 +28,11 @@ module cpu7_ifu_fdp(
    input  wire                 exu_ifu_ertn_e ,
 
    // group o
-   output wire                        fdp_dec_valid  ,
+   output wire                        fdp_dec_valid_f,
    output wire                        fdp_dec_ex     ,
    output wire [5  :0]                fdp_dec_exccode,
    output wire [`LSOC1K_PRU_HINT-1:0] fdp_dec_hint   ,
-   output wire [31 :0]                fdp_dec_inst   ,
+   output wire [31 :0]                fdp_dec_inst_f ,
    output wire [31 :0]                fdp_dec_pc     ,
    output wire                        fdp_dec_taken  ,
    output wire [29 :0]                fdp_dec_target ,
@@ -42,7 +42,8 @@ module cpu7_ifu_fdp(
    output wire [`GRLEN-1:0]           ifu_exu_pc_w   ,
    output wire [`GRLEN-1:0]           ifu_exu_pc_e   ,
 
-   input  wire                        exu_ifu_stall_req
+   input  wire                        exu_ifu_stall_req,
+   output wire                        kill_f
    );
 
 
@@ -87,11 +88,11 @@ module cpu7_ifu_fdp(
    // if exu ask ifu to stall, the pc_bf takes bc_f and the instruction passed
    // down the pipe should be invalid
 
-   wire kill_f;
+   //wire kill_f;
 
    assign kill_f = br_taken | exu_ifu_except | exu_ifu_ertn_e; 
 
-   assign fdp_dec_valid = inst_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
+   assign fdp_dec_valid_f = inst_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
 
    // or should not if exception happen
 
@@ -151,7 +152,7 @@ module cpu7_ifu_fdp(
 
 
    //wire pc_f2d_en = ~exu_ifu_stall_req; 
-   wire pc_f2d_en = fdp_dec_valid; 
+   wire pc_f2d_en = fdp_dec_valid_f & ~exu_ifu_stall_req; 
    
    dffe_s #(`GRLEN) pc_f2d_reg (
       .din (pc_f),
@@ -277,7 +278,7 @@ module cpu7_ifu_fdp(
    
    assign inst = inst_rdata_f[31:0];
 
-   assign fdp_dec_inst = inst;
+   assign fdp_dec_inst_f = inst;
    
 //   dff_s #(32) inst_reg (
 //      .din (inst),

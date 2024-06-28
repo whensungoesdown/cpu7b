@@ -51,9 +51,9 @@ module cpu7_ifu(
    input  wire                              exu_ifu_stall_req
    );
 
-   wire                             fdp_dec_valid;
+   wire                             fdp_dec_valid_f;
    wire [`GRLEN-1:0]                fdp_dec_pc;
-   wire [31:0]                      fdp_dec_inst;
+   wire [31:0]                      fdp_dec_inst_f;
    wire                             fdp_dec_br_taken;
    wire [`GRLEN-3:0]                fdp_dec_br_target;  
    wire                             fdp_dec_exception;
@@ -61,6 +61,8 @@ module cpu7_ifu(
    wire [`LSOC1K_PRU_HINT-1:0]      fdp_dec_hint;
 
    wire                             dec_fdp_valid_d;
+
+   wire kill_f;
 
    cpu7_ifu_fdp fdp(
       .clock            (clock             ),
@@ -89,9 +91,9 @@ module cpu7_ifu(
       .inst_ex          (inst_ex           ),
       .inst_exccode     (inst_exccode      ),
 
-      .fdp_dec_valid    (fdp_dec_valid     ),
+      .fdp_dec_valid_f  (fdp_dec_valid_f   ),
       .fdp_dec_pc       (fdp_dec_pc        ),
-      .fdp_dec_inst     (fdp_dec_inst      ),
+      .fdp_dec_inst_f   (fdp_dec_inst_f    ),
       .fdp_dec_taken    (fdp_dec_br_taken  ),
       .fdp_dec_target   (fdp_dec_br_target ),
       .fdp_dec_ex       (fdp_dec_exception ),
@@ -103,7 +105,8 @@ module cpu7_ifu(
       .ifu_exu_pc_w     (ifu_exu_pc_w      ),
       .ifu_exu_pc_e     (ifu_exu_pc_e      ),
 
-      .exu_ifu_stall_req(exu_ifu_stall_req )
+      .exu_ifu_stall_req(exu_ifu_stall_req ),
+      .kill_f           (kill_f            )
       );
 
 
@@ -114,9 +117,9 @@ module cpu7_ifu(
       // output  de_allow_in,
       // output de_accept
 
-      .fdp_dec_valid        (fdp_dec_valid       ),
+      .fdp_dec_valid_f      (fdp_dec_valid_f     ),
       .fdp_dec_pc           (fdp_dec_pc          ),
-      .fdp_dec_inst         (fdp_dec_inst        ),
+      .fdp_dec_inst_f       (fdp_dec_inst_f      ),
       .fdp_dec_br_target    (fdp_dec_br_target   ),
       .fdp_dec_br_taken     (fdp_dec_br_taken    ),
       .fdp_dec_exception    (fdp_dec_exception   ),
@@ -139,7 +142,8 @@ module cpu7_ifu(
       .ifu_exu_rf_target_d  (ifu_exu_rf_target_d ),
       .ifu_exu_hint_d       (ifu_exu_hint_d      ),
 
-      .exu_ifu_stall_req    (exu_ifu_stall_req   )
+      .exu_ifu_stall_req    (exu_ifu_stall_req   ),
+      .kill_f               (kill_f              )
       );
 
    // cpu7_ifu_imd, decode offset imm
