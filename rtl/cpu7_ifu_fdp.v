@@ -1,7 +1,7 @@
 `include "common.vh"
  
 module cpu7_ifu_fdp(
-   input  wire                 clock          ,
+   input  wire                 clk            ,
    input  wire                 reset          ,
    input  wire [31 :0]         pc_init        ,
 
@@ -28,23 +28,43 @@ module cpu7_ifu_fdp(
    input  wire                 exu_ifu_ertn_e ,
 
    // group o
-   output wire                        fdp_dec_valid_f,
-   output wire                        fdp_dec_ex     ,
-   output wire [5  :0]                fdp_dec_exccode,
-   output wire [`LSOC1K_PRU_HINT-1:0] fdp_dec_hint   ,
-   output wire [31 :0]                fdp_dec_inst_f ,
-   output wire [31 :0]                fdp_dec_pc     ,
-   output wire                        fdp_dec_taken  ,
-   output wire [29 :0]                fdp_dec_target ,
+//   output wire                        fdp_dec_valid_f,
+//   output wire                        fdp_dec_ex     ,
+//   output wire [5  :0]                fdp_dec_exccode,
+//   output wire [`LSOC1K_PRU_HINT-1:0] fdp_dec_hint   ,
+//   output wire [31 :0]                fdp_dec_inst_f ,
+//   output wire [31 :0]                fdp_dec_pc     ,
+//   output wire                        fdp_dec_taken  ,
+//   output wire [29 :0]                fdp_dec_target ,
+//
+//   input  wire                        dec_fdp_valid_d  ,
 
-   input  wire                        dec_fdp_valid_d  ,
+   output wire                        ifu_exu_valid_d,
+   output wire [`GRLEN-1:0]           ifu_exu_pc_d,
+   output wire [`GRLEN-1:0]           ifu_exu_inst_d,
    
    output wire [`GRLEN-1:0]           ifu_exu_pc_w   ,
    output wire [`GRLEN-1:0]           ifu_exu_pc_e   ,
 
-   input  wire                        exu_ifu_stall_req,
-   output wire                        kill_f
+   input  wire                        exu_ifu_stall_req
+
+//   output wire                        kill_f
    );
+
+
+   //
+   // dec stuff, tmp
+   //
+   wire                        fdp_dec_valid_f;
+   wire                        fdp_dec_ex     ;
+   wire [5  :0]                fdp_dec_exccode;
+   wire [`LSOC1K_PRU_HINT-1:0] fdp_dec_hint   ;
+   wire [31 :0]                fdp_dec_inst_f ;
+   wire [31 :0]                fdp_dec_pc     ;
+   wire                        fdp_dec_taken  ;
+   wire [29 :0]                fdp_dec_target ;
+   
+   wire                        dec_fdp_valid_d;
 
 
 
@@ -70,7 +90,7 @@ module cpu7_ifu_fdp(
    //assign o_valid = 3'b001;
 //   dff_s #(3) ovalid_reg (
 //      .din (3'b001 & {3{inst_valid}}),
-//      .clk (clock),
+//      .clk (clk),
 //      .q   (o_valid),
 //      .se(), .si(), .so());
 
@@ -88,7 +108,7 @@ module cpu7_ifu_fdp(
    // if exu ask ifu to stall, the pc_bf takes bc_f and the instruction passed
    // down the pipe should be invalid
 
-   //wire kill_f;
+   wire kill_f;
 
    assign kill_f = br_taken | exu_ifu_except | exu_ifu_ertn_e; 
 
@@ -115,7 +135,7 @@ module cpu7_ifu_fdp(
    
    dff_s #(32) pc_reg (
       .din (pc_bf),
-      .clk (clock),
+      .clk (clk),
       .q   (pc_f),
 //      .en  (pc_bf2f_en),
       .se(), .si(), .so());
@@ -125,7 +145,7 @@ module cpu7_ifu_fdp(
 //   dffe_s #(32) pc_reg (
 //      .din (pc_bf),
 //      .en  (inst_addr_ok),
-//      .clk (clock),
+//      .clk (clk),
 //      .q   (pc_f),
 //      .se(), .si(), .so());
    
@@ -134,7 +154,7 @@ module cpu7_ifu_fdp(
    assign fdp_dec_pc = pc_f; 
 //   dff_s #(32) pcport0_reg (
 //      .din (pc_f),
-//      .clk (clock),
+//      .clk (clk),
 //      .q   (fdp_dec_pc),
 //      .se(), .si(), .so());
 
@@ -156,7 +176,7 @@ module cpu7_ifu_fdp(
    
    dffe_s #(`GRLEN) pc_f2d_reg (
       .din (pc_f),
-      .clk (clock),
+      .clk (clk),
       .q   (pc_d),
       .en  (pc_f2d_en), 
       .se(), .si(), .so());
@@ -166,14 +186,14 @@ module cpu7_ifu_fdp(
 
    dffe_s #(`GRLEN) pc_d2e_reg (
       .din (pc_d),
-      .clk (clock),
+      .clk (clk),
       .q   (pc_e),
       .en  (pc_d2e_en),
       .se(), .si(), .so());
 
    dff_s #(`GRLEN) pc_e2m_reg (
       .din (pc_e),
-      .clk (clock),
+      .clk (clk),
       .q   (pc_m),
       .se(), .si(), .so());
 
@@ -181,7 +201,7 @@ module cpu7_ifu_fdp(
    
    dff_s #(`GRLEN) pc_m2w_reg (
       .din (pc_m),
-      .clk (clock),
+      .clk (clk),
       .q   (pc_w),
       .se(), .si(), .so());
 
@@ -282,19 +302,111 @@ module cpu7_ifu_fdp(
    
 //   dff_s #(32) inst_reg (
 //      .din (inst),
-//      .clk (clock),
+//      .clk (clk),
 //      .q   (fdp_dec_inst),
 //      .se(), .si(), .so());
 
 
 //   dff_s #(32) nir_reg (
 //      .din (),
-//      .clk (clock),
+//      .clk (clk),
 //      .q   (),
 //      .se(), .si(), so());
 
 
    assign fdp_dec_hint = `LSOC1K_PRU_HINT'b0;
+
+
+
+
+   //
+   // fdp dec stuff, temp
+   //
+
+   wire valid_d_reg_in;
+
+   assign valid_d_reg_in = fdp_dec_valid_f & (~kill_f);
+
+   dffrle_s #(1) valid_d_reg (
+      .din   (fdp_dec_valid_f),
+      //.rst_l (resetn),
+      .rst_l (~reset),
+      .clk   (clk),
+      .en    (~exu_ifu_stall_req),
+      .q     (dec_fdp_valid_d),
+      .se(), .si(), .so());
+
+   //assign dec_fdp_valid_d = ifu_exu_valid_d; // code review
+   assign ifu_exu_valid_d = dec_fdp_valid_d;
+
+
+   dffe_s #(`GRLEN) dec_pc_d_reg (  // pc_d_reg exists in cpu7_ifu_fdp, duplicated
+      .din (fdp_dec_pc),
+      .en  (fdp_dec_valid_f),
+      .clk (clk),
+      .q   (ifu_exu_pc_d),
+      .se(), .si(), .so());
+
+   dffe_s #(32) inst_d_reg (
+      .din (fdp_dec_inst_f),
+      .en  (fdp_dec_valid_f),
+      .clk (clk),
+      .q   (ifu_exu_inst_d),
+      .se(), .si(), .so());
+
+//   dffe_s #(`GRLEN-2) br_target_d_reg (
+//      .din (fdp_dec_br_target),
+//      .en  (fdp_dec_valid_f),
+//      .clk (clk),
+//      .q   (ifu_exu_br_target_d),
+//      .se(), .si(), .so());
+      
+//   dffe_s #(1) br_taken_d_reg (
+//      .din (fdp_dec_br_taken),
+//      .en  (fdp_dec_valid_f),
+//      .clk (clk),
+//      .q   (ifu_exu_br_taken_d),
+//      .se(), .si(), .so());
+//
+//   dffe_s #(1) exception_d_reg (
+//      .din (fdp_dec_exception),
+//      .en  (fdp_dec_valid_f),
+//      .clk (clk),
+//      .q   (ifu_exu_exception_d),
+//      .se(), .si(), .so());
+      
+//   dffe_s #(6) exccode_d_reg (
+//      .din (fdp_dec_exccode),
+//      .en  (fdp_dec_valid_f),
+//      .clk (clk),
+//      .q   (ifu_exu_exccode_d),
+//      .se(), .si(), .so());
+
+//   dffe_s #(`LSOC1K_PRU_HINT) hint_d_reg (
+//      .din (fdp_dec_hint),
+//      .en  (fdp_dec_valid_f),
+//      .clk (clk),
+//      .q   (ifu_exu_hint_d),
+//      .se(), .si(), .so());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
    
 endmodule // cpu7_ifu_fdp
 

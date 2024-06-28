@@ -51,21 +51,21 @@ module cpu7_ifu(
    input  wire                              exu_ifu_stall_req
    );
 
-   wire                             fdp_dec_valid_f;
-   wire [`GRLEN-1:0]                fdp_dec_pc;
-   wire [31:0]                      fdp_dec_inst_f;
-   wire                             fdp_dec_br_taken;
-   wire [`GRLEN-3:0]                fdp_dec_br_target;  
-   wire                             fdp_dec_exception;
-   wire [5:0]                       fdp_dec_exccode;
-   wire [`LSOC1K_PRU_HINT-1:0]      fdp_dec_hint;
-
-   wire                             dec_fdp_valid_d;
-
-   wire kill_f;
+//   wire                             fdp_dec_valid_f;
+//   wire [`GRLEN-1:0]                fdp_dec_pc;
+//   wire [31:0]                      fdp_dec_inst_f;
+//   wire                             fdp_dec_br_taken;
+//   wire [`GRLEN-3:0]                fdp_dec_br_target;  
+//   wire                             fdp_dec_exception;
+//   wire [5:0]                       fdp_dec_exccode;
+//   wire [`LSOC1K_PRU_HINT-1:0]      fdp_dec_hint;
+//
+//   wire                             dec_fdp_valid_d;
+//
+//   wire kill_f;
 
    cpu7_ifu_fdp fdp(
-      .clock            (clock             ),
+      .clk              (clock             ),
       .reset            (~resetn           ),
 
       .pc_init          (pc_init           ),
@@ -91,22 +91,26 @@ module cpu7_ifu(
       .inst_ex          (inst_ex           ),
       .inst_exccode     (inst_exccode      ),
 
-      .fdp_dec_valid_f  (fdp_dec_valid_f   ),
-      .fdp_dec_pc       (fdp_dec_pc        ),
-      .fdp_dec_inst_f   (fdp_dec_inst_f    ),
-      .fdp_dec_taken    (fdp_dec_br_taken  ),
-      .fdp_dec_target   (fdp_dec_br_target ),
-      .fdp_dec_ex       (fdp_dec_exception ),
-      .fdp_dec_exccode  (fdp_dec_exccode   ),
-      .fdp_dec_hint     (fdp_dec_hint      ),
+//      .fdp_dec_valid_f  (fdp_dec_valid_f   ),
+//      .fdp_dec_pc       (fdp_dec_pc        ),
+//      .fdp_dec_inst_f   (fdp_dec_inst_f    ),
+//      .fdp_dec_taken    (fdp_dec_br_taken  ),
+//      .fdp_dec_target   (fdp_dec_br_target ),
+//      .fdp_dec_ex       (fdp_dec_exception ),
+//      .fdp_dec_exccode  (fdp_dec_exccode   ),
+//      .fdp_dec_hint     (fdp_dec_hint      ),
+//
+//      .dec_fdp_valid_d  (dec_fdp_valid_d   ),
 
-      .dec_fdp_valid_d  (dec_fdp_valid_d   ),
+      .ifu_exu_valid_d  (ifu_exu_valid_d   ),
+      .ifu_exu_pc_d     (ifu_exu_pc_d      ),
+      .ifu_exu_inst_d   (ifu_exu_inst_d    ),
 
       .ifu_exu_pc_w     (ifu_exu_pc_w      ),
       .ifu_exu_pc_e     (ifu_exu_pc_e      ),
 
-      .exu_ifu_stall_req(exu_ifu_stall_req ),
-      .kill_f           (kill_f            )
+      .exu_ifu_stall_req(exu_ifu_stall_req )
+//      .kill_f           (kill_f            )
       );
 
 
@@ -117,33 +121,33 @@ module cpu7_ifu(
       // output  de_allow_in,
       // output de_accept
 
-      .fdp_dec_valid_f      (fdp_dec_valid_f     ),
-      .fdp_dec_pc           (fdp_dec_pc          ),
-      .fdp_dec_inst_f       (fdp_dec_inst_f      ),
-      .fdp_dec_br_target    (fdp_dec_br_target   ),
-      .fdp_dec_br_taken     (fdp_dec_br_taken    ),
-      .fdp_dec_exception    (fdp_dec_exception   ),
-      .fdp_dec_exccode      (fdp_dec_exccode     ),
-      .fdp_dec_hint         (fdp_dec_hint        ),
-
-      .dec_fdp_valid_d      (dec_fdp_valid_d     ),
-
-      .int_except           (1'b0                ), // test
-      
-      .ifu_exu_valid_d      (ifu_exu_valid_d     ),
+//      .fdp_dec_valid_f      (fdp_dec_valid_f     ),
+//      .fdp_dec_pc           (fdp_dec_pc          ),
+//      .fdp_dec_inst_f       (fdp_dec_inst_f      ),
+//      .fdp_dec_br_target    (fdp_dec_br_target   ),
+//      .fdp_dec_br_taken     (fdp_dec_br_taken    ),
+//      .fdp_dec_exception    (fdp_dec_exception   ),
+//      .fdp_dec_exccode      (fdp_dec_exccode     ),
+//      .fdp_dec_hint         (fdp_dec_hint        ),
+//
+//      .dec_fdp_valid_d      (dec_fdp_valid_d     ),
+//
+//      .int_except           (1'b0                ), // test
+//      
+//      .ifu_exu_valid_d      (ifu_exu_valid_d     ),
       .ifu_exu_inst_d       (ifu_exu_inst_d      ),
-      .ifu_exu_pc_d         (ifu_exu_pc_d        ),
+//      .ifu_exu_pc_d         (ifu_exu_pc_d        ),
       .ifu_exu_op_d         (ifu_exu_op_d        ),
-      .ifu_exu_exception_d  (ifu_exu_exception_d ),
-      .ifu_exu_exccode_d    (ifu_exu_exccode_d   ),
-      .ifu_exu_br_target_d  (ifu_exu_br_target_d ),
-      .ifu_exu_br_taken_d   (ifu_exu_br_taken_d  ),
+//      .ifu_exu_exception_d  (ifu_exu_exception_d ),
+//      .ifu_exu_exccode_d    (ifu_exu_exccode_d   ),
+//      .ifu_exu_br_target_d  (ifu_exu_br_target_d ),
+//      .ifu_exu_br_taken_d   (ifu_exu_br_taken_d  ),
       .ifu_exu_rf_wen_d     (ifu_exu_rf_wen_d    ),
-      .ifu_exu_rf_target_d  (ifu_exu_rf_target_d ),
-      .ifu_exu_hint_d       (ifu_exu_hint_d      ),
-
-      .exu_ifu_stall_req    (exu_ifu_stall_req   ),
-      .kill_f               (kill_f              )
+      .ifu_exu_rf_target_d  (ifu_exu_rf_target_d )
+//      .ifu_exu_hint_d       (ifu_exu_hint_d      ),
+//
+//      .exu_ifu_stall_req    (exu_ifu_stall_req   ),
+//      .kill_f               (kill_f              )
       );
 
    // cpu7_ifu_imd, decode offset imm

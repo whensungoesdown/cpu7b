@@ -4,39 +4,40 @@
 module cpu7_ifu_dec(
    input  wire                         clk,
    input  wire                         resetn,
-   // pipe in
-   //    output wire                         de_allow_in,
-   //    output wire [ 2:0]                  de_accept,
-   // port0
-   input  wire                         fdp_dec_valid_f,
-   input  wire [`GRLEN-1:0]            fdp_dec_pc,
-   input  wire [31:0]                  fdp_dec_inst_f,
-   input  wire [`GRLEN-3:0]            fdp_dec_br_target,
-   input  wire                         fdp_dec_br_taken,
-   input  wire                         fdp_dec_exception,
-   input  wire [5 :0]                  fdp_dec_exccode,
-   input  wire [`LSOC1K_PRU_HINT-1:0]  fdp_dec_hint,
 
-   output wire                         dec_fdp_valid_d,
-
-   input  wire                              int_except,
    // port0
-   output wire                              ifu_exu_valid_d,
-   output wire [31:0]                       ifu_exu_inst_d,
-   output wire [`GRLEN-1:0]                 ifu_exu_pc_d,
+//   input  wire                         fdp_dec_valid_f,
+//   input  wire [`GRLEN-1:0]            fdp_dec_pc,
+//   input  wire [31:0]                  fdp_dec_inst_f,
+//   input  wire [`GRLEN-3:0]            fdp_dec_br_target,
+//   input  wire                         fdp_dec_br_taken,
+//   input  wire                         fdp_dec_exception,
+//   input  wire [5 :0]                  fdp_dec_exccode,
+//   input  wire [`LSOC1K_PRU_HINT-1:0]  fdp_dec_hint,
+//
+//   output wire                         dec_fdp_valid_d,
+//
+//   input  wire                              int_except,
+   // port0
+//   output wire                              ifu_exu_valid_d,
+   input  wire [31:0]                       ifu_exu_inst_d,
+//   output wire [`GRLEN-1:0]                 ifu_exu_pc_d,
    output wire [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
-   output wire                              ifu_exu_exception_d,
-   output wire [5 :0]                       ifu_exu_exccode_d,
-   output wire [`GRLEN-3:0]                 ifu_exu_br_target_d,
-   output wire                              ifu_exu_br_taken_d,
+//   output wire                              ifu_exu_exception_d,
+//   output wire [5 :0]                       ifu_exu_exccode_d,
+//   output wire [`GRLEN-3:0]                 ifu_exu_br_target_d,
+//   output wire                              ifu_exu_br_taken_d,
    output wire                              ifu_exu_rf_wen_d,
-   output wire [4:0]                        ifu_exu_rf_target_d,
-   output wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
+   output wire [4:0]                        ifu_exu_rf_target_d
+ //  output wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
 
-   input  wire                              exu_ifu_stall_req,
-   input  wire                              kill_f
+//   input  wire                              exu_ifu_stall_req,
+//   input  wire                              kill_f
    );
 
+wire int_except = 1'b0;
+wire fdp_dec_exception = 1'b0;
+wire [5 :0] fdp_dec_exccode = 6'b0;
 
 // define
 wire rst = !resetn;
@@ -92,103 +93,13 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 //assign de_accept   = {0, 0, de_allow_in};
 
 
-   wire valid_d_reg_in;
-
-   assign valid_d_reg_in = fdp_dec_valid_f & (~kill_f);
-
-   dffrle_s #(1) valid_d_reg (
-      .din   (fdp_dec_valid_f),
-      .rst_l (resetn),
-      .clk   (clk),
-      .en    (~exu_ifu_stall_req),
-      .q     (dec_fdp_valid_d),
-      .se(), .si(), .so());
-
-   //assign dec_fdp_valid_d = ifu_exu_valid_d; // code review
-   assign ifu_exu_valid_d = dec_fdp_valid_d;
 
 
-   dffe_s #(`GRLEN) dec_pc_d_reg (  // pc_d_reg exists in cpu7_ifu_fdp, duplicated
-      .din (fdp_dec_pc),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_pc_d),
-      .se(), .si(), .so());
 
-   dffe_s #(32) inst_d_reg (
-      .din (fdp_dec_inst_f),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_inst_d),
-      .se(), .si(), .so());
-
-   dffe_s #(`GRLEN-2) br_target_d_reg (
-      .din (fdp_dec_br_target),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_br_target_d),
-      .se(), .si(), .so());
-      
-   dffe_s #(1) br_taken_d_reg (
-      .din (fdp_dec_br_taken),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_br_taken_d),
-      .se(), .si(), .so());
-
-   dffe_s #(1) exception_d_reg (
-      .din (fdp_dec_exception),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_exception_d),
-      .se(), .si(), .so());
-      
-   dffe_s #(6) exccode_d_reg (
-      .din (fdp_dec_exccode),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_exccode_d),
-      .se(), .si(), .so());
-
-   dffe_s #(`LSOC1K_PRU_HINT) hint_d_reg (
-      .din (fdp_dec_hint),
-      .en  (fdp_dec_valid_f),
-      .clk (clk),
-      .q   (ifu_exu_hint_d),
-      .se(), .si(), .so());
 
    assign ifu_exu_op_d = port0_op;
    assign ifu_exu_rf_wen_d = rf_wen0;
    assign ifu_exu_rf_target_d = {5{rf_wen0}}&waddr0;
-
-
-
-
    
-// basic
-always @(posedge clk) begin
-    if (rst)
-    begin
-//	  ifu_exu_br_taken     <= 1'd0;
-//        ifu_exu_exception    <= 1'd0;
-//        ifu_exu_exccode      <= 6'd0;
-//        ifu_exu_rf_wen       <= 1'd0;
-//
-//        is_port1_br_taken    <= 1'd0;
-//        is_port1_exception   <= 1'd0;
-//        is_port1_exccode     <= 6'd0;
-//        is_port1_rf_wen      <= 1'd0;
-//
-//        is_port2_br_taken    <= 1'd0;
-//        is_port2_exception   <= 1'd0;
-//        is_port2_exccode     <= 6'd0;
-    end
-//    else
-//    if (de_allow_in)
-//    begin
-//    end
-
-end
-
 
 endmodule // cpu7_ifu_dec
