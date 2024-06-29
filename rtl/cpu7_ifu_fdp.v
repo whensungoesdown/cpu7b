@@ -27,9 +27,13 @@ module cpu7_ifu_fdp(
    input  [`GRLEN-1:0]    exu_ifu_era    ,
    input                  exu_ifu_ertn_e ,
 
-   output                 ifu_exu_valid_d,
+//   output                 ifu_exu_valid_d,
    output [`GRLEN-1:0]    ifu_exu_pc_d,
    output [`GRLEN-1:0]    ifu_exu_inst_d,
+
+   output                 fdp_dec_inst_vld_kill_d,
+
+   output                 ifu_exu_valid_e, //
    
    output [`GRLEN-1:0]    ifu_exu_pc_w   ,
    output [`GRLEN-1:0]    ifu_exu_pc_e   ,
@@ -41,6 +45,7 @@ module cpu7_ifu_fdp(
    wire ifu_fdp_valid_f;
    assign ifu_fdp_valid_f = inst_valid_f;
 
+   wire ifu_exu_valid_d;
 
    wire [`GRLEN-1:0] pcbf_btwn_mux;
    
@@ -57,12 +62,17 @@ module cpu7_ifu_fdp(
    // down the pipe should be invalid
 
    wire kill_f;
+   wire kill_d;
    wire inst_vld_kill_f;
+   wire inst_vld_kill_d;
 
    assign kill_f = br_taken | exu_ifu_except | exu_ifu_ertn_e; 
    assign inst_vld_kill_f = ifu_fdp_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
+   // should not if exception happen
 
-   // or should not if exception happen
+   assign kill_d = br_taken | exu_ifu_except; // if branch is taken, kill the instruction at the pipeline _d stage.
+   assign inst_vld_kill_d = ifu_exu_valid_d & (~kill_d);
+   assign fdp_dec_inst_vld_kill_d = inst_vld_kill_d;
 
    dffrle_s #(1) inst_vld_kill_f2d_reg (
       .din   (inst_vld_kill_f),
@@ -71,6 +81,14 @@ module cpu7_ifu_fdp(
       .clk   (clk),
       .en    (~exu_ifu_stall_req),
       .q     (ifu_exu_valid_d),
+      .se(), .si(), .so());
+
+   dffrle_s #(1) inst_vld_kill_d2e_reg (
+      .din   (inst_vld_kill_d),
+      .rst_l (~reset),
+      .clk   (clk),
+      .en    (~exu_ifu_stall_req),
+      .q     (ifu_exu_valid_e),
       .se(), .si(), .so());
 
 

@@ -29,21 +29,77 @@ module cpu7_ifu(
    input                               exu_ifu_ertn_e,
    
    // port0
-   output                              ifu_exu_valid_d,
-   output [31:0]                       ifu_exu_inst_d,
-   output [`GRLEN-1:0]                 ifu_exu_pc_d,
-   output [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
-   output                              ifu_exu_exception_d,
-   output [5 :0]                       ifu_exu_exccode_d,
-   output [`GRLEN-3:0]                 ifu_exu_br_target_d,
-   output                              ifu_exu_br_taken_d,
-   output                              ifu_exu_rf_wen_d,
-   output [4:0]                        ifu_exu_rf_target_d,
-   output [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
+//   output                              ifu_exu_valid_d,
+//   output [31:0]                       ifu_exu_inst_d,
+//   output [`GRLEN-1:0]                 ifu_exu_pc_d,
+//   output [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
+//   output                              ifu_exu_exception_d,
+//   output [5 :0]                       ifu_exu_exccode_d,
+//   output [`GRLEN-3:0]                 ifu_exu_br_target_d,
+//   output                              ifu_exu_br_taken_d,
+//   output                              ifu_exu_rf_wen_d,
+//   output [4:0]                        ifu_exu_rf_target_d,
+//   output [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
 
-   output [31:0]                       ifu_exu_imm_shifted_d,
-   output [`GRLEN-1:0]                 ifu_exu_c_d,
-   output [`GRLEN-1:0]                 ifu_exu_br_offs,
+//   output [31:0]                       ifu_exu_imm_shifted_d,
+//   output [`GRLEN-1:0]                 ifu_exu_c_d,
+//   output [`GRLEN-1:0]                 ifu_exu_br_offs,
+
+  
+   output                              ifu_exu_valid_e,
+
+   output [`GRLEN-1:0]                 ifu_exu_alu_a_e,
+   output [`GRLEN-1:0]                 ifu_exu_alu_b_e,
+   output [`LSOC1K_ALU_CODE_BIT-1:0]   ifu_exu_alu_op_e,
+   output [`GRLEN-1:0]                 ifu_exu_alu_c_e,
+   output                              ifu_exu_alu_double_word_e,
+   output                              ifu_exu_alu_b_imm_e,
+
+   output [4:0]                        ifu_exu_rs1_d,
+   output [4:0]                        ifu_exu_rs2_d,
+   output [4:0]                        ifu_exu_rs1_e,
+   output [4:0]                        ifu_exu_rs2_e,
+
+   input  [`GRLEN-1:0]                 exu_ifu_rs1_data_d,
+   input  [`GRLEN-1:0]                 exu_ifu_rs2_data_d,
+
+   // lsu
+   output                              ifu_exu_lsu_valid_e,
+   output [`LSOC1K_LSU_CODE_BIT-1:0]   ifu_exu_lsu_op_e,
+   output                              ifu_exu_double_read_e,
+   output [`GRLEN-1:0]                 ifu_exu_imm_shifted_e,
+   output [4:0]                        ifu_exu_lsu_rd_e,
+   output                              ifu_exu_lsu_wen_e,
+
+   // bru
+   output                               ifu_exu_bru_valid_e,
+   output [`LSOC1K_BRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
+   output [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
+
+   // mul
+   output                               ifu_exu_mul_valid_e,
+   output                               ifu_exu_mul_wen_e,
+   output                               ifu_exu_mul_signed_e,
+   output                               ifu_exu_mul_double_e,
+   output                               ifu_exu_mul_hi_e,
+   output                               ifu_exu_mul_short_e,
+
+   // csr
+   output                               ifu_exu_csr_valid_e,
+   output [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_raddr_d,
+   output                               ifu_exu_csr_rdwen_e,
+   output                               ifu_exu_csr_xchg_e,
+   output                               ifu_exu_csr_wen_e,
+   output [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_waddr_e,
+
+   // alu
+   output [4:0]                         ifu_exu_rf_target_e,
+   output                               ifu_exu_alu_wen_e,
+   // ertn
+   output                               ifu_exu_ertn_valid_e,
+
+   output                               ifu_exu_illinst_e,
+
 
    output [`GRLEN-1:0]                 ifu_exu_pc_w,
    output [`GRLEN-1:0]                 ifu_exu_pc_e,
@@ -51,6 +107,14 @@ module cpu7_ifu(
    input                               exu_ifu_stall_req
    );
 
+
+
+//   wire                              ifu_exu_valid_d,
+   wire [31:0]                       ifu_exu_inst_d;
+   wire [`GRLEN-1:0]                 ifu_exu_pc_d;
+//   wire [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
+
+   wire fdp_dec_inst_vld_kill_d;
 
    cpu7_ifu_fdp fdp(
       .clk              (clock             ),
@@ -79,9 +143,13 @@ module cpu7_ifu(
       .inst_ex          (inst_ex           ),
       .inst_exccode     (inst_exccode      ),
 
-      .ifu_exu_valid_d  (ifu_exu_valid_d   ),
+//      .ifu_exu_valid_d  (ifu_exu_valid_d   ),
       .ifu_exu_pc_d     (ifu_exu_pc_d      ),
       .ifu_exu_inst_d   (ifu_exu_inst_d    ),
+
+      .fdp_dec_inst_vld_kill_d  (fdp_dec_inst_vld_kill_d  ),
+
+      .ifu_exu_valid_e          (ifu_exu_valid_e          ),
 
       .ifu_exu_pc_w     (ifu_exu_pc_w      ),
       .ifu_exu_pc_e     (ifu_exu_pc_e      ),
@@ -95,18 +163,77 @@ module cpu7_ifu(
       .resetn                (resetn            ),
 
       .ifu_exu_inst_d       (ifu_exu_inst_d      ),
-      .ifu_exu_op_d         (ifu_exu_op_d        ),
-      .ifu_exu_rf_wen_d     (ifu_exu_rf_wen_d    ),
-      .ifu_exu_rf_target_d  (ifu_exu_rf_target_d )
+//      .ifu_exu_op_d         (ifu_exu_op_d        ),
+
+      .ifu_exu_pc_d             (ifu_exu_pc_d             ),
+      .fdp_dec_inst_vld_kill_d  (fdp_dec_inst_vld_kill_d  ),
+
+//      .ifu_exu_rf_wen_d     (ifu_exu_rf_wen_d    ),
+//      .ifu_exu_rf_target_d  (ifu_exu_rf_target_d ),
+
+      .ifu_exu_alu_a_e          (ifu_exu_alu_a_e          ), 
+      .ifu_exu_alu_b_e          (ifu_exu_alu_b_e          ), 
+      .ifu_exu_alu_op_e         (ifu_exu_alu_op_e         ), 
+      .ifu_exu_alu_c_e          (ifu_exu_alu_c_e          ), 
+      .ifu_exu_alu_double_word_e(ifu_exu_alu_double_word_e),
+      .ifu_exu_alu_b_imm_e      (ifu_exu_alu_b_imm_e      ),
+      .ifu_exu_rs1_d            (ifu_exu_rs1_d            ),
+      .ifu_exu_rs2_d            (ifu_exu_rs2_d            ),
+      .ifu_exu_rs1_e            (ifu_exu_rs1_e            ),
+      .ifu_exu_rs2_e            (ifu_exu_rs2_e            ),
+
+      .exu_ifu_rs1_data_d       (exu_ifu_rs1_data_d       ),
+      .exu_ifu_rs2_data_d       (exu_ifu_rs2_data_d       ),
+
+      // lsu
+      .ifu_exu_lsu_valid_e      (ifu_exu_lsu_valid_e      ), 
+      .ifu_exu_lsu_op_e         (ifu_exu_lsu_op_e         ),
+      .ifu_exu_double_read_e    (ifu_exu_double_read_e    ),
+      .ifu_exu_imm_shifted_e    (ifu_exu_imm_shifted_e    ),
+      .ifu_exu_lsu_rd_e         (ifu_exu_lsu_rd_e         ),
+      .ifu_exu_lsu_wen_e        (ifu_exu_lsu_wen_e        ),
+
+      // bru
+      .ifu_exu_bru_valid_e      (ifu_exu_bru_valid_e      ),
+      .ifu_exu_bru_op_e         (ifu_exu_bru_op_e         ),
+      .ifu_exu_bru_offset_e     (ifu_exu_bru_offset_e     ),
+
+      // mul
+      .ifu_exu_mul_valid_e      (ifu_exu_mul_valid_e      ),
+      .ifu_exu_mul_wen_e        (ifu_exu_mul_wen_e        ),
+      .ifu_exu_mul_signed_e     (ifu_exu_mul_signed_e     ),
+      .ifu_exu_mul_double_e     (ifu_exu_mul_double_e     ),
+      .ifu_exu_mul_hi_e         (ifu_exu_mul_hi_e         ),
+      .ifu_exu_mul_short_e      (ifu_exu_mul_short_e      ),
+
+      // csr
+      .ifu_exu_csr_valid_e      (ifu_exu_csr_valid_e      ),
+      .ifu_exu_csr_raddr_d      (ifu_exu_csr_raddr_d      ),
+      .ifu_exu_csr_rdwen_e      (ifu_exu_csr_rdwen_e      ),
+      .ifu_exu_csr_xchg_e       (ifu_exu_csr_xchg_e       ),
+      .ifu_exu_csr_wen_e        (ifu_exu_csr_wen_e        ),
+      .ifu_exu_csr_waddr_e      (ifu_exu_csr_waddr_e      ),
+
+      // alu
+      .ifu_exu_rf_target_e      (ifu_exu_rf_target_e      ),
+      .ifu_exu_alu_wen_e        (ifu_exu_alu_wen_e        ),
+                                                     
+      // ertn                    
+      .ifu_exu_ertn_valid_e     (ifu_exu_ertn_valid_e     ),
+
+      .ifu_exu_illinst_e        (ifu_exu_illinst_e        )
+
       );
 
-   // cpu7_ifu_imd, decode offset imm
-   cpu7_ifu_imd imd(
-      .ifu_exu_inst_d        (ifu_exu_inst_d        ),
-      .ifu_exu_op_d          (ifu_exu_op_d          ),
-      .ifu_exu_imm_shifted_d (ifu_exu_imm_shifted_d ),
-      .ifu_exu_c_d           (ifu_exu_c_d           ),
-      .ifu_exu_br_offs       (ifu_exu_br_offs       )
-      );
+
+
+//   // cpu7_ifu_imd, decode offset imm
+//   cpu7_ifu_imd imd(
+//      .ifu_exu_inst_d        (ifu_exu_inst_d        ),
+//      .ifu_exu_op_d          (ifu_exu_op_d          ),
+//      .ifu_exu_imm_shifted_d (ifu_exu_imm_shifted_d ),
+//      .ifu_exu_c_d           (ifu_exu_c_d           ),
+//      .ifu_exu_br_offs       (ifu_exu_br_offs       )
+//      );
    
 endmodule // cpu7_ifu
