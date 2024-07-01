@@ -43,22 +43,6 @@ module cpu7_nocache(
 
 );
 
-//   wire                              ifu_exu_valid_d;
-//   wire [31:0]                       ifu_exu_inst_d;
-//   wire [`GRLEN-1:0]                 ifu_exu_pc_d;
-//   wire [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d;     
-//   wire                              ifu_exu_exception_d;
-//   wire [5:0]                        ifu_exu_exccode_d;
-//   wire [`GRLEN-3:0]                 ifu_exu_br_target_d;
-//   wire                              ifu_exu_br_taken_d;
-//   wire                              ifu_exu_rf_wen_d;     
-//   wire [4:0]                        ifu_exu_rf_target_d;
-//   wire [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d;       
-//
-//   wire [31:0]                       ifu_exu_imm_shifted_d;
-//   wire [`GRLEN-1:0]                 ifu_exu_c_d;
-//   wire [`GRLEN-1:0]                 ifu_exu_br_offs;
-
 
    wire [`GRLEN-1:0]                 ifu_exu_pc_w;
    wire [`GRLEN-1:0]                 ifu_exu_pc_e;
@@ -158,23 +142,6 @@ module cpu7_nocache(
       .exu_ifu_era             (exu_ifu_era          ),
       .exu_ifu_ertn_e          (exu_ifu_ertn_e       ),
 
-      // now only have one port
-//      .ifu_exu_valid_d         (ifu_exu_valid_d      ),
-//      .ifu_exu_inst_d          (ifu_exu_inst_d       ),
-//      .ifu_exu_pc_d            (ifu_exu_pc_d         ),
-//      .ifu_exu_op_d            (ifu_exu_op_d         ),
-//      .ifu_exu_exception_d     (ifu_exu_exception_d  ),
-//      .ifu_exu_exccode_d       (ifu_exu_exccode_d    ),
-//      .ifu_exu_br_target_d     (ifu_exu_br_target_d  ),
-//      .ifu_exu_br_taken_d      (ifu_exu_br_taken_d   ),
-//      .ifu_exu_rf_wen_d        (ifu_exu_rf_wen_d     ),
-//      .ifu_exu_rf_target_d     (ifu_exu_rf_target_d  ),
-//      .ifu_exu_hint_d          (ifu_exu_hint_d       ),
-
-//      .ifu_exu_imm_shifted_d   (ifu_exu_imm_shifted_d),
-//      .ifu_exu_c_d             (ifu_exu_c_d          ),
-//      .ifu_exu_br_offs         (ifu_exu_br_offs      ),
-
       .ifu_exu_valid_e         (ifu_exu_valid_e      ),
 
       .ifu_exu_alu_a_e          (ifu_exu_alu_a_e          ), 
@@ -238,29 +205,11 @@ module cpu7_nocache(
       );
 
 
-
-
    
 
    cpu7_exu exu(
       .clk                     (clk                  ),
       .resetn                  (resetn               ),
-
-//      .ifu_exu_valid_d         (ifu_exu_valid_d      ),
-//      .ifu_exu_inst_d          (ifu_exu_inst_d       ),
-//      .ifu_exu_pc_d            (ifu_exu_pc_d         ),
-//      .ifu_exu_op_d            (ifu_exu_op_d         ),
-//      .ifu_exu_exception_d     (ifu_exu_exception_d  ),
-//      .ifu_exu_exccode_d       (ifu_exu_exccode_d    ),
-//      .ifu_exu_br_target_d     (ifu_exu_br_target_d  ),
-//      .ifu_exu_br_taken_d      (ifu_exu_br_taken_d   ),
-//      .ifu_exu_rf_wen_d        (ifu_exu_rf_wen_d     ),
-//      .ifu_exu_rf_target_d     (ifu_exu_rf_target_d  ),
-//      .ifu_exu_hint_d          (ifu_exu_hint_d       ),
-
-//      .ifu_exu_imm_shifted_d   (ifu_exu_imm_shifted_d),
-//      .ifu_exu_c_d             (ifu_exu_c_d          ),
-//      .ifu_exu_br_offs         (ifu_exu_br_offs      ),
       
       .ifu_exu_valid_e         (ifu_exu_valid_e      ),
 

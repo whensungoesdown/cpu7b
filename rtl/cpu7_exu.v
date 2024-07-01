@@ -5,22 +5,6 @@ module cpu7_exu(
    input                                clk,
    input                                resetn,
 
-//   input                                ifu_exu_valid_d,
-//   input  [`GRLEN-1:0]                  ifu_exu_pc_d,
-//   input  [31:0]	                ifu_exu_inst_d,
-//   input  [`LSOC1K_DECODE_RES_BIT-1:0]  ifu_exu_op_d,
-//   input  [`GRLEN-3:0]                  ifu_exu_br_target_d,
-//   input                                ifu_exu_br_taken_d,
-//   input                                ifu_exu_exception_d,
-//   input  [5:0]                         ifu_exu_exccode_d,
-//   input                                ifu_exu_rf_wen_d,
-//   input  [4:0]                         ifu_exu_rf_target_d,
-//   input  [`LSOC1K_PRU_HINT-1:0]        ifu_exu_hint_d,
-
-//   input  [31:0]                        ifu_exu_imm_shifted_d,
-//   input  [`GRLEN-1:0]                  ifu_exu_c_d,
-//   input  [`GRLEN-1:0]                  ifu_exu_br_offs,
-
    input                                ifu_exu_valid_e,
 
    input  [`GRLEN-1:0]                  ifu_exu_pc_w,
@@ -61,7 +45,6 @@ module cpu7_exu(
    output [`GRLEN-1:0]                  exu_ifu_era,
    output                               exu_ifu_ertn_e,
    
-
 
    input  [`GRLEN-1:0]                  ifu_exu_alu_a_e,
    input  [`GRLEN-1:0]                  ifu_exu_alu_b_e,
@@ -118,11 +101,6 @@ module cpu7_exu(
    );
 
 
-//   wire [4:0]                           ecl_irf_rs1_d;
-//   wire [4:0]                           ecl_irf_rs2_d;
-//   wire [`GRLEN-1:0]                    irf_ecl_rs1_data_d;
-//   wire [`GRLEN-1:0]                    irf_ecl_rs2_data_d;
-   
    
    // alu
    wire [`GRLEN-1:0]                    ecl_alu_a_e;
@@ -196,14 +174,10 @@ module cpu7_exu(
 	.rst        (~resetn              ),
 
         .waddr1     (ecl_irf_rd_w         ),// I, 5
-//        .raddr0_0   (ecl_irf_rs1_d        ),// I, 5
-//        .raddr0_1   (ecl_irf_rs2_d        ),// I, 5
         .raddr0_0   (ifu_exu_rs1_d        ),// I, 5
         .raddr0_1   (ifu_exu_rs2_d        ),// I, 5
         .wen1       (ecl_irf_wen_w        ),// I, 1
         .wdata1     (ecl_irf_rd_data_w    ),// I, 32
-//        .rdata0_0   (irf_ecl_rs1_data_d   ),// O, 32
-//        .rdata0_1   (irf_ecl_rs2_data_d   ),// O, 32
         .rdata0_0   (exu_ifu_rs1_data_d   ),// O, 32
         .rdata0_1   (exu_ifu_rs2_data_d   ),// O, 32
 
@@ -254,20 +228,8 @@ module cpu7_exu(
    cpu7_exu_ecl ecl(
       .clk                      (clk                 ),
       .resetn                   (resetn              ),
-//      .ifu_exu_valid_d          (ifu_exu_valid_d     ),
-//      .ifu_exu_inst_d           (ifu_exu_inst_d      ),
-//      .ifu_exu_op_d             (ifu_exu_op_d        ),
-//      .ifu_exu_pc_d             (ifu_exu_pc_d        ),
-//      .ifu_exu_rf_wen_d         (ifu_exu_rf_wen_d    ),
-//      .ifu_exu_rf_target_d      (ifu_exu_rf_target_d ),
-//      .ifu_exu_imm_shifted_d    (ifu_exu_imm_shifted_d),
-//      .ifu_exu_c_d              (ifu_exu_c_d         ),
-//      .ifu_exu_br_offs          (ifu_exu_br_offs     ),
-//      .irf_ecl_rs1_data_d       (irf_ecl_rs1_data_d  ),
-//      .irf_ecl_rs2_data_d       (irf_ecl_rs2_data_d  ),
 
       .ifu_exu_valid_e          (ifu_exu_valid_e     ),
-
      
       .ifu_exu_alu_a_e          (ifu_exu_alu_a_e     ),
       .ifu_exu_alu_b_e          (ifu_exu_alu_b_e     ),
@@ -319,10 +281,6 @@ module cpu7_exu(
       .ifu_exu_ertn_valid_e     (ifu_exu_ertn_valid_e     ),
 
       .ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
-
-
-      //.ecl_irf_rs1_d            (ecl_irf_rs1_d       ),
-      //.ecl_irf_rs2_d            (ecl_irf_rs2_d       ),
 
 
       // alu
@@ -489,12 +447,6 @@ module cpu7_exu(
       .clk                (clk            ),
       .rstn               (resetn         ),
 
-//      .mul_validin        (mul_valid      ),
-//      .ex2_allowin        (ex2_allow_in   ),
-//      .mul_validout       (ex2_mul_ready  ),
-//      .ex1_readygo        (ex1_allow_in   ),
-//      .ex2_readygo        (ex2_allow_in   ),
-      
       .mul_validin        (ecl_mul_valid_e  ),
       .ex2_allowin        (1'b1             ),
       .mul_validout       (mul_ecl_64ready  ),

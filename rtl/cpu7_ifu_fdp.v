@@ -27,7 +27,6 @@ module cpu7_ifu_fdp(
    input  [`GRLEN-1:0]    exu_ifu_era    ,
    input                  exu_ifu_ertn_e ,
 
-//   output                 ifu_exu_valid_d,
    output [`GRLEN-1:0]    ifu_exu_pc_d,
    output [`GRLEN-1:0]    ifu_exu_inst_d,
 
@@ -76,7 +75,6 @@ module cpu7_ifu_fdp(
 
    dffrle_s #(1) inst_vld_kill_f2d_reg (
       .din   (inst_vld_kill_f),
-      //.rst_l (resetn),
       .rst_l (~reset),
       .clk   (clk),
       .en    (~exu_ifu_stall_req),

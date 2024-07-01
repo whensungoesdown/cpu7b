@@ -5,11 +5,8 @@ module cpu7_ifu_dec(
    input                                clk,
    input                                resetn,
    input  [31:0]                        ifu_exu_inst_d,
-//   output [`LSOC1K_DECODE_RES_BIT-1:0]  ifu_exu_op_d,
-//   output                               ifu_exu_rf_wen_d,
-//   output [4:0]                         ifu_exu_rf_target_d,
 
-   input [`GRLEN-1:0]                  ifu_exu_pc_d,
+   input [`GRLEN-1:0]                   ifu_exu_pc_d,
    input                                fdp_dec_inst_vld_kill_d,
 
    output [`GRLEN-1:0]                  ifu_exu_alu_a_e,

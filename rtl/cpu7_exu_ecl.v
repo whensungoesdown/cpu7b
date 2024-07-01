@@ -4,17 +4,6 @@
 module cpu7_exu_ecl(
    input                                clk,
    input                                resetn,
-//   input                                ifu_exu_valid_d,
-//   input  [31:0]	                ifu_exu_inst_d,
-////   input  [`GRLEN-1:0]	                ifu_exu_pc_d,
-//   input  [`LSOC1K_DECODE_RES_BIT-1:0]  ifu_exu_op_d,
-//   input                                ifu_exu_rf_wen_d,
-//   input  [4:0]                         ifu_exu_rf_target_d,
-//   input  [31:0]                        ifu_exu_imm_shifted_d,
-//   input  [`GRLEN-1:0]                  ifu_exu_c_d,
-//   input  [`GRLEN-1:0]                  ifu_exu_br_offs,
-//   input  [`GRLEN-1:0]                  irf_ecl_rs1_data_d,
-//   input  [`GRLEN-1:0]                  irf_ecl_rs2_data_d,
 
    input                                ifu_exu_valid_e,
 
@@ -67,9 +56,6 @@ module cpu7_exu_ecl(
 
    input                                ifu_exu_illinst_e,
 
-
-//   output [4:0]                         ecl_irf_rs1_d,
-//   output [4:0]                         ecl_irf_rs2_d,
 
    // alu
    output [`GRLEN-1:0]                  ecl_alu_a_e,
@@ -154,153 +140,19 @@ module cpu7_exu_ecl(
    wire wen_m;
    wire wen_w;
 
-//   wire double_read_d;
-//   wire double_read_e;
 
    wire [`GRLEN-1:0] rd_data_m;
    wire [`GRLEN-1:0] rd_data_w;
 
-//   wire alu_dispatch_d;
-//   wire bru_dispatch_d;
-//   wire lsu_dispatch_d;
-//   wire mul_dispatch_d;
-//   wire div_dispatch_d;
-//   wire none_dispatch_d;
-//   wire ertn_dispatch_d; //ERET
-
-
-//   wire inst_vld_kill_d;
-//   wire inst_vld_e; // interrupt wont change pc_bf until inst_vld_e is 1
-   // inst_vld_e should be named ifu_exu_valid_e, because if does not comprise
-   // ~kill_e like inst_vld_kill_f inst_vld_kill_d do
-
-//   wire kill_d;
    wire kill_e;
   
- 
-
-
-//   assign inst_vld_kill_d = ifu_exu_valid_d & (~kill_d);
-
-//   dffrle_s #(1) inst_vld_kill_d2e_reg (
-//      .din   (inst_vld_kill_d),
-//      .rst_l (resetn),
-//      .clk   (clk),
-//      .en    (~exu_ifu_stall_req),
-//      .q     (inst_vld_e),
-//      .se(), .si(), .so());
 
 
    
-//   //main
-//   assign alu_dispatch_d  = !ifu_exu_op_d[`LSOC1K_LSU_RELATED] && !ifu_exu_op_d[`LSOC1K_BRU_RELATED] && !ifu_exu_op_d[`LSOC1K_MUL_RELATED] && !ifu_exu_op_d[`LSOC1K_DIV_RELATED] && !ifu_exu_op_d[`LSOC1K_CSR_RELATED] && inst_vld_kill_d; // && !port0_exception; // alu0 is binded to port0
-//   assign lsu_dispatch_d  = ifu_exu_op_d[`LSOC1K_LSU_RELATED] && inst_vld_kill_d; // && !port0_exception;
-//   assign bru_dispatch_d  = ifu_exu_op_d[`LSOC1K_BRU_RELATED] && inst_vld_kill_d; // && !port0_exception;
-//   assign mul_dispatch_d  = ifu_exu_op_d[`LSOC1K_MUL_RELATED] && inst_vld_kill_d; // && !port0_exception;
-//   assign div_dispatch_d  = ifu_exu_op_d[`LSOC1K_DIV_RELATED] && inst_vld_kill_d; // && !port0_exception;
-//   assign none_dispatch_d = (ifu_exu_op_d[`LSOC1K_CSR_RELATED] || ifu_exu_op_d[`LSOC1K_TLB_RELATED] || ifu_exu_op_d[`LSOC1K_CACHE_RELATED]) && inst_vld_kill_d; // || port0_exception ;
-//   assign ertn_dispatch_d = ifu_exu_op_d[`LSOC1K_ERET] && inst_vld_kill_d;
-//
-//
-//   ////register interface
-//   // common registers
-//   assign ecl_irf_rs1_d = ifu_exu_op_d[`LSOC1K_RD2RJ  ] ? `GET_RD(ifu_exu_inst_d) : `GET_RJ(ifu_exu_inst_d);
-//   assign ecl_irf_rs2_d = ifu_exu_op_d[`LSOC1K_RD_READ] ? `GET_RD(ifu_exu_inst_d) : `GET_RK(ifu_exu_inst_d);
-//   //assign raddr1_0 = is_port1_op[`LSOC1K_RD2RJ  ] ? `GET_RD(is_port1_inst) : `GET_RJ(is_port1_inst);
-//   //assign raddr1_1 = is_port1_op[`LSOC1K_RD_READ] ? `GET_RD(is_port1_inst) : `GET_RK(is_port1_inst);
-//   //assign raddr2_0 = port0_triple_read ? `GET_RK(is_port0_inst) : is_port2_op[`LSOC1K_RD2RJ] ? `GET_RD(is_port2_inst) : `GET_RJ(is_port2_inst);
-//   //assign raddr2_1 = port1_triple_read ? `GET_RK(is_port1_inst) : `GET_RD(is_port2_inst);
-//
-
-//   wire illinst_d;
-//   wire illinst_e;
-//
-//   // illegal instruction exception
-//   assign illinst_d = ifu_exu_op_d[`LSOC1K_INE] && inst_vld_kill_d;
-//   
-//   dff_s #(1) illinst_d2e_reg (
-//      .din (illinst_d),
-//      .clk (clk),
-//      .q   (illinst_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_csr_illinst_e = illinst_e;
-
-
-
+   /////////////////////////
+   // ALU parameters
+   /////////////////////////
    
-//   /////////////////////////
-//   // ALU parameters
-//   /////////////////////////
-//   
-//   
-//   wire [`LSOC1K_ALU_CODE_BIT-1:0] alu_op = ifu_exu_op_d[`LSOC1K_ALU_CODE];
-//
-//
-//
-//   // those imm and rs1 rs2 should be handle in cpu7_exu_byp 
-//   
-//   ////ALU input
-//   //A:
-//   wire alu_a_zero = ifu_exu_op_d[`LSOC1K_LUI];// op_rdpgpr_1 || op_wrpgpr_1; //zero
-//   wire alu_a_pc = ifu_exu_op_d[`LSOC1K_PC_RELATED];
-//
-//   //B:
-//   //wire alu_b_imm = ifu_exu_op_d[`LSOC1K_I5] || ifu_exu_op_d[`LSOC1K_I12] || ifu_exu_op_d[`LSOC1K_I16] || ifu_exu_op_d[`LSOC1K_I20];
-//   wire alu_b_imm = (ifu_exu_op_d[`LSOC1K_I5] || ifu_exu_op_d[`LSOC1K_I12] || ifu_exu_op_d[`LSOC1K_I16] || ifu_exu_op_d[`LSOC1K_I20]) & alu_dispatch_d;
-//
-//   //wire ecl_alu_b_get_a = ifu_exu_op_d[`LSOC1K_ALU_CODE] == `LSOC1K_ALU_EXT;
-//
-//
-//
-//   //assign alu_a = alu_a_pc? ifu_exu_pc_d : rdata0_0_input;
-//   wire [`GRLEN-1:0] alu_a_d = alu_a_pc? ifu_exu_pc_d : irf_ecl_rs1_data_d;
-//
-//   //wire port0_a_lsu_fw;
-//   //assign port0_a_lsu_fw = !alu0_a_pc && rdata0_0_lsu_fw;
-//
-//   //assign alu_b = alu_b_imm? ifu_exu_imm_shifted_d : rdata0_1_input;
-//   wire [`GRLEN-1:0] alu_b_d = alu_b_imm? ifu_exu_imm_shifted_d : irf_ecl_rs2_data_d;
-//
-//   //wire port0_b_lsu_fw;
-//   //assign port0_b_lsu_fw = !alu0_b_imm && rdata0_1_lsu_fw; 
-//
-//
-//   wire alu_double_word_d = ifu_exu_op_d[`LSOC1K_DOUBLE_WORD];
-//   
-//   wire [`GRLEN-1:0] alu_a_e;
-//   wire [`GRLEN-1:0] alu_b_e;
-//
-//   dff_s #(`GRLEN) alu_a_reg (
-//      .din (alu_a_d),
-//      .clk (clk),
-//      .q   (alu_a_e),
-//      .se(), .si(), .so());
-//   
-//   dff_s #(`GRLEN) alu_b_reg (
-//      .din (alu_b_d),
-//      .clk (clk),
-//      .q   (alu_b_e),
-//      .se(), .si(), .so());
-//   
-//   dff_s #(`LSOC1K_ALU_CODE_BIT) alu_op_reg (
-//      .din (alu_op),
-//      .clk (clk),
-//      .q   (ecl_alu_op_e),
-//      .se(), .si(), .so());
-//
-//   dff_s #(`GRLEN) alu_c_reg (
-//      .din (ifu_exu_c_d),
-//      .clk (clk),
-//      .q   (ecl_alu_c_e),
-//      .se(), .si(), .so());
-//   
-//   dff_s #(1) alu_double_word_reg (
-//      .din (alu_double_word_d),
-//      .clk (clk),
-//      .q   (ecl_alu_double_word_e),
-//      .se(), .si(), .so());
-
 
    assign ecl_alu_op_e = ifu_exu_alu_op_e;
    assign ecl_alu_c_e = ifu_exu_alu_c_e;
@@ -311,13 +163,9 @@ module cpu7_exu_ecl(
    //  bypass logic
    //////////////////
 
-//   wire [4:0] rs1_e;
-//   wire [4:0] rs2_e;
 
    wire [`GRLEN-1:0] byp_rs1_data_e;
    wire [`GRLEN-1:0] byp_rs2_data_e;
-
-   //wire  alu_b_imm_e;
 
    wire  ecl_byp_rs1_mux_sel_rf;
    wire  ecl_byp_rs1_mux_sel_m;   
@@ -330,26 +178,7 @@ module cpu7_exu_ecl(
    wire use_other_e;
    
    
-//   dff_s #(5) rs1_d2e_reg (
-//      .din (ecl_irf_rs1_d),
-//      .clk (clk),
-//      .q   (rs1_e),
-//      .se(), .si(), .so());
-//   
-//   dff_s #(5) rs2_d2e_reg (
-//      .din (ecl_irf_rs2_d),
-//      .clk (clk),
-//      .q   (rs2_e),
-//      .se(), .si(), .so());
-//   
-//   dff_s #(1) alu_b_imm_d2e_reg (
-//      .din (alu_b_imm),
-//      .clk (clk),
-//      .q   (alu_b_imm_e),
-//      .se(), .si(), .so());
-   
    cpu7_exu_eclbyplog_rs1 byplog_rs1(
-      //.rs_e           (rs1_e[4:0]             ),
       .rs_e           (ifu_exu_rs1_e[4:0]     ),
       .rd_m           (rd_m[4:0]              ),
       .rd_w           (rd_w[4:0]              ),
@@ -361,11 +190,9 @@ module cpu7_exu_ecl(
       .rs_mux_sel_w   (ecl_byp_rs1_mux_sel_w  )
       );
 
-//   assign use_other_e = alu_b_imm_e | double_read_e;
    assign use_other_e = ifu_exu_alu_b_imm_e | ifu_exu_double_read_e;
 
    cpu7_exu_eclbyplog byplog_rs2(
-      //.rs_e           (rs2_e[4:0]             ),
       .rs_e           (ifu_exu_rs2_e[4:0]     ),
       .rd_m           (rd_m[4:0]              ),
       .rd_w           (rd_w[4:0]              ),
@@ -379,7 +206,6 @@ module cpu7_exu_ecl(
       );
    
    mux3ds #(`GRLEN) mux_rs1_data (.dout(byp_rs1_data_e),
-      //.in0(alu_a_e),
       .in0(ifu_exu_alu_a_e),
       .in1(rd_data_m),
       .in2(ecl_irf_rd_data_w),
@@ -391,7 +217,6 @@ module cpu7_exu_ecl(
    assign ecl_alu_a_e = byp_rs1_data_e;
 
    mux3ds #(`GRLEN) mux_rs2_data (.dout(byp_rs2_data_e),
-      //.in0(alu_b_e),
       .in0(ifu_exu_alu_b_e),
       .in1(rd_data_m),
       .in2(ecl_irf_rd_data_w),
@@ -409,93 +234,17 @@ module cpu7_exu_ecl(
    // LSU
    ///////////////
 
-//   wire lsu_valid_d;
-//   wire lsu_valid_e;
-//   
-//   assign lsu_valid_d = lsu_dispatch_d; // & ifu_exu_valid_d; 
-//   
-//   dff_s #(1) lsu_valid_reg (
-//      .din (lsu_valid_d),
-//      .clk (clk),
-//      .q   (lsu_valid_e),
-//      .se(), .si(), .so());
-//   
-//   assign ecl_lsu_valid_e = lsu_valid_e & (~kill_e); 
    assign ecl_lsu_valid_e = ifu_exu_lsu_valid_e & (~kill_e); 
-
-
-//   wire [`LSOC1K_LSU_CODE_BIT-1:0] lsu_op_d;
-//   wire [`LSOC1K_LSU_CODE_BIT-1:0] lsu_op_e;
-//
-//   assign lsu_op_d = ifu_exu_op_d[`LSOC1K_OP_CODE];
-//   
-//   dff_s #(`LSOC1K_LSU_CODE_BIT) lsu_op_reg (
-//      .din (lsu_op_d),
-//      .clk (clk),
-//      .q   (lsu_op_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_lsu_op_e = lsu_op_e;
    assign ecl_lsu_op_e = ifu_exu_lsu_op_e;
-
-
    assign ecl_lsu_base_e = byp_rs1_data_e;
    
 
-//   wire [`GRLEN-1:0]          ifu_exu_imm_shifted_e;
    wire [`GRLEN-1:0]          lsu_offset_e;
  
-//   assign double_read_d = ifu_exu_op_d[`LSOC1K_DOUBLE_READ] & lsu_dispatch_d;
-   
-//   dff_s #(1) double_read_d2e_reg (
-//      .din (double_read_d),
-//      .clk (clk),
-//      .q   (double_read_e),
-//      .se(), .si(), .so());
-
-//   dff_s #(`GRLEN) imm_shifted_d2e_reg (
-//      .din (ifu_exu_imm_shifted_d),
-//      .clk (clk),
-//      .q   (ifu_exu_imm_shifted_e),
-//      .se(), .si(), .so());
-
-//   assign lsu_offset_e = double_read_e ? byp_rs2_data_e : ifu_exu_imm_shifted_e; 
    assign lsu_offset_e = ifu_exu_double_read_e ? byp_rs2_data_e : ifu_exu_imm_shifted_e; 
    assign ecl_lsu_offset_e = lsu_offset_e;
-
-
    assign ecl_lsu_wdata_e = byp_rs2_data_e;
-
-   
-   
-//   wire [4:0]               lsu_rd_d;
-//   wire [4:0]               lsu_rd_e;
-   
-//   assign lsu_rd_d = ifu_exu_rf_target_d;
-   
-//   dff_s #(5) lsu_rd_d2e_reg (
-//      .din (lsu_rd_d),
-//      .clk (clk),
-//      .q   (lsu_rd_e),
-//      .se(), .si(), .so());
-
-//   assign ecl_lsu_rd_e = lsu_rd_e;
    assign ecl_lsu_rd_e = ifu_exu_lsu_rd_e;
-
-
-
-//   wire lsu_wen_d;
-//   wire lsu_wen_e;
-//   
-//   assign lsu_wen_d = ifu_exu_rf_wen_d;
-//   
-//   dff_s #(1) lsu_wen_d2e_reg (
-//      .din (lsu_wen_d),
-//      .clk (clk),
-//      .q   (lsu_wen_e),
-//      .se(), .si(), .so());
-
-//   assign ecl_lsu_wen_e = lsu_wen_e;
    assign ecl_lsu_wen_e = ifu_exu_lsu_wen_e;
 
    
@@ -504,68 +253,11 @@ module cpu7_exu_ecl(
    // BRU
    //////////////////////
 
-//   wire bru_valid_d;
-//   wire bru_valid_e;
-//
-//   assign bru_valid_d = bru_dispatch_d; // & ifu_exu_valid_d;
-//
-//   dff_s #(1) bru_valid_d2e_reg (
-//      .din (bru_valid_d),
-//      .clk (clk),
-//      .q   (bru_valid_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_bru_valid_e = bru_valid_e & (~kill_e);
    assign ecl_bru_valid_e = ifu_exu_bru_valid_e & (~kill_e);
-
-
-
-//   wire [`LSOC1K_BRU_CODE_BIT-1:0] bru_op_d;
-//   wire [`LSOC1K_BRU_CODE_BIT-1:0] bru_op_e;
-//
-//   assign bru_op_d = ifu_exu_op_d[`LSOC1K_BRU_CODE];
-//   
-//   dff_s #(`LSOC1K_BRU_CODE_BIT) bru_op_d2e_reg (
-//      .din (bru_op_d),
-//      .clk (clk),
-//      .q   (bru_op_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_bru_op_e = bru_op_e;
    assign ecl_bru_op_e = ifu_exu_bru_op_e;
-
-   
    assign ecl_bru_a_e = byp_rs1_data_e;
    assign ecl_bru_b_e = byp_rs2_data_e;
-
-   
-//   wire [`GRLEN-1:0] bru_pc_d;
-//   wire [`GRLEN-1:0] bru_pc_e;
-//
-//   assign bru_pc_d = ifu_exu_pc_d;
-//   
-//   dff_s #(`GRLEN) bru_pc_d2e_reg (
-//      .din (bru_pc_d),
-//      .clk (clk),
-//      .q   (bru_pc_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_bru_pc_e = bru_pc_e;
-     assign ecl_bru_pc_e = ifu_exu_pc_e; 
-   
-
-//   wire [`GRLEN-1:0] bru_offset_d;
-//   wire [`GRLEN-1:0] bru_offset_e;
-//
-//   assign bru_offset_d = ifu_exu_br_offs;
-//
-//   dff_s #(`GRLEN) bru_offset_d2e_reg (
-//      .din (bru_offset_d),
-//      .clk (clk),
-//      .q   (bru_offset_e),
-//      .se(), .si(), .so());
-// 
-//   assign ecl_bru_offset_e = bru_offset_e;
+   assign ecl_bru_pc_e = ifu_exu_pc_e; 
    assign ecl_bru_offset_e = ifu_exu_bru_offset_e;
   
 
@@ -599,27 +291,13 @@ module cpu7_exu_ecl(
    
    
 
-
-   
-
    /////////////////////////
    // MUL
    ////////////////////////
 
-//   wire mul_wen_d;
-//   wire mul_wen_e;
    wire mul_wen_m;
 
-//   assign mul_wen_d = ifu_exu_rf_wen_d & mul_dispatch_d;
-   
-//   dff_s #(1) mul_wen_d2e_reg (
-//      .din (mul_wen_d),
-//      .clk (clk),
-//      .q   (mul_wen_e),
-//      .se(), .si(), .so());
-   
    dff_s #(1) mul_wen_e2m_reg (
-      //.din (mul_wen_e),
       .din (ifu_exu_mul_wen_e),
       .clk (clk),
       .q   (mul_wen_m),
@@ -629,97 +307,20 @@ module cpu7_exu_ecl(
    assign byp_mul_a_e = byp_rs1_data_e;
    assign byp_mul_b_e = byp_rs2_data_e;
    
-//   wire mul_valid_d;
-//   wire mul_valid_e;
    wire mul_valid_m;
 
-//   assign mul_valid_d = mul_dispatch_d;
-   
-//   dff_s #(1) mul_valid_d2e_reg (
-//      .din (mul_valid_d),
-//      .clk (clk),
-//      .q   (mul_valid_e),
-//      .se(), .si(), .so());
-   
-//   assign ecl_mul_valid_e = mul_valid_e & (~kill_e);
    assign ecl_mul_valid_e = ifu_exu_mul_valid_e & (~kill_e);
    
    dff_s #(1) mul_valid_e2m_reg (
-      //.din (mul_valid_e),
       .din (ecl_mul_valid_e),
       .clk (clk),
       .q   (mul_valid_m),
       .se(), .si(), .so());
    
 
-//   wire [`LSOC1K_MDU_CODE_BIT-1:0] mul_op_d;
-//   assign mul_op_d = ifu_exu_op_d[`LSOC1K_MDU_CODE];
-//
-//   wire mul_signed_d;
-//   wire mul_signed_e;
-//
-//   wire mul_double_d;
-//   wire mul_double_e;
-//
-//   wire mul_hi_d;
-//   wire mul_hi_e;
-//
-//   wire mul_short_d;
-//   wire mul_short_e;
-//   
-//
-//   assign mul_signed_d = mul_op_d == `LSOC1K_MDU_MUL_W     ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_W    ||
-//			 mul_op_d == `LSOC1K_MDU_MUL_D     ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_D    ||
-//			 mul_op_d == `LSOC1K_MDU_MULW_D_W  ;
-//   assign mul_double_d = mul_op_d == `LSOC1K_MDU_MUL_D     ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_D    ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_DU   ;
-//   assign mul_hi_d     = mul_op_d == `LSOC1K_MDU_MULH_W    ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_WU   ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_D    ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_DU   ;
-//   assign mul_short_d  = mul_op_d == `LSOC1K_MDU_MUL_W     ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_W    ||
-//			 mul_op_d == `LSOC1K_MDU_MULH_WU   ;
-//
-
-//   dff_s #(1) mul_signed_d2e_reg (
-//      .din (mul_signed_d),
-//      .clk (clk),
-//      .q   (mul_signed_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_mul_signed_e = mul_signed_e;
    assign ecl_mul_signed_e = ifu_exu_mul_signed_e;
-
-//   dff_s #(1) mul_double_d2e_reg (
-//      .din (mul_double_d),
-//      .clk (clk),
-//      .q   (mul_double_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_mul_double_e = mul_double_e;
    assign ecl_mul_double_e = ifu_exu_mul_double_e;
-   
-   
-//   dff_s #(1) mul_hi_d2e_reg (
-//      .din (mul_hi_d),
-//      .clk (clk),
-//      .q   (mul_hi_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_mul_hi_e = mul_hi_e;
    assign ecl_mul_hi_e = ifu_exu_mul_hi_e;
-
-//   dff_s #(1) mul_short_d2e_reg (
-//      .din (mul_short_d),
-//      .clk (clk),
-//      .q   (mul_short_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_mul_short_e = mul_short_e;
    assign ecl_mul_short_e = ifu_exu_mul_short_e;
 
 
@@ -730,21 +331,11 @@ module cpu7_exu_ecl(
 
    //
    // csrrd
-   
-//   wire csr_valid_d;
-//   wire csr_valid_e;
+   //
+
    wire ecl_csr_valid_e;
    wire csr_valid_m;
 
-//   assign csr_valid_d = none_dispatch_d;
-
-//   dff_s #(1) csr_valid_d2e_reg (
-//      .din (csr_valid_d),
-//      .clk (clk),
-//      .q   (csr_valid_e),
-//      .se(), .si(), .so());
-//
-//   assign ecl_csr_valid_e = csr_valid_e & (~kill_e);
    assign ecl_csr_valid_e = ifu_exu_csr_valid_e & (~kill_e);
 
    dff_s #(1) csr_valid_e2m_reg (
@@ -753,46 +344,14 @@ module cpu7_exu_ecl(
       .q   (csr_valid_m),
       .se(), .si(), .so());
 
-
    
    
    wire [`GRLEN-1:0]             csr_rdata_d;
    wire [`GRLEN-1:0]             csr_rdata_e;
    wire [`GRLEN-1:0]             csr_rdata_m;
    
-//   assign ecl_csr_raddr_d = `GET_CSR(ifu_exu_inst_d);
    assign ecl_csr_raddr_d = ifu_exu_csr_raddr_d;
-
-//   //
-//   // byp logic based on csr addr
-//
-//   wire ecl_byp_muxcsr_sel_csrrf;
-//   wire ecl_byp_muxcsr_sel_e;
-//   wire ecl_byp_muxcsr_sel_m;
-//
-//   cpu7_csr_byplog csrbyplog(
-//      .csr_raddr_d       (ecl_csr_raddr_d          ),
-//      .csr_waddr_e       (csr_waddr_e              ),
-//      .csr_waddr_m       (csr_waddr_m              ),
-//      .csr_wen_e         (csr_wen_e                ),
-//      .csr_wen_m         (csr_wen_m                ),
-//      
-//      .csr_mux_sel_csrrf (ecl_byp_muxcsr_sel_csrrf ),
-//      .csr_mux_sel_e     (ecl_byp_muxcsr_sel_e     ),
-//      .csr_mux_sel_m     (ecl_byp_muxcsr_sel_m     )
-//      );
-//
-//   mux3ds #(`GRLEN) mux_csr_rdata(.dout(csr_rdata_d),
-//      .in0(csr_byp_rdata_d),
-//      .in1(csr_wdata_e),
-//      .in2(csr_wdata_m),
-//      .sel0(ecl_byp_muxcsr_sel_csrrf),
-//      .sel1(ecl_byp_muxcsr_sel_e),
-//      .sel2(ecl_byp_muxcsr_sel_m)
-//      );
-   
    assign csr_rdata_d = csr_byp_rdata_d;
-
 
    
    dff_s #(`GRLEN) csr_rdata_d2e_reg (
@@ -800,7 +359,6 @@ module cpu7_exu_ecl(
       .clk (clk),
       .q   (csr_rdata_e),
       .se(), .si(), .so());
-   
    
    dff_s #(`GRLEN) csr_rdata_e2m_reg (
       .din (csr_rdata_e),
@@ -815,20 +373,9 @@ module cpu7_exu_ecl(
    // CSR's rd follows ALU rd's datapath
 
    // CSR rd wen
-//   wire csr_rdwen_d;
-//   wire csr_rdwen_e;
    wire csr_rdwen_m;
 
-//   assign csr_rdwen_d = ifu_exu_rf_wen_d & none_dispatch_d;
-
-//   dff_s #(1) csr_rdwen_d2e_reg (
-//      .din (csr_rdwen_d),
-//      .clk (clk),
-//      .q   (csr_rdwen_e),
-//      .se(), .si(), .so());
-
    dff_s #(1) csr_rdwen_e2m_reg (
-      //.din (csr_rdwen_e),
       .din (ifu_exu_csr_rdwen_e),
       .clk (clk),
       .q   (csr_rdwen_m),
@@ -837,34 +384,15 @@ module cpu7_exu_ecl(
 
    //
    // csrwr csrxchg
-   
-//   wire [`LSOC1K_CSR_OP_BIT-1:0] csr_op_d;
-//
-//   assign csr_op_d = ifu_exu_op_d[`LSOC1K_CSR_XCHG ] ? `LSOC1K_CSR_CSRXCHG :
-//		     ifu_exu_op_d[`LSOC1K_CSR_WRITE] ? `LSOC1K_CSR_CSRWR   :
-//		     ifu_exu_op_d[`LSOC1K_CSR_READ ] ? `LSOC1K_CSR_CSRRD   :
-//		     `LSOC1K_CSR_IDLE    ;
-   
-//   wire csr_xchg_d;
-//   wire csr_xchg_e;
+   //
    
    wire [`GRLEN-1:0] csr_mask_e;
    wire [`GRLEN-1:0] csr_mask_m;
-   
-//   assign csr_xchg_d = ifu_exu_op_d[`LSOC1K_CSR_XCHG];
-//   
-//   dff_s #(1) csr_xchg_d2e_reg (
-//      .din (csr_xchg_d),
-//      .clk (clk),
-//      .q   (csr_xchg_e),
-//      .se(), .si(), .so());
    
 
    // according to the handbook
    // csrwr is a special csrxchg, that has a full mask.
 
-   //assign csr_mask_e = byp_rs1_data_e;
-   //assign csr_mask_e = csr_xchg_e ? byp_rs1_data_e : `GRLEN'hFFFFFFFF;
    assign csr_mask_e = ifu_exu_csr_xchg_e ? byp_rs1_data_e : `GRLEN'hFFFFFFFF;
 
    dff_s #(`GRLEN) csr_mask_e2m_reg (
@@ -880,7 +408,6 @@ module cpu7_exu_ecl(
    wire [`GRLEN-1:0] csr_wdata_m;
    
    assign csr_wdata_e = byp_rs2_data_e;
-   //assign csr_wdata_e = csr_xchg_e ? (csr_mask_e & byp_rs2_data_e) : byp_rs2_data_e;
 
    dff_s #(`GRLEN) csr_wdata_e2m_reg (
       .din (csr_wdata_e),
@@ -892,17 +419,7 @@ module cpu7_exu_ecl(
    
 
    // csr wen
-//   wire csr_wen_d;
-//   wire csr_wen_e;
    wire csr_wen_m;
-
-//   assign csr_wen_d = (ifu_exu_op_d[`LSOC1K_CSR_XCHG] | ifu_exu_op_d[`LSOC1K_CSR_WRITE]) & csr_valid_d;
-   
-//   dff_s #(1) csr_wen_d2e_reg (
-//      .din (csr_wen_d),
-//      .clk (clk),
-//      .q   (csr_wen_e),
-//      .se(), .si(), .so());
 
    dff_s #(1) csr_wen_e2m_reg (
       //.din (csr_wen_e),
@@ -915,17 +432,7 @@ module cpu7_exu_ecl(
    
    
    // waddr is the same as raddr
-//   wire [`LSOC1K_CSR_BIT-1:0]    csr_waddr_d;
-//   wire [`LSOC1K_CSR_BIT-1:0]    csr_waddr_e;
    wire [`LSOC1K_CSR_BIT-1:0]    csr_waddr_m;
-   
-//   assign csr_waddr_d = `GET_CSR(ifu_exu_inst_d);
-
-//   dff_s #(`LSOC1K_CSR_BIT) csr_waddr_d2e_reg (
-//      .din (csr_waddr_d),
-//      .clk (clk),
-//      .q   (csr_waddr_e),
-//      .se(), .si(), .so());
    
    dff_s #(`LSOC1K_CSR_BIT) csr_waddr_e2m_reg (
       //.din (csr_waddr_e),
@@ -936,16 +443,14 @@ module cpu7_exu_ecl(
 
    assign ecl_csr_waddr_m = csr_waddr_m;
    
-   
-
 
    //
    // csr stall req
+   //
    
    wire csr_stall_req;
    wire csr_stall_req_next;
 
-   //assign csr_stall_req_next = (csr_wen_e) | (csr_stall_req & ~csr_wen_m);
    assign csr_stall_req_next = (ifu_exu_csr_wen_e) | (csr_stall_req & ~csr_wen_m);
    
    dffr_s #(1) csr_stall_req_reg (
@@ -953,9 +458,6 @@ module cpu7_exu_ecl(
       .clk (clk),
       .q   (csr_stall_req),
       .se(), .si(), .so(), .rst (~resetn));
-
-   
-
 
    
    
@@ -967,17 +469,9 @@ module cpu7_exu_ecl(
    //  rf_target rd_data rf_wen
    //  only for ALU instructions
    //
-//   wire [4:0] rf_target_e;
    wire [4:0] rf_target_m;
    
-//   dff_s #(5) rd_d2e_reg (
-//      .din (ifu_exu_rf_target_d),
-//      .clk (clk),
-//      .q   (rf_target_e),
-//      .se(), .si(), .so());
-   
    dff_s #(5) rd_e2m_reg (
-      //.din (rf_target_e),
       .din (ifu_exu_rf_target_e),
       .clk (clk),
       .q   (rf_target_m),
@@ -986,21 +480,11 @@ module cpu7_exu_ecl(
   
    //
    // rf_wen, only for ALU instructions
+   //
    
-//   wire alu_wen_d;
-//   wire alu_wen_e;
    wire ecl_alu_wen_e;
    wire alu_wen_m;
    
-//   assign alu_wen_d = ifu_exu_rf_wen_d & alu_dispatch_d;
-   
-//   dff_s #(1) alu_wen_d2e_reg (
-//      .din (alu_wen_d),
-//      .clk (clk),
-//      .q   (alu_wen_e),
-//      .se(), .si(), .so());
-
-//   assign ecl_alu_wen_e = alu_wen_e & (~kill_e);
    assign ecl_alu_wen_e = ifu_exu_alu_wen_e & (~kill_e);
    
    dff_s #(1) alu_wen_e2m_reg (
@@ -1009,9 +493,8 @@ module cpu7_exu_ecl(
       .q   (alu_wen_m),
       .se(), .si(), .so());
 
-   //
-   // alu_res_m, only for ALU instructions
 
+   // alu_res_m, only for ALU instructions
    wire [`GRLEN-1:0] alu_res_m;
 
    dff_s #(`GRLEN) rd_data_e2m_reg (
@@ -1019,8 +502,6 @@ module cpu7_exu_ecl(
       .clk (clk),
       .q   (alu_res_m),
       .se(), .si(), .so());
-
-
 
 
    
@@ -1060,13 +541,6 @@ module cpu7_exu_ecl(
    // wen mux
    //
    
-   
-//   dp_mux2es #(1) wen_mux(
-//      .dout (wen_m),
-//      .in0  (alu_wen_m),
-//      .in1  (lsu_ecl_wen_m),
-//      .sel  (lsu_ecl_finish_m));
-   
    // set the wen if any module claims it
    assign wen_m = alu_wen_m | (lsu_ecl_wen_m & lsu_ecl_finish_m) | bru_wen_m | mul_wen_m | csr_rdwen_m;
    
@@ -1082,7 +556,6 @@ module cpu7_exu_ecl(
    //
    // rd_data mux
    //
-   
    
 
    wire rddata_sel_alu_res_m_l;
@@ -1199,8 +672,6 @@ module cpu7_exu_ecl(
 
    assign intr_in = csr_ecl_timer_intr; // | external_interrupt
    assign intr_hold_in = intr_in & (~ifu_exu_valid_e);
-   //assign intr_hold_en = intr_in & (~ifu_exu_valid_e); // if intr_in and ifu_exu_valid_e come at the same time, no need to hold
-   //assign intr_hold_en = (intr_in | ifu_exu_valid_e) & (~(intr_in & ifu_exu_valid_e));
    assign intr_hold_en = intr_in | ifu_exu_valid_e;
 
    assign intr = (intr_in & ifu_exu_valid_e) | (intr_hold_q & ifu_exu_valid_e);
@@ -1224,8 +695,6 @@ module cpu7_exu_ecl(
    assign exu_ifu_except = lsu_ecl_ale_e | ecl_csr_illinst_e | intr;
    assign ecl_csr_ale_e = lsu_ecl_ale_e;
    
-   //assign kill_d = (ecl_bru_valid_e & bru_ecl_br_taken_e) // if branch is taken, kill the instruction at the pipeline _d stage.
-   //              | exu_ifu_except; //| intr;
                  
    // BUG FIX
    // exu_ifu_except consists of lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr, lsu_ecl_ale_e is signal from _e
@@ -1246,20 +715,7 @@ module cpu7_exu_ecl(
    // ernt (eret) 
    //
 
-//   wire ertn_valid_d;
-//   wire ertn_valid_e;
-
-//   assign ertn_valid_d = ertn_dispatch_d;
-   
-//   dff_s #(1) ertn_valid_d2e_reg (
-//      .din (ertn_valid_d),
-//      .clk (clk),
-//      .q   (ertn_valid_e),
-//      .se(), .si(), .so());
-   
-//   assign exu_ifu_ertn_e = ertn_valid_e;
-//   assign ecl_csr_ertn_e = ertn_valid_e;
-   assign exu_ifu_ertn_e = ifu_exu_ertn_valid_e; // code review
+   assign exu_ifu_ertn_e = ifu_exu_ertn_valid_e; // code review: exu_ifu_ertn_e is unnecessary
    assign ecl_csr_ertn_e = ifu_exu_ertn_valid_e;
    
 endmodule // cpu7_exu_ecl

@@ -28,24 +28,6 @@ module cpu7_ifu(
    input  [`GRLEN-1:0]                 exu_ifu_era,
    input                               exu_ifu_ertn_e,
    
-   // port0
-//   output                              ifu_exu_valid_d,
-//   output [31:0]                       ifu_exu_inst_d,
-//   output [`GRLEN-1:0]                 ifu_exu_pc_d,
-//   output [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
-//   output                              ifu_exu_exception_d,
-//   output [5 :0]                       ifu_exu_exccode_d,
-//   output [`GRLEN-3:0]                 ifu_exu_br_target_d,
-//   output                              ifu_exu_br_taken_d,
-//   output                              ifu_exu_rf_wen_d,
-//   output [4:0]                        ifu_exu_rf_target_d,
-//   output [`LSOC1K_PRU_HINT-1:0]       ifu_exu_hint_d,
-
-//   output [31:0]                       ifu_exu_imm_shifted_d,
-//   output [`GRLEN-1:0]                 ifu_exu_c_d,
-//   output [`GRLEN-1:0]                 ifu_exu_br_offs,
-
-  
    output                              ifu_exu_valid_e,
 
    output [`GRLEN-1:0]                 ifu_exu_alu_a_e,
@@ -108,11 +90,8 @@ module cpu7_ifu(
    );
 
 
-
-//   wire                              ifu_exu_valid_d,
-   wire [31:0]                       ifu_exu_inst_d;
-   wire [`GRLEN-1:0]                 ifu_exu_pc_d;
-//   wire [`LSOC1K_DECODE_RES_BIT-1:0] ifu_exu_op_d,
+   wire [31:0] ifu_exu_inst_d;
+   wire [`GRLEN-1:0] ifu_exu_pc_d;
 
    wire fdp_dec_inst_vld_kill_d;
 
@@ -143,7 +122,6 @@ module cpu7_ifu(
       .inst_ex          (inst_ex           ),
       .inst_exccode     (inst_exccode      ),
 
-//      .ifu_exu_valid_d  (ifu_exu_valid_d   ),
       .ifu_exu_pc_d     (ifu_exu_pc_d      ),
       .ifu_exu_inst_d   (ifu_exu_inst_d    ),
 
@@ -163,13 +141,9 @@ module cpu7_ifu(
       .resetn                (resetn            ),
 
       .ifu_exu_inst_d       (ifu_exu_inst_d      ),
-//      .ifu_exu_op_d         (ifu_exu_op_d        ),
 
       .ifu_exu_pc_d             (ifu_exu_pc_d             ),
       .fdp_dec_inst_vld_kill_d  (fdp_dec_inst_vld_kill_d  ),
-
-//      .ifu_exu_rf_wen_d     (ifu_exu_rf_wen_d    ),
-//      .ifu_exu_rf_target_d  (ifu_exu_rf_target_d ),
 
       .ifu_exu_alu_a_e          (ifu_exu_alu_a_e          ), 
       .ifu_exu_alu_b_e          (ifu_exu_alu_b_e          ), 
@@ -225,15 +199,5 @@ module cpu7_ifu(
 
       );
 
-
-
-//   // cpu7_ifu_imd, decode offset imm
-//   cpu7_ifu_imd imd(
-//      .ifu_exu_inst_d        (ifu_exu_inst_d        ),
-//      .ifu_exu_op_d          (ifu_exu_op_d          ),
-//      .ifu_exu_imm_shifted_d (ifu_exu_imm_shifted_d ),
-//      .ifu_exu_c_d           (ifu_exu_c_d           ),
-//      .ifu_exu_br_offs       (ifu_exu_br_offs       )
-//      );
    
 endmodule // cpu7_ifu

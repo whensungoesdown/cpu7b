@@ -316,3 +316,9 @@ u@uu:~/prjs/cpu7b/simulation/test0$ ./simulate.sh
 `````shell
 u@uu:~/prjs/cpu7b/simulation/test0$ ./viewwave.sh
 `````
+
+---------------------------
+---------------------------
+---------------------------
+
+
