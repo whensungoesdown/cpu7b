@@ -101,7 +101,7 @@ module cpu7_csr(
    // CRMD.plv
 
    wire                   crmd_plv_msk_wen;
-   assign crmd_plv_msk_wen = csr_mask[`CRMD_PLV] & crmd_wen;
+   assign crmd_plv_msk_wen = |csr_mask[`CRMD_PLV] & crmd_wen; // plv 2bits
    
    wire [1:0]             crmd_plv;
    wire [1:0]             crmd_plv_wdata;
@@ -180,7 +180,7 @@ module cpu7_csr(
 
 
    wire prmd_pplv_msk_wen;
-   assign prmd_pplv_msk_wen = csr_mask[`LSOC1K_PRMD_PPLV] & prmd_wen;
+   assign prmd_pplv_msk_wen = |csr_mask[`LSOC1K_PRMD_PPLV] & prmd_wen;
 
    assign prmd_pplv_wdata = csr_wdata[`LSOC1K_PRMD_PPLV];
 
@@ -359,7 +359,7 @@ module cpu7_csr(
 
 
    assign tcfg = {
-	         `GRLEN-`TIMER_BIT-2'b0,
+	         //`GRLEN-`TIMER_BIT-2'b0,
 	         tcfg_initval,
 		 tcfg_periodic,
 		 tcfg_en
@@ -389,7 +389,7 @@ module cpu7_csr(
    wire [`GRLEN-1:0]           tval;
 
    assign tval = {
-                 `GRLEN-`TIMER_BIT-2'b0,
+                 //`GRLEN-`TIMER_BIT'b0,
 	         timeval
 	         };
 	         

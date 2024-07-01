@@ -68,7 +68,6 @@ wire fdp_dec_exception = 1'b0;
 wire [5 :0] fdp_dec_exccode = 6'b0;
 
 // define
-wire rst = !resetn;
 wire [`LSOC1K_DECODE_RES_BIT-1:0] port0_op;
 
 wire alu_dispatch_d;
