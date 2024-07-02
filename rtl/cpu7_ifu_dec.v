@@ -63,28 +63,9 @@ module cpu7_ifu_dec(
    );
 
 
-   wire int_except = 1'b0;
-   wire fdp_dec_exception = 1'b0;
-   wire [5 :0] fdp_dec_exccode = 6'b0;
-
    wire [`LSOC1K_DECODE_RES_BIT-1:0] op_d;
 
-   wire alu_dispatch_d;
-   wire lsu_dispatch_d; 
-   wire bru_dispatch_d;
-   wire mul_dispatch_d; 
-   wire div_dispatch_d; 
-   wire none_dispatch_d;
-   wire ertn_dispatch_d;
-
-
-   ////func
    decoder u_decoder(.inst(fdp_dec_inst_d), .res(op_d)); //decode the inst
-
-   //reg file related
-   wire rf_wen0 = op_d[`LSOC1K_GR_WEN];
-
-   wire [4:0] waddr0 = (op_d[`LSOC1K_BRU_RELATED] && (op_d[`LSOC1K_BRU_CODE] == `LSOC1K_BRU_BL)) ? 5'd1 : `GET_RD(fdp_dec_inst_d);
 
 
 ////// crash check
@@ -126,15 +107,7 @@ module cpu7_ifu_dec(
 //                                                       6'd0              ;
 
 
-// ifu_exu_exception_e
-// ifu_exu_exccode_e
 
-   wire [4:0] rf_target_d; 
-   wire rf_wen_d;
-
-
-   assign rf_wen_d = rf_wen0;
-   assign rf_target_d = {5{rf_wen0}}&waddr0;
 
 
    wire [`GRLEN-1:0] alu_c_d;
@@ -152,6 +125,14 @@ module cpu7_ifu_dec(
       );
    
 
+   wire alu_dispatch_d;
+   wire lsu_dispatch_d; 
+   wire bru_dispatch_d;
+   wire mul_dispatch_d; 
+   wire div_dispatch_d; 
+   wire none_dispatch_d;
+   wire ertn_dispatch_d;
+
    assign alu_dispatch_d  = !op_d[`LSOC1K_LSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception; // alu0 is binded to port0
    assign lsu_dispatch_d  = op_d[`LSOC1K_LSU_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception;
    assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception;
@@ -161,8 +142,11 @@ module cpu7_ifu_dec(
    assign ertn_dispatch_d = op_d[`LSOC1K_ERET] && fdp_dec_inst_vld_kill_d;
 
 
-   ////register interface
-   // common registers
+
+
+   wire       rf_wen_d = op_d[`LSOC1K_GR_WEN];
+   wire [4:0] rf_target_d = (op_d[`LSOC1K_BRU_RELATED] && (op_d[`LSOC1K_BRU_CODE] == `LSOC1K_BRU_BL)) ? 5'd1 : `GET_RD(fdp_dec_inst_d);
+
 
    wire [4:0] rs1_d;
    wire [4:0] rs2_d;
@@ -172,23 +156,6 @@ module cpu7_ifu_dec(
 
    assign ifu_exu_rs1_d = rs1_d;
    assign ifu_exu_rs2_d = rs2_d;
-
-
-   // code review illinst exception should go through excode
-   wire illinst_d;
-   wire illinst_e;
-
-   // illegal instruction exception
-   assign illinst_d = op_d[`LSOC1K_INE] && fdp_dec_inst_vld_kill_d;
-   
-   dff_s #(1) illinst_d2e_reg (
-      .din (illinst_d),
-      .clk (clk),
-      .q   (illinst_e),
-      .se(), .si(), .so());
-
-//   assign ecl_csr_illinst_e = illinst_e;
-   assign ifu_exu_illinst_e = illinst_e;
 
 
 
@@ -396,7 +363,6 @@ module cpu7_ifu_dec(
    wire lsu_wen_d;
    wire lsu_wen_e;
    
-   //assign lsu_wen_d = rf_wen_d;
    assign lsu_wen_d = rf_wen_d & lsu_dispatch_d;
    
    dff_s #(1) lsu_wen_d2e_reg (
@@ -687,5 +653,47 @@ module cpu7_ifu_dec(
       .se(), .si(), .so());
 
    assign ifu_exu_ertn_valid_e = ertn_valid_e;
+
+
+
+
+
+
+   //
+   // Exceptions
+   //
+
+
+   // code review illinst exception should go through excode
+   wire illinst_d;
+   wire illinst_e;
+
+   // illegal instruction exception
+   assign illinst_d = op_d[`LSOC1K_INE] && fdp_dec_inst_vld_kill_d;
+   
+   dff_s #(1) illinst_d2e_reg (
+      .din (illinst_d),
+      .clk (clk),
+      .q   (illinst_e),
+      .se(), .si(), .so());
+
+//   assign ecl_csr_illinst_e = illinst_e;
+   assign ifu_exu_illinst_e = illinst_e;
+
+
+   //wire int_except = 1'b0;
+   wire       fdp_dec_exception_f = 1'b0;
+   wire [5:0] fdp_dec_exccode_f = 6'b0;
+
+   wire       exception_d;
+   wire [5:0] exccode_d;
+
+   assign exception_d = fdp_dec_exception_f | op_d[`LSOC1K_SYSCALL] | op_d[`LSOC1K_BREAK ] | op_d[`LSOC1K_INE]; // || int_except;
+   assign exccode_d = //int_except                ? `EXC_INT          :  // interrupt send into EXU
+                      fdp_dec_exception_f   ? fdp_dec_exccode_f : // exceptions that happens at _f, like cache related 
+                      op_d[`LSOC1K_SYSCALL] ? `EXC_SYS          :
+                      op_d[`LSOC1K_BREAK  ] ? `EXC_BRK          :
+                      op_d[`LSOC1K_INE    ] ? `EXC_INE          :
+                                              6'd0              ;
 
 endmodule // cpu7_ifu_dec
