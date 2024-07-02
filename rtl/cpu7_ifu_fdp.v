@@ -27,8 +27,8 @@ module cpu7_ifu_fdp(
    input  [`GRLEN-1:0]    exu_ifu_era    ,
    input                  exu_ifu_ertn_e ,
 
-   output [`GRLEN-1:0]    ifu_exu_pc_d,
-   output [`GRLEN-1:0]    ifu_exu_inst_d,
+   output [`GRLEN-1:0]    fdp_dec_pc_d,
+   output [`GRLEN-1:0]    fdp_dec_inst_d,
 
    output                 fdp_dec_inst_vld_kill_d,
 
@@ -141,7 +141,7 @@ module cpu7_ifu_fdp(
       .en  (pc_f2d_en), 
       .se(), .si(), .so());
 
-   assign ifu_exu_pc_d = pc_d;
+   assign fdp_dec_pc_d = pc_d;
    
 
    wire pc_d2e_en;
@@ -232,15 +232,15 @@ module cpu7_ifu_fdp(
    // Fetched Instruction Datapath
    //===================================================
    
-   wire [31:0] ifu_fdp_inst_f;
-   assign ifu_fdp_inst_f = inst_rdata_f[31:0];
+   wire [31:0] inst_f;
+   assign inst_f = inst_rdata_f[31:0];
 
 
    dffe_s #(32) inst_f2d_reg (
-      .din (ifu_fdp_inst_f),
+      .din (inst_f),
       .en  (inst_vld_kill_f),
       .clk (clk),
-      .q   (ifu_exu_inst_d),
+      .q   (fdp_dec_inst_d),
       .se(), .si(), .so());
 
    

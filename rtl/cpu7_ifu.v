@@ -90,9 +90,8 @@ module cpu7_ifu(
    );
 
 
-   wire [31:0] ifu_exu_inst_d;
-   wire [`GRLEN-1:0] ifu_exu_pc_d;
-
+   wire [31:0] fdp_dec_inst_d;
+   wire [`GRLEN-1:0] fdp_dec_pc_d;
    wire fdp_dec_inst_vld_kill_d;
 
    cpu7_ifu_fdp fdp(
@@ -122,8 +121,8 @@ module cpu7_ifu(
       .inst_ex          (inst_ex           ),
       .inst_exccode     (inst_exccode      ),
 
-      .ifu_exu_pc_d     (ifu_exu_pc_d      ),
-      .ifu_exu_inst_d   (ifu_exu_inst_d    ),
+      .fdp_dec_pc_d     (fdp_dec_pc_d      ),
+      .fdp_dec_inst_d   (fdp_dec_inst_d    ),
 
       .fdp_dec_inst_vld_kill_d  (fdp_dec_inst_vld_kill_d  ),
 
@@ -140,9 +139,9 @@ module cpu7_ifu(
       .clk                   (clock             ),
       .resetn                (resetn            ),
 
-      .ifu_exu_inst_d       (ifu_exu_inst_d      ),
+      .fdp_dec_inst_d       (fdp_dec_inst_d      ),
 
-      .ifu_exu_pc_d             (ifu_exu_pc_d             ),
+      .fdp_dec_pc_d             (fdp_dec_pc_d             ),
       .fdp_dec_inst_vld_kill_d  (fdp_dec_inst_vld_kill_d  ),
 
       .ifu_exu_alu_a_e          (ifu_exu_alu_a_e          ), 

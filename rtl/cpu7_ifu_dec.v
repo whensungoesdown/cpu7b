@@ -4,9 +4,9 @@
 module cpu7_ifu_dec(
    input                                clk,
    input                                resetn,
-   input  [31:0]                        ifu_exu_inst_d,
+   input  [31:0]                        fdp_dec_inst_d,
 
-   input [`GRLEN-1:0]                   ifu_exu_pc_d,
+   input [`GRLEN-1:0]                   fdp_dec_pc_d,
    input                                fdp_dec_inst_vld_kill_d,
 
    output [`GRLEN-1:0]                  ifu_exu_alu_a_e,
@@ -63,70 +63,67 @@ module cpu7_ifu_dec(
    );
 
 
-wire int_except = 1'b0;
-wire fdp_dec_exception = 1'b0;
-wire [5 :0] fdp_dec_exccode = 6'b0;
+   wire int_except = 1'b0;
+   wire fdp_dec_exception = 1'b0;
+   wire [5 :0] fdp_dec_exccode = 6'b0;
 
-// define
-wire [`LSOC1K_DECODE_RES_BIT-1:0] port0_op;
+   wire [`LSOC1K_DECODE_RES_BIT-1:0] port0_op;
 
-wire alu_dispatch_d;
-wire lsu_dispatch_d; 
-wire bru_dispatch_d;
-wire mul_dispatch_d; 
-wire div_dispatch_d; 
-wire none_dispatch_d;
-wire ertn_dispatch_d;
-
+   wire alu_dispatch_d;
+   wire lsu_dispatch_d; 
+   wire bru_dispatch_d;
+   wire mul_dispatch_d; 
+   wire div_dispatch_d; 
+   wire none_dispatch_d;
+   wire ertn_dispatch_d;
 
 
+   ////func
+   decoder u_decoder(.inst(fdp_dec_inst_d), .res(port0_op)); //decode the inst
 
-////func
-decoder port0_decoder(.inst(ifu_exu_inst_d), .res(port0_op)); //decode the inst
+   //reg file related
+   wire rf_wen0 = port0_op[`LSOC1K_GR_WEN];
 
-//reg file related
-wire rf_wen0 = port0_op[`LSOC1K_GR_WEN];
+   wire [4:0] waddr0 = (port0_op[`LSOC1K_BRU_RELATED] && (port0_op[`LSOC1K_BRU_CODE] == `LSOC1K_BRU_BL)) ? 5'd1 : `GET_RD(fdp_dec_inst_d);
 
-wire [4:0] waddr0 = (port0_op[`LSOC1K_BRU_RELATED] && (port0_op[`LSOC1K_BRU_CODE] == `LSOC1K_BRU_BL)) ? 5'd1 : `GET_RD(ifu_exu_inst_d);
 
-//// crash check
-// exception
-//wire port0_fpd = !csr_output[`LSOC1K_CSR_OUTPUT_EUEN_FPE] && port0_op[`LSOC1K_FLOAT];
+////// crash check
+//// exception
+////wire port0_fpd = !csr_output[`LSOC1K_CSR_OUTPUT_EUEN_FPE] && port0_op[`LSOC1K_FLOAT];
+////
+////`ifdef LA64
+////wire port0_ipe = ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd1) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL1] && port0_op[`LSOC1K_RDTIME]) ||
+////                 ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd2) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL2] && port0_op[`LSOC1K_RDTIME]) ||
+////                 ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd3) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL3] && port0_op[`LSOC1K_RDTIME]) ;
+////`elsif LA32
+////wire port0_ipe = 1'B0;//(csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] != 2'd0) && (port0_op[`LSOC1K_CSR_READ] || port0_op[`LSOC1K_CACHE_RELATED] || port0_op[`LSOC1K_TLB_RELATED] || port0_op[`LSOC1K_WAIT] || port0_op[`LSOC1K_ERET]);
+////
+////`endif
 //
-//`ifdef LA64
-//wire port0_ipe = ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd1) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL1] && port0_op[`LSOC1K_RDTIME]) ||
-//                 ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd2) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL2] && port0_op[`LSOC1K_RDTIME]) ||
-//                 ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd3) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL3] && port0_op[`LSOC1K_RDTIME]) ;
-//`elsif LA32
-//wire port0_ipe = 1'B0;//(csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] != 2'd0) && (port0_op[`LSOC1K_CSR_READ] || port0_op[`LSOC1K_CACHE_RELATED] || port0_op[`LSOC1K_TLB_RELATED] || port0_op[`LSOC1K_WAIT] || port0_op[`LSOC1K_ERET]);
 //
-//`endif
-
-
-// uty: review
-// here, port0_exception and port0_excccode both use fdp_dec_exception
-// it may actually need to use ifu_exu_exception_d instead
-// wait until debugging exception code
-   
-//wire port0_exception = fdp_dec_exception   || port0_op[`LSOC1K_SYSCALL] || port0_op[`LSOC1K_BREAK ] || port0_op[`LSOC1K_INE] ||
-//                       port0_fpd || port0_ipe || int_except;
-wire port0_exception = fdp_dec_exception   || port0_op[`LSOC1K_SYSCALL] || port0_op[`LSOC1K_BREAK ] || port0_op[`LSOC1K_INE] || int_except;
-   
-//
+//// uty: review
+//// here, port0_exception and port0_excccode both use fdp_dec_exception
+//// it may actually need to use ifu_exu_exception_d instead
+//// wait until debugging exception code
+//   
+////wire port0_exception = fdp_dec_exception   || port0_op[`LSOC1K_SYSCALL] || port0_op[`LSOC1K_BREAK ] || port0_op[`LSOC1K_INE] ||
+////                       port0_fpd || port0_ipe || int_except;
+//wire port0_exception = fdp_dec_exception   || port0_op[`LSOC1K_SYSCALL] || port0_op[`LSOC1K_BREAK ] || port0_op[`LSOC1K_INE] || int_except;
+//   
+////
+////wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
+////                           fdp_dec_exception       ? fdp_dec_exccode : 
+////                           port0_op[`LSOC1K_SYSCALL] ? `EXC_SYS          :
+////                           port0_op[`LSOC1K_BREAK  ] ? `EXC_BRK          :
+////                           port0_op[`LSOC1K_INE    ] ? `EXC_INE          :
+////                           port0_fpd                 ? `EXC_FPD          :
+////                                                       6'd0              ;
 //wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
-//                           fdp_dec_exception       ? fdp_dec_exccode : 
+//                           fdp_dec_exception         ? fdp_dec_exccode   : 
 //                           port0_op[`LSOC1K_SYSCALL] ? `EXC_SYS          :
 //                           port0_op[`LSOC1K_BREAK  ] ? `EXC_BRK          :
 //                           port0_op[`LSOC1K_INE    ] ? `EXC_INE          :
-//                           port0_fpd                 ? `EXC_FPD          :
 //                                                       6'd0              ;
-wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
-                           fdp_dec_exception         ? fdp_dec_exccode   : 
-                           port0_op[`LSOC1K_SYSCALL] ? `EXC_SYS          :
-                           port0_op[`LSOC1K_BREAK  ] ? `EXC_BRK          :
-                           port0_op[`LSOC1K_INE    ] ? `EXC_INE          :
-                                                       6'd0              ;
-   
 
 
    wire [4:0] rf_target_d; 
@@ -134,9 +131,7 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 
 
    wire [`LSOC1K_DECODE_RES_BIT-1:0] op_d;
-   //assign ifu_exu_op_d = port0_op;
    assign op_d = port0_op;
-   //assign ifu_exu_rf_wen_d = rf_wen0;
    assign rf_wen_d = rf_wen0;
    assign rf_target_d = {5{rf_wen0}}&waddr0;
 
@@ -146,14 +141,13 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
    wire [`GRLEN-1:0] br_offs_d;
 
 
-   // code review: change signal names
    // cpu7_ifu_imd, decode offset imm
    cpu7_ifu_imd u_imd(
-      .ifu_exu_inst_d        (ifu_exu_inst_d        ),
-      .ifu_exu_op_d          (op_d                  ),
-      .ifu_exu_imm_shifted_d (imm_shifted_d         ),
-      .ifu_exu_c_d           (alu_c_d               ),
-      .ifu_exu_br_offs       (br_offs_d             )
+      .inst              (fdp_dec_inst_d        ),
+      .op                (op_d                  ),
+      .imm_shifted       (imm_shifted_d         ),
+      .alu_c             (alu_c_d               ),
+      .br_offs           (br_offs_d             )
       );
    
 
@@ -171,10 +165,9 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 
    wire [4:0] rs1_d;
    wire [4:0] rs2_d;
-   //assign ecl_irf_rs1_d = op_d[`LSOC1K_RD2RJ  ] ? `GET_RD(ifu_exu_inst_d) : `GET_RJ(ifu_exu_inst_d);
-   assign rs1_d = op_d[`LSOC1K_RD2RJ  ] ? `GET_RD(ifu_exu_inst_d) : `GET_RJ(ifu_exu_inst_d);
-   //assign ecl_irf_rs2_d = op_d[`LSOC1K_RD_READ] ? `GET_RD(ifu_exu_inst_d) : `GET_RK(ifu_exu_inst_d);
-   assign rs2_d = op_d[`LSOC1K_RD_READ] ? `GET_RD(ifu_exu_inst_d) : `GET_RK(ifu_exu_inst_d);
+
+   assign rs1_d = op_d[`LSOC1K_RD2RJ  ] ? `GET_RD(fdp_dec_inst_d) : `GET_RJ(fdp_dec_inst_d);
+   assign rs2_d = op_d[`LSOC1K_RD_READ] ? `GET_RD(fdp_dec_inst_d) : `GET_RK(fdp_dec_inst_d);
 
    assign ifu_exu_rs1_d = rs1_d;
    assign ifu_exu_rs2_d = rs2_d;
@@ -223,20 +216,8 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 
 
 
-   //assign alu_a = alu_a_pc? ifu_exu_pc_d : rdata0_0_input;
-   //wire [`GRLEN-1:0] alu_a_d = alu_a_pc? ifu_exu_pc_d : irf_ecl_rs1_data_d;
-   wire [`GRLEN-1:0] alu_a_d = alu_a_pc? ifu_exu_pc_d : exu_ifu_rs1_data_d;
-
-   //wire port0_a_lsu_fw;
-   //assign port0_a_lsu_fw = !alu0_a_pc && rdata0_0_lsu_fw;
-
-   //assign alu_b = alu_b_imm? ifu_exu_imm_shifted_d : rdata0_1_input;
-   //wire [`GRLEN-1:0] alu_b_d = alu_b_imm_d? ifu_exu_imm_shifted_d : irf_ecl_rs2_data_d;
-   //wire [`GRLEN-1:0] alu_b_d = alu_b_imm_d? ifu_exu_imm_shifted_d : exu_ifu_rs2_data_d;
+   wire [`GRLEN-1:0] alu_a_d = alu_a_pc? fdp_dec_pc_d : exu_ifu_rs1_data_d;
    wire [`GRLEN-1:0] alu_b_d = alu_b_imm_d? imm_shifted_d : exu_ifu_rs2_data_d;
-
-   //wire port0_b_lsu_fw;
-   //assign port0_b_lsu_fw = !alu0_b_imm && rdata0_1_lsu_fw; 
 
 
    wire alu_double_word_d = op_d[`LSOC1K_DOUBLE_WORD];
@@ -268,7 +249,6 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
    dff_s #(`LSOC1K_ALU_CODE_BIT) alu_op_d2e_reg (
       .din (alu_op_d),
       .clk (clk),
-      //.q   (ecl_alu_op_e),
       .q   (alu_op_e),
       .se(), .si(), .so());
 
@@ -280,7 +260,6 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
    dff_s #(`GRLEN) alu_c_d2e_reg (
       .din (alu_c_d),
       .clk (clk),
-      //.q   (ecl_alu_c_e),
       .q   (alu_c_e),
       .se(), .si(), .so());
    
@@ -292,7 +271,6 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
    dff_s #(1) alu_double_word_d2e_reg (
       .din (alu_double_word_d),
       .clk (clk),
-      //.q   (ecl_alu_double_word_e),
       .q   (alu_double_word_e),
       .se(), .si(), .so());
 
@@ -598,7 +576,7 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
    assign ifu_exu_csr_valid_e = csr_valid_e;
 
  
-   assign ifu_exu_csr_raddr_d = `GET_CSR(ifu_exu_inst_d);
+   assign ifu_exu_csr_raddr_d = `GET_CSR(fdp_dec_inst_d);
 
 
 
@@ -651,7 +629,7 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
    wire [`LSOC1K_CSR_BIT-1:0] csr_waddr_d;
    wire [`LSOC1K_CSR_BIT-1:0] csr_waddr_e;
  
-   assign csr_waddr_d = `GET_CSR(ifu_exu_inst_d);
+   assign csr_waddr_d = `GET_CSR(fdp_dec_inst_d);
 
    dff_s #(`LSOC1K_CSR_BIT) csr_waddr_d2e_reg (
       .din (csr_waddr_d),
@@ -708,4 +686,5 @@ wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
       .se(), .si(), .so());
 
    assign ifu_exu_ertn_valid_e = ertn_valid_e;
+
 endmodule // cpu7_ifu_dec
