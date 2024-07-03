@@ -30,7 +30,7 @@ module cpu7_ifu_fdp(
    output [`GRLEN-1:0]    fdp_dec_pc_d,
    output [`GRLEN-1:0]    fdp_dec_inst_d,
 
-   output                 fdp_dec_inst_vld_kill_d,
+   output                 fdp_dec_inst_kill_vld_d,
 
    output                 ifu_exu_valid_e, //
    
@@ -62,19 +62,19 @@ module cpu7_ifu_fdp(
 
    wire kill_f;
    wire kill_d;
-   wire inst_vld_kill_f;
-   wire inst_vld_kill_d;
+   wire inst_kill_vld_f;
+   wire inst_kill_vld_d;
 
    assign kill_f = br_taken | exu_ifu_except | exu_ifu_ertn_e; 
-   assign inst_vld_kill_f = ifu_fdp_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
+   assign inst_kill_vld_f = ifu_fdp_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
    // should not if exception happen
 
    assign kill_d = br_taken | exu_ifu_except; // if branch is taken, kill the instruction at the pipeline _d stage.
-   assign inst_vld_kill_d = ifu_exu_valid_d & (~kill_d);
-   assign fdp_dec_inst_vld_kill_d = inst_vld_kill_d;
+   assign inst_kill_vld_d = ifu_exu_valid_d & (~kill_d);
+   assign fdp_dec_inst_kill_vld_d = inst_kill_vld_d;
 
    dffrle_s #(1) inst_vld_kill_f2d_reg (
-      .din   (inst_vld_kill_f),
+      .din   (inst_kill_vld_f),
       .rst_l (~reset),
       .clk   (clk),
       .en    (~exu_ifu_stall_req),
@@ -82,7 +82,7 @@ module cpu7_ifu_fdp(
       .se(), .si(), .so());
 
    dffrle_s #(1) inst_vld_kill_d2e_reg (
-      .din   (inst_vld_kill_d),
+      .din   (inst_kill_vld_d),
       .rst_l (~reset),
       .clk   (clk),
       .en    (~exu_ifu_stall_req),
@@ -132,7 +132,7 @@ module cpu7_ifu_fdp(
 
 
    wire pc_f2d_en;
-   assign pc_f2d_en = inst_vld_kill_f & ~exu_ifu_stall_req; 
+   assign pc_f2d_en = inst_kill_vld_f & ~exu_ifu_stall_req; 
    
    dffe_s #(`GRLEN) pc_f2d_reg (
       .din (pc_f),
@@ -238,7 +238,7 @@ module cpu7_ifu_fdp(
 
    dffe_s #(32) inst_f2d_reg (
       .din (inst_f),
-      .en  (inst_vld_kill_f),
+      .en  (inst_kill_vld_f),
       .clk (clk),
       .q   (fdp_dec_inst_d),
       .se(), .si(), .so());

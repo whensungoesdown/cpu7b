@@ -7,7 +7,7 @@ module cpu7_ifu_dec(
    input  [31:0]                        fdp_dec_inst_d,
 
    input [`GRLEN-1:0]                   fdp_dec_pc_d,
-   input                                fdp_dec_inst_vld_kill_d,
+   input                                fdp_dec_inst_kill_vld_d,
 
    output [`GRLEN-1:0]                  ifu_exu_alu_a_e,
    output [`GRLEN-1:0]                  ifu_exu_alu_b_e,
@@ -133,7 +133,7 @@ module cpu7_ifu_dec(
    wire       exception_e;
    wire [5:0] exccode_e;
 
-   assign exception_d2e_in = exception_d & fdp_dec_inst_vld_kill_d;
+   assign exception_d2e_in = exception_d & fdp_dec_inst_kill_vld_d;
 
    dff_s #(1) exception_d2e_reg (
       .din (exception_d2e_in),
@@ -178,13 +178,13 @@ module cpu7_ifu_dec(
 
    // do not dispatch if this instruction is killed at _d or it causes
    // exception
-   assign alu_dispatch_d  = !op_d[`LSOC1K_LSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d; // alu0 is binded to port0
-   assign lsu_dispatch_d  = op_d[`LSOC1K_LSU_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
-   assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
-   assign mul_dispatch_d  = op_d[`LSOC1K_MUL_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
-   assign div_dispatch_d  = op_d[`LSOC1K_DIV_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
-   assign none_dispatch_d = (op_d[`LSOC1K_CSR_RELATED] || op_d[`LSOC1K_TLB_RELATED] || op_d[`LSOC1K_CACHE_RELATED]) && fdp_dec_inst_vld_kill_d && !exception_d ;
-   assign ertn_dispatch_d = op_d[`LSOC1K_ERET] && fdp_dec_inst_vld_kill_d && !exception_d;
+   assign alu_dispatch_d  = !op_d[`LSOC1K_LSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d; // alu0 is binded to port0
+   assign lsu_dispatch_d  = op_d[`LSOC1K_LSU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign mul_dispatch_d  = op_d[`LSOC1K_MUL_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign div_dispatch_d  = op_d[`LSOC1K_DIV_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign none_dispatch_d = (op_d[`LSOC1K_CSR_RELATED] || op_d[`LSOC1K_TLB_RELATED] || op_d[`LSOC1K_CACHE_RELATED]) && fdp_dec_inst_kill_vld_d && !exception_d ;
+   assign ertn_dispatch_d = op_d[`LSOC1K_ERET] && fdp_dec_inst_kill_vld_d && !exception_d;
 
 
 
