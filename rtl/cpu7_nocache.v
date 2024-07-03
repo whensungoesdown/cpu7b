@@ -113,7 +113,10 @@ module cpu7_nocache(
    // ertn
    wire                              ifu_exu_ertn_valid_e;
 
-   wire                              ifu_exu_illinst_e;
+   //wire                              ifu_exu_illinst_e;
+   wire                              ifu_exu_exception_e;
+   wire [5:0]                        ifu_exu_exccode_e;
+
    
    cpu7_ifu ifu(
       .clock                   (clk                ),
@@ -194,7 +197,9 @@ module cpu7_nocache(
       // ertn                    
       .ifu_exu_ertn_valid_e     (ifu_exu_ertn_valid_e     ),
 
-      .ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
+      //.ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
+      .ifu_exu_exception_e      (ifu_exu_exception_e      ),
+      .ifu_exu_exccode_e        (ifu_exu_exccode_e        ),
 
 
       .ifu_exu_pc_w            (ifu_exu_pc_w         ),
@@ -263,7 +268,9 @@ module cpu7_nocache(
       // ertn                    
       .ifu_exu_ertn_valid_e     (ifu_exu_ertn_valid_e     ),
 
-      .ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
+      //.ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
+      .ifu_exu_exception_e      (ifu_exu_exception_e      ),
+      .ifu_exu_exccode_e        (ifu_exu_exccode_e        ),
 
 
       .ifu_exu_pc_w            (ifu_exu_pc_w         ),

@@ -97,7 +97,9 @@ module cpu7_exu(
    // ertn
    input                                ifu_exu_ertn_valid_e,
 
-   input                                ifu_exu_illinst_e
+   //input                                ifu_exu_illinst_e
+   input                                ifu_exu_exception_e,
+   input  [5:0]                         ifu_exu_exccode_e
    );
 
 
@@ -158,8 +160,6 @@ module cpu7_exu(
    wire [`GRLEN-1:0]            byp_csr_wdata_m;
    wire [`GRLEN-1:0]            ecl_csr_mask_m;
    wire                         ecl_csr_wen_m;
-   wire                         ecl_csr_ale_e;
-   wire                         ecl_csr_illinst_e;
    wire                         ecl_csr_ertn_e;
    wire                         csr_ecl_timer_intr;
 
@@ -280,7 +280,9 @@ module cpu7_exu(
       // ertn                    
       .ifu_exu_ertn_valid_e     (ifu_exu_ertn_valid_e     ),
 
-      .ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
+      //.ifu_exu_illinst_e        (ifu_exu_illinst_e        ),
+      .ifu_exu_exception_e      (ifu_exu_exception_e      ),
+      .ifu_exu_exccode_e        (ifu_exu_exccode_e        ),
 
 
       // alu
@@ -338,8 +340,6 @@ module cpu7_exu(
       .ecl_csr_wen_m            (ecl_csr_wen_m       ),
 
       .exu_ifu_except           (exu_ifu_except      ),
-      .ecl_csr_ale_e            (ecl_csr_ale_e       ),
-      .ecl_csr_illinst_e        (ecl_csr_illinst_e   ),
       .csr_ecl_timer_intr       (csr_ecl_timer_intr  ),
       
       .exu_ifu_ertn_e           (exu_ifu_ertn_e      ),
@@ -483,9 +483,7 @@ module cpu7_exu(
       .csr_eentry        (exu_ifu_eentry    ),
       .csr_era           (exu_ifu_era       ),
 
-      .ecl_csr_ale_e     (ecl_csr_ale_e     ),
       .lsu_csr_badv_e    (lsu_csr_badv_e    ),
-      .ecl_csr_illinst_e (ecl_csr_illinst_e ),
       .exu_ifu_except    (exu_ifu_except    ),
       .ifu_exu_pc_e      (ifu_exu_pc_e      ),
       .ecl_csr_ertn_e    (ecl_csr_ertn_e    ),

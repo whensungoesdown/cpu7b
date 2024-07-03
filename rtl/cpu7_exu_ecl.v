@@ -54,7 +54,9 @@ module cpu7_exu_ecl(
    // ertn
    input                                ifu_exu_ertn_valid_e,
 
-   input                                ifu_exu_illinst_e,
+   //input                                ifu_exu_illinst_e,
+   input                                ifu_exu_exception_e,
+   input  [5:0]                         ifu_exu_exccode_e,
 
 
    // alu
@@ -114,8 +116,6 @@ module cpu7_exu_ecl(
 
    // exception
    output                               exu_ifu_except,
-   output                               ecl_csr_ale_e,
-   output                               ecl_csr_illinst_e,
    input                                csr_ecl_timer_intr,
 
    // ertn
@@ -689,11 +689,14 @@ module cpu7_exu_ecl(
    // excetpion
    //
 
-   // exu_ifu_except should only be signaled 1 cycle to notify ifu, otherwise
-   // ifu stalls 
-   assign ecl_csr_illinst_e = ifu_exu_illinst_e;
-   assign exu_ifu_except = lsu_ecl_ale_e | ecl_csr_illinst_e | intr;
-   assign ecl_csr_ale_e = lsu_ecl_ale_e;
+   wire       exception_all_e;
+   wire [5:0] exccode_all_e;
+
+   // exu_ifu_except should only be signaled 1 cycle to notify ifu, because it makes ifu stall 
+   assign exception_all_e = ifu_exu_exception_e | lsu_ecl_ale_e;
+
+   // exu_ifu_except tells ifu to change pc_bf
+   assign exu_ifu_except = exception_all_e | intr;
    
                  
    // BUG FIX

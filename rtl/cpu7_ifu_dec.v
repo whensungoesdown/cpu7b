@@ -59,7 +59,9 @@ module cpu7_ifu_dec(
    // ertn
    output                               ifu_exu_ertn_valid_e,
    
-   output                               ifu_exu_illinst_e
+//   output                               ifu_exu_illinst_e
+   output                               ifu_exu_exception_e,
+   output [5:0]                         ifu_exu_exccode_e
    );
 
 
@@ -107,6 +109,46 @@ module cpu7_ifu_dec(
 //                                                       6'd0              ;
 
 
+   //
+   // Exceptions
+   //
+
+
+   //wire int_except = 1'b0;
+   wire       fdp_dec_exception_f = 1'b0;
+   wire [5:0] fdp_dec_exccode_f = 6'b0;
+
+   wire       exception_d;
+   wire [5:0] exccode_d;
+
+   assign exception_d = fdp_dec_exception_f | op_d[`LSOC1K_SYSCALL] | op_d[`LSOC1K_BREAK ] | op_d[`LSOC1K_INE]; // || int_except;
+   assign exccode_d = //int_except                ? `EXC_INT          :  // interrupt send into EXU
+                      fdp_dec_exception_f   ? fdp_dec_exccode_f : // exceptions that happens at _f, like cache related 
+                      op_d[`LSOC1K_SYSCALL] ? `EXC_SYS          :
+                      op_d[`LSOC1K_BREAK  ] ? `EXC_BRK          :
+                      op_d[`LSOC1K_INE    ] ? `EXC_INE          :
+                                              6'd0              ;
+				      
+   wire       exception_d2e_in;
+   wire       exception_e;
+   wire [5:0] exccode_e;
+
+   assign exception_d2e_in = exception_d & fdp_dec_inst_vld_kill_d;
+
+   dff_s #(1) exception_d2e_reg (
+      .din (exception_d2e_in),
+      .clk (clk),
+      .q   (exception_e),
+      .se(), .si(), .so());
+
+   dff_s #(6) exccode_d2e_reg (
+      .din (exccode_d),
+      .clk (clk),
+      .q   (exccode_e),
+      .se(), .si(), .so());
+
+   assign ifu_exu_exception_e = exception_e;
+   assign ifu_exu_exccode_e = exccode_e;
 
 
 
@@ -133,13 +175,16 @@ module cpu7_ifu_dec(
    wire none_dispatch_d;
    wire ertn_dispatch_d;
 
-   assign alu_dispatch_d  = !op_d[`LSOC1K_LSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception; // alu0 is binded to port0
-   assign lsu_dispatch_d  = op_d[`LSOC1K_LSU_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception;
-   assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception;
-   assign mul_dispatch_d  = op_d[`LSOC1K_MUL_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception;
-   assign div_dispatch_d  = op_d[`LSOC1K_DIV_RELATED] && fdp_dec_inst_vld_kill_d; // && !port0_exception;
-   assign none_dispatch_d = (op_d[`LSOC1K_CSR_RELATED] || op_d[`LSOC1K_TLB_RELATED] || op_d[`LSOC1K_CACHE_RELATED]) && fdp_dec_inst_vld_kill_d; // || port0_exception ;
-   assign ertn_dispatch_d = op_d[`LSOC1K_ERET] && fdp_dec_inst_vld_kill_d;
+
+   // do not dispatch if this instruction is killed at _d or it causes
+   // exception
+   assign alu_dispatch_d  = !op_d[`LSOC1K_LSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d; // alu0 is binded to port0
+   assign lsu_dispatch_d  = op_d[`LSOC1K_LSU_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
+   assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
+   assign mul_dispatch_d  = op_d[`LSOC1K_MUL_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
+   assign div_dispatch_d  = op_d[`LSOC1K_DIV_RELATED] && fdp_dec_inst_vld_kill_d && !exception_d;
+   assign none_dispatch_d = (op_d[`LSOC1K_CSR_RELATED] || op_d[`LSOC1K_TLB_RELATED] || op_d[`LSOC1K_CACHE_RELATED]) && fdp_dec_inst_vld_kill_d && !exception_d ;
+   assign ertn_dispatch_d = op_d[`LSOC1K_ERET] && fdp_dec_inst_vld_kill_d && !exception_d;
 
 
 
@@ -657,43 +702,5 @@ module cpu7_ifu_dec(
 
 
 
-
-
-   //
-   // Exceptions
-   //
-
-
-   // code review illinst exception should go through excode
-   wire illinst_d;
-   wire illinst_e;
-
-   // illegal instruction exception
-   assign illinst_d = op_d[`LSOC1K_INE] && fdp_dec_inst_vld_kill_d;
-   
-   dff_s #(1) illinst_d2e_reg (
-      .din (illinst_d),
-      .clk (clk),
-      .q   (illinst_e),
-      .se(), .si(), .so());
-
-//   assign ecl_csr_illinst_e = illinst_e;
-   assign ifu_exu_illinst_e = illinst_e;
-
-
-   //wire int_except = 1'b0;
-   wire       fdp_dec_exception_f = 1'b0;
-   wire [5:0] fdp_dec_exccode_f = 6'b0;
-
-   wire       exception_d;
-   wire [5:0] exccode_d;
-
-   assign exception_d = fdp_dec_exception_f | op_d[`LSOC1K_SYSCALL] | op_d[`LSOC1K_BREAK ] | op_d[`LSOC1K_INE]; // || int_except;
-   assign exccode_d = //int_except                ? `EXC_INT          :  // interrupt send into EXU
-                      fdp_dec_exception_f   ? fdp_dec_exccode_f : // exceptions that happens at _f, like cache related 
-                      op_d[`LSOC1K_SYSCALL] ? `EXC_SYS          :
-                      op_d[`LSOC1K_BREAK  ] ? `EXC_BRK          :
-                      op_d[`LSOC1K_INE    ] ? `EXC_INE          :
-                                              6'd0              ;
 
 endmodule // cpu7_ifu_dec

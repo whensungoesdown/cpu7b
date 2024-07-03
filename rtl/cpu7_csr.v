@@ -21,9 +21,7 @@ module cpu7_csr(
 
    output [`GRLEN-1:0]                  csr_eentry,
    output [`GRLEN-1:0]                  csr_era,
-   input                                ecl_csr_ale_e,
    input  [`GRLEN-1:0]                  lsu_csr_badv_e,
-   input                                ecl_csr_illinst_e,
    input                                exu_ifu_except,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
    input                                ecl_csr_ertn_e,
@@ -34,7 +32,6 @@ module cpu7_csr(
 
    wire exception;
 
-   //assign exception = ecl_csr_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr; // timer_intr; // | other exception
    assign exception = exu_ifu_except; // when to store era, the timing is decided by ecl
 
 
@@ -249,16 +246,17 @@ module cpu7_csr(
 
    assign badv_wdata = (badv & (~csr_mask)) | (csr_wdata & csr_mask);
 
+
    dp_mux2es #(`GRLEN) badv_mux(
       .dout (badv_nxt),
       .in0  (badv_wdata),
       .in1  (lsu_csr_badv_e),
-      .sel  (ecl_csr_ale_e));  // illinst does not set BADV
+      .sel  (exception));  // illinst does not set BADV, later consider this. code review 
 
    dffrle_s #(`GRLEN) badv_reg (
       .din   (badv_nxt),
       .rst_l (resetn),
-      .en    (badv_wen | (ecl_csr_ale_e /*| other_excep*/)),
+      .en    (badv_wen | exception),
       .clk   (clk),
       .q     (badv),
       .se(), .si(), .so());

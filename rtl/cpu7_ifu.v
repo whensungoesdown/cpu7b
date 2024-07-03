@@ -80,7 +80,9 @@ module cpu7_ifu(
    // ertn
    output                               ifu_exu_ertn_valid_e,
 
-   output                               ifu_exu_illinst_e,
+//   output                               ifu_exu_illinst_e,
+   output                               ifu_exu_exception_e,
+   output [5:0]                         ifu_exu_exccode_e,
 
 
    output [`GRLEN-1:0]                 ifu_exu_pc_w,
@@ -194,8 +196,9 @@ module cpu7_ifu(
       // ertn                    
       .ifu_exu_ertn_valid_e     (ifu_exu_ertn_valid_e     ),
 
-      .ifu_exu_illinst_e        (ifu_exu_illinst_e        )
-
+      //.ifu_exu_illinst_e        (ifu_exu_illinst_e        )
+      .ifu_exu_exception_e      (ifu_exu_exception_e      ),
+      .ifu_exu_exccode_e        (ifu_exu_exccode_e        )
       );
 
    
