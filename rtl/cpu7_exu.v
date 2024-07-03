@@ -162,6 +162,7 @@ module cpu7_exu(
    wire                         ecl_csr_wen_m;
    wire                         ecl_csr_ertn_e;
    wire                         csr_ecl_timer_intr;
+   wire [5:0]                   ecl_csr_exccode_e;
 
 
    wire [`GRLEN-1:0] dumb_rdata1_0;
@@ -340,6 +341,7 @@ module cpu7_exu(
       .ecl_csr_wen_m            (ecl_csr_wen_m       ),
 
       .exu_ifu_except           (exu_ifu_except      ),
+      .ecl_csr_exccode_e        (ecl_csr_exccode_e   ),
       .csr_ecl_timer_intr       (csr_ecl_timer_intr  ),
       
       .exu_ifu_ertn_e           (exu_ifu_ertn_e      ),
@@ -485,6 +487,7 @@ module cpu7_exu(
 
       .lsu_csr_badv_e    (lsu_csr_badv_e    ),
       .exu_ifu_except    (exu_ifu_except    ),
+      .ecl_csr_exccode_e (ecl_csr_exccode_e ),
       .ifu_exu_pc_e      (ifu_exu_pc_e      ),
       .ecl_csr_ertn_e    (ecl_csr_ertn_e    ),
       .csr_ecl_timer_intr(csr_ecl_timer_intr)

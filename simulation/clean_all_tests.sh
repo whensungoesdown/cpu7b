@@ -177,3 +177,10 @@ echo "test25_lsu_stall"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test26_illinstr_exception
+echo "test26_illinstr_exception"
+./clean.sh
+echo ""
+cd ..

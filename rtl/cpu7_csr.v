@@ -23,6 +23,7 @@ module cpu7_csr(
    output [`GRLEN-1:0]                  csr_era,
    input  [`GRLEN-1:0]                  lsu_csr_badv_e,
    input                                exu_ifu_except,
+   input  [5:0]                         ecl_csr_exccode_e,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
    input                                ecl_csr_ertn_e,
    output                               csr_ecl_timer_intr
@@ -45,7 +46,7 @@ module cpu7_csr(
 
 
    //
-   //  CRMD
+   //  CRMD 0x0
    //
    
    wire [`GRLEN-1:0]       crmd;
@@ -146,7 +147,7 @@ module cpu7_csr(
 
 
    //
-   //  PRMD
+   //  PRMD 0x1
    //
 
    wire [`GRLEN-1:0]      prmd;
@@ -202,7 +203,10 @@ module cpu7_csr(
                  prmd_pplv
 		 };
 
-   
+
+
+
+
    //
    //  ERA 0x6
    //
@@ -427,6 +431,76 @@ module cpu7_csr(
 
 
    //
+   // ESTAT 0x5
+   //
+   
+   wire [`GRLEN-1:0] estat;
+   wire              estat_wen;
+   assign estat_wen = (csr_waddr == `LSOC1K_CSR_ESTAT) && csr_wen;
+
+   wire              estat_sis_msk_wen;
+   assign estat_sis_msk_wen = |csr_mask[`LSOC1K_ESTAT_SIS] & estat_wen;
+
+   // 1:0
+   wire [`LSOC1K_ESTAT_SIS] estat_sis_wdata;
+   wire [`LSOC1K_ESTAT_SIS] estat_sis_nxt;
+   wire [`LSOC1K_ESTAT_SIS] estat_sis;
+
+   assign estat_sis_wdata = csr_wdata[`LSOC1K_ESTAT_SIS];
+   assign estat_sis_nxt = (estat_sis & (~csr_mask[`LSOC1K_ESTAT_SIS])) | (estat_sis_wdata & csr_mask[`LSOC1K_ESTAT_SIS]);
+
+   dffrle_s #(2) estat_sis_reg (
+      .din   (estat_sis_nxt),
+      .rst_l (resetn),
+      .en    (estat_sis_msk_wen),
+      .clk   (clk),
+      .q     (estat_sis),
+      .se(), .si(), .so());
+
+
+   wire [`LSOC1K_ESTAT_IS] estat_is;
+   assign estat_is = {
+                     1'b0,        // ??
+                     8'b0,        // HWI0~HWI7
+                     ticlr_clr,   // TI
+                     1'b0         // IPI
+	             };
+
+
+   wire [`LSOC1K_ESTAT_ECODE] estat_ecode;
+
+   // not control data, only for query, no need reset
+   dffe_s #(6) estat_ecode_reg (
+      .din   (ecl_csr_exccode_e),
+      .en    (exception),             // interrupt ecode is 0, handled in ecl
+      .clk   (clk),
+      .q     (estat_ecode),
+      .se(), .si(), .so());
+
+
+   wire [`LSOC1K_ESTAT_ESUBCODE] estat_esubcode;
+
+   // not control data, only for query, no need reset
+   dffe_s #(9) estat_esubcode_reg (
+      .din   (9'b0),
+      .en    (exception), 
+      .clk   (clk),
+      .q     (estat_esubcode),
+      .se(), .si(), .so());
+
+   assign estat = {
+                  1'b0, // reserved
+                  estat_esubcode,
+		  estat_ecode,
+		  3'b0, // reserved
+		  estat_is,
+		  estat_sis
+                  };
+
+
+
+
+   //
    //  SELF DEFINED: BSEC (BOOT SECURITY) 0x100
    //
 
@@ -469,6 +543,7 @@ module cpu7_csr(
    
    assign csr_rdata = {`GRLEN{csr_raddr == `LSOC1K_CSR_CRMD}}  & crmd   |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_PRMD}}  & prmd   |
+		      {`GRLEN{csr_raddr == `LSOC1K_CSR_ESTAT}} & estat  |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_EPC}}   & era    |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_BADV}}  & badv   |
 		      {`GRLEN{csr_raddr == `LSOC1K_CSR_EBASE}} & eentry |

@@ -116,6 +116,7 @@ module cpu7_exu_ecl(
 
    // exception
    output                               exu_ifu_except,
+   output [5:0]                         ecl_csr_exccode_e,
    input                                csr_ecl_timer_intr,
 
    // ertn
@@ -694,6 +695,13 @@ module cpu7_exu_ecl(
 
    // exu_ifu_except should only be signaled 1 cycle to notify ifu, because it makes ifu stall 
    assign exception_all_e = ifu_exu_exception_e | lsu_ecl_ale_e;
+
+   // if exception and interrupt come at the same time, handle interrupt
+   // first, the casue-exception instruction will be reexecuted
+   //
+   // interrupt ecode is 0
+   assign exccode_all_e = intr ? 6'b0 : ifu_exu_exccode_e;
+   assign ecl_csr_exccode_e = exccode_all_e;
 
    // exu_ifu_except tells ifu to change pc_bf
    assign exu_ifu_except = exception_all_e | intr;

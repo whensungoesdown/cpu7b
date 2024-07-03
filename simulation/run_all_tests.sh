@@ -4,14 +4,24 @@ echo
 
 cd test0
 echo "test0"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test1_ld.w
 echo "test1_ld.w"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
@@ -21,28 +31,48 @@ cd ..
 
 cd test3_st.w
 echo "test3_st.w"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test4_beq
 echo "test4_beq"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test5_jirl
 echo "test5_jirl"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test6_beq_testbyp
 echo "test6_beq_testbyp"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
@@ -53,125 +83,227 @@ cd ..
 
 cd test8_mulw
 echo "test8_mulw"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test9_mulhwu
 echo "test9_mulhwu"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test10_mulhw
 echo "test10_mulhw"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test11_csrrd
 echo "test11_csrrd"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test12_csrwr
 echo "test12_csrwr"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test13_csrxchg
 echo "test13_csrxchg"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test14_csr_crmd
 echo "test14_csr_crmd"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test15_csr_prmd
 echo "test15_csr_prmd"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test16_ale_exception
 echo "test16_ale_exception"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test17_exception_crmd_prmd
 echo "test17_exception_crmd_prmd"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test18_csr_badv
 echo "test18_csr_badv"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test19_csr_tcfg
 echo "test19_csr_tcfg"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test20_csr_tcfg_periodic
 echo "test20_csr_tcfg_periodic"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test21_timer_intr_right_after_branch
 echo "test21_timer_intr_right_after_branch"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test22_timer_intr_on_pipeline_bubble
 echo "test22_timer_intr_on_pipeline_bubble"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test23_lsu_stall_ifu_at_e
 echo "test23_lsu_stall_ifu_at_e"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test24_beq_ld.w
 echo "test24_beq_ld.w"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
 
 
 cd test25_lsu_stall
 echo "test25_lsu_stall"
-./simulate.sh | grep PASS
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test26_illinstr_exception
+echo ""test26_illinstr_exception
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
 echo ""
 cd ..
