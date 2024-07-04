@@ -164,6 +164,7 @@ module top(
       .rden         (ram_ren         ),
       .wraddress    (ram_waddr[14:2] ),
       .data         (ram_wdata       ),
+      .byteena_a    (ram_wen         ),
       .wren         (|ram_wen        )
       );
 

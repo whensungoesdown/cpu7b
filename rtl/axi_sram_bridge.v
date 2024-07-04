@@ -217,7 +217,8 @@ module axi_sram_bridge(
 
 
    // enable ram write when both awaddr and wdata are received.
-   assign ram_wen = aw_busy & w_busy;
+   //assign ram_wen = aw_busy & w_busy;
+   assign ram_wen = {4{aw_busy & w_busy}} & m_wstrb;
 
 
    wire bresp_valid;

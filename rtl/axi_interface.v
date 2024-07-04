@@ -338,7 +338,8 @@ module axi_interface(
 
    assign wid     = `Lwid'b0;
    //assign wdata   = `Lwdata'b0;
-   assign wstrb   = `Lwstrb'b0;
+   //assign wstrb   = `Lwstrb'b0;
+   assign wstrb   = data_wstrb;
    assign wlast   = 1'b1;
    //assign wvalid  = 1'b0;
 

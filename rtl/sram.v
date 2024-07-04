@@ -37,6 +37,7 @@
 `timescale 1 ps / 1 ps
 // synopsys translate_on
 module sram (
+	byteena_a,
 	clock,
 	data,
 	rdaddress,
@@ -45,6 +46,7 @@ module sram (
 	wren,
 	q);
 
+	input	[3:0]  byteena_a;
 	input	  clock;
 	input	[31:0]  data;
 	input	[12:0]  rdaddress;
@@ -55,6 +57,7 @@ module sram (
 `ifndef ALTERA_RESERVED_QIS
 // synopsys translate_off
 `endif
+	tri1	[3:0]  byteena_a;
 	tri1	  clock;
 	tri1	  rden;
 	tri0	  wren;
@@ -67,6 +70,7 @@ module sram (
 
 	altsyncram	altsyncram_component (
 				.address_a (wraddress),
+				.byteena_a (byteena_a),
 				.clock0 (clock),
 				.data_a (data),
 				.rden_b (rden),
@@ -77,7 +81,6 @@ module sram (
 				.aclr1 (1'b0),
 				.addressstall_a (1'b0),
 				.addressstall_b (1'b0),
-				.byteena_a (1'b1),
 				.byteena_b (1'b1),
 				.clock1 (1'b1),
 				.clocken0 (1'b1),
@@ -92,6 +95,7 @@ module sram (
 	defparam
 		altsyncram_component.address_aclr_b = "NONE",
 		altsyncram_component.address_reg_b = "CLOCK0",
+		altsyncram_component.byte_size = 8,
 		altsyncram_component.clock_enable_input_a = "BYPASS",
 		altsyncram_component.clock_enable_input_b = "BYPASS",
 		altsyncram_component.clock_enable_output_b = "BYPASS",
@@ -110,7 +114,7 @@ module sram (
 		altsyncram_component.widthad_b = 13,
 		altsyncram_component.width_a = 32,
 		altsyncram_component.width_b = 32,
-		altsyncram_component.width_byteena_a = 1;
+		altsyncram_component.width_byteena_a = 4;
 
 
 endmodule
@@ -122,7 +126,7 @@ endmodule
 // Retrieval info: PRIVATE: ADDRESSSTALL_B NUMERIC "0"
 // Retrieval info: PRIVATE: BYTEENA_ACLR_A NUMERIC "0"
 // Retrieval info: PRIVATE: BYTEENA_ACLR_B NUMERIC "0"
-// Retrieval info: PRIVATE: BYTE_ENABLE_A NUMERIC "0"
+// Retrieval info: PRIVATE: BYTE_ENABLE_A NUMERIC "1"
 // Retrieval info: PRIVATE: BYTE_ENABLE_B NUMERIC "0"
 // Retrieval info: PRIVATE: BYTE_SIZE NUMERIC "8"
 // Retrieval info: PRIVATE: BlankMemory NUMERIC "0"
@@ -180,6 +184,7 @@ endmodule
 // Retrieval info: LIBRARY: altera_mf altera_mf.altera_mf_components.all
 // Retrieval info: CONSTANT: ADDRESS_ACLR_B STRING "NONE"
 // Retrieval info: CONSTANT: ADDRESS_REG_B STRING "CLOCK0"
+// Retrieval info: CONSTANT: BYTE_SIZE NUMERIC "8"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_INPUT_A STRING "BYPASS"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_INPUT_B STRING "BYPASS"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_B STRING "BYPASS"
@@ -198,7 +203,8 @@ endmodule
 // Retrieval info: CONSTANT: WIDTHAD_B NUMERIC "13"
 // Retrieval info: CONSTANT: WIDTH_A NUMERIC "32"
 // Retrieval info: CONSTANT: WIDTH_B NUMERIC "32"
-// Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "1"
+// Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "4"
+// Retrieval info: USED_PORT: byteena_a 0 0 4 0 INPUT VCC "byteena_a[3..0]"
 // Retrieval info: USED_PORT: clock 0 0 0 0 INPUT VCC "clock"
 // Retrieval info: USED_PORT: data 0 0 32 0 INPUT NODEFVAL "data[31..0]"
 // Retrieval info: USED_PORT: q 0 0 32 0 OUTPUT NODEFVAL "q[31..0]"
@@ -208,6 +214,7 @@ endmodule
 // Retrieval info: USED_PORT: wren 0 0 0 0 INPUT GND "wren"
 // Retrieval info: CONNECT: @address_a 0 0 13 0 wraddress 0 0 13 0
 // Retrieval info: CONNECT: @address_b 0 0 13 0 rdaddress 0 0 13 0
+// Retrieval info: CONNECT: @byteena_a 0 0 4 0 byteena_a 0 0 4 0
 // Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
 // Retrieval info: CONNECT: @data_a 0 0 32 0 data 0 0 32 0
 // Retrieval info: CONNECT: @rden_b 0 0 0 0 rden 0 0 0 0
