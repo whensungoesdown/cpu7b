@@ -191,3 +191,10 @@ echo "test27_estat"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test28_ld.b.bu.h.hu
+echo "test28_ld.b.bu.h.hu"
+./clean.sh
+echo ""
+cd ..

@@ -319,3 +319,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test28_ld.b.bu.h.hu
+echo "test28_ld.b.bu.h.hu"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
