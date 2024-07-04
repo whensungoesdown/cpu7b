@@ -134,6 +134,8 @@ _f _d _e _m _w
   
   0x1  PRMD.pie PRMD.pplv
 
+  0x5  ESTAT
+
   0x6  ERA
   
   0x7  BADV
@@ -294,6 +296,13 @@ test24_beq_ld.w
 
 test25_lsu_stall
 # PASS!
+
+test26_illinstr_exception
+# PASS!
+
+test27_estat
+# PASS!
+
 
 `````
 
