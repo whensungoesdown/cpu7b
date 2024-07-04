@@ -184,3 +184,10 @@ echo "test26_illinstr_exception"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test27_estat
+echo "test27_estat"
+./clean.sh
+echo ""
+cd ..

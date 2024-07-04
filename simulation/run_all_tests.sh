@@ -298,7 +298,19 @@ cd ..
 
 
 cd test26_illinstr_exception
-echo ""test26_illinstr_exception
+echo "test26_illinstr_exception"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test27_estat
+echo "test27_estat"
 if ./simulate.sh | grep PASS; then
 	printf ""
 else
