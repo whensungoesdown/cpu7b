@@ -208,17 +208,23 @@ module axi_sram_bridge(
 
    assign m_wready = ~w_busy;
    
-   dffe_s #(`Lwdata) wdata_reg (
-      .din   (m_wdata),
+   wire [`Lwdata+`Lwstrb-1:0] wpayload_in;
+   wire [`Lwdata+`Lwstrb-1:0] wpayload_q;
+   wire [`Lwstrb-1:0] m_wstrb_q;
+
+   assign wpayload_in = {m_wdata, m_wstrb};
+   assign {ram_wdata, m_wstrb_q} = wpayload_q;
+
+
+   dffe_s #(`Lwdata+`Lwstrb) wpayload_reg (
+      .din   (wpayload_in),
       .clk   (aclk),
       .en    (w_enter),
-      .q     (ram_wdata), 
+      .q     (wpayload_q), 
       .se(), .si(), .so());
 
-
    // enable ram write when both awaddr and wdata are received.
-   //assign ram_wen = aw_busy & w_busy;
-   assign ram_wen = {4{aw_busy & w_busy}} & m_wstrb;
+   assign ram_wen = {4{aw_busy & w_busy}} & m_wstrb_q;
 
 
    wire bresp_valid;
