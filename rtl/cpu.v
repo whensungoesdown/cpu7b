@@ -3,6 +3,9 @@
 module cpu(
    input                        clk    ,
    input                        resetn ,
+
+   input                        ext_intr,
+
    //  axi_control
    //ar
    output [`Larid   -1 :0]      arid   ,
@@ -86,6 +89,8 @@ module cpu(
    cpu7_nocache cpu(
         .clk              (clk                 ),
         .resetn           (resetn              ),
+
+	.ext_intr         (ext_intr            ),
 
         .inst_req         (inst_req             ),
         .inst_addr        (inst_addr            ),

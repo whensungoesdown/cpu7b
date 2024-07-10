@@ -26,7 +26,11 @@ module cpu7_csr(
    input  [5:0]                         ecl_csr_exccode_e,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
    input                                ecl_csr_ertn_e,
-   output                               csr_ecl_timer_intr
+
+   output                               csr_ecl_crmd_ie,
+   output                               csr_ecl_timer_intr,
+
+   input                                ext_intr
    );
 
 
@@ -426,7 +430,8 @@ module cpu7_csr(
       .se(), .si(), .so());
 
 
-   assign csr_ecl_timer_intr = ticlr_clr & crmd_ie;
+   //assign csr_ecl_timer_intr = ticlr_clr & crmd_ie;
+   assign csr_ecl_timer_intr = ticlr_clr;
 
 
 
@@ -461,7 +466,8 @@ module cpu7_csr(
    wire [`LSOC1K_ESTAT_IS] estat_is;
    assign estat_is = {
                      1'b0,        // ??
-                     8'b0,        // HWI0~HWI7
+                     7'b0,        // HWI1~HWI7
+		     ext_intr,    // HWI0
                      ticlr_clr,   // TI
                      1'b0         // IPI
 	             };
@@ -470,8 +476,10 @@ module cpu7_csr(
    wire [`LSOC1K_ESTAT_ECODE] estat_ecode;
 
    // not control data, only for query, no need reset
-   dffe_s #(6) estat_ecode_reg (
+   //  need reset, if there is no exception happened before, the estat contains x
+   dffrle_s #(6) estat_ecode_reg (
       .din   (ecl_csr_exccode_e),
+      .rst_l (resetn),
       .en    (exception),             // interrupt ecode is 0, handled in ecl
       .clk   (clk),
       .q     (estat_ecode),
@@ -481,8 +489,10 @@ module cpu7_csr(
    wire [`LSOC1K_ESTAT_ESUBCODE] estat_esubcode;
 
    // not control data, only for query, no need reset
-   dffe_s #(9) estat_esubcode_reg (
+   //  need reset, if there is no exception happened before, the estat contains x
+   dffrle_s #(9) estat_esubcode_reg (
       .din   (9'b0),
+      .rst_l (resetn),
       .en    (exception), 
       .clk   (clk),
       .q     (estat_esubcode),
@@ -536,8 +546,10 @@ module cpu7_csr(
 		 };
 
 
-   
 
+
+   
+   assign csr_ecl_crmd_ie = crmd_ie;
 
    
    

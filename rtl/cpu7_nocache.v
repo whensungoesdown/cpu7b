@@ -5,6 +5,7 @@ module cpu7_nocache(
     input                 clk,
     input                 resetn,            //low active
     
+    input                 ext_intr,
     
     output                inst_req       ,
     output  [ 31:0]       inst_addr      ,
@@ -310,7 +311,9 @@ module cpu7_nocache(
       .exu_ifu_except          (exu_ifu_except       ),
       //ertn
       .exu_ifu_era             (exu_ifu_era          ),
-      .exu_ifu_ertn_e          (exu_ifu_ertn_e       )
+      .exu_ifu_ertn_e          (exu_ifu_ertn_e       ),
+
+      .ext_intr                (ext_intr             )
       );
 
    

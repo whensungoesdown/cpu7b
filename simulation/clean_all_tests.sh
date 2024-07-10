@@ -205,3 +205,10 @@ echo "test29_st.b.h"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test30_ext_intr
+echo "test30_ext_intr"
+./clean.sh
+echo ""
+cd ..

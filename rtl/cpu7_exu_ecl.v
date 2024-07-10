@@ -117,6 +117,7 @@ module cpu7_exu_ecl(
    // exception
    output                               exu_ifu_except,
    output [5:0]                         ecl_csr_exccode_e,
+   input                                csr_ecl_crmd_ie,
    input                                csr_ecl_timer_intr,
 
    // ertn
@@ -131,7 +132,9 @@ module cpu7_exu_ecl(
 
    output [`GRLEN-1:0]                  ecl_irf_rd_data_w,
    output                               ecl_irf_wen_w,
-   output [4:0]                         ecl_irf_rd_w
+   output [4:0]                         ecl_irf_rd_w,
+
+   input                                ext_intr
    );
 
 
@@ -671,7 +674,7 @@ module cpu7_exu_ecl(
    wire intr_hold_q;
    wire intr_hold_en;
 
-   assign intr_in = csr_ecl_timer_intr; // | external_interrupt
+   assign intr_in = (csr_ecl_timer_intr | ext_intr) & csr_ecl_crmd_ie; // ext_intr as HWI0
    assign intr_hold_in = intr_in & (~ifu_exu_valid_e);
    assign intr_hold_en = intr_in | ifu_exu_valid_e;
 

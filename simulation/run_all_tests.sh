@@ -343,3 +343,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test30_ext_intr
+echo "test30_ext_intr"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

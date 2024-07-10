@@ -55,12 +55,25 @@ module top(
    wire [`DATA_WIDTH/8-1:0]  ram_wen;
 
 
+  
+   // only for test purpose
+   reg ext_intr;
+
+   always @(posedge clk or posedge resetn)
+   begin
+	   if(resetn == 1'b0)
+		   ext_intr <= 0; //reset condition
+   end
+   //
    
+
 
    cpu u_cpu(
       .clk          (clk             ),
       .resetn       (resetn          ),
       
+      .ext_intr     (ext_intr        ),
+
       .awid         (cpu_awid        ),           
       .awaddr       (cpu_awaddr      ),
       .awlen        (cpu_awlen       ),

@@ -99,7 +99,10 @@ module cpu7_exu(
 
    //input                                ifu_exu_illinst_e
    input                                ifu_exu_exception_e,
-   input  [5:0]                         ifu_exu_exccode_e
+   input  [5:0]                         ifu_exu_exccode_e,
+
+
+   input                                ext_intr
    );
 
 
@@ -161,6 +164,7 @@ module cpu7_exu(
    wire [`GRLEN-1:0]            ecl_csr_mask_m;
    wire                         ecl_csr_wen_m;
    wire                         ecl_csr_ertn_e;
+   wire                         csr_ecl_crmd_ie;
    wire                         csr_ecl_timer_intr;
    wire [5:0]                   ecl_csr_exccode_e;
 
@@ -342,6 +346,7 @@ module cpu7_exu(
 
       .exu_ifu_except           (exu_ifu_except      ),
       .ecl_csr_exccode_e        (ecl_csr_exccode_e   ),
+      .csr_ecl_crmd_ie          (csr_ecl_crmd_ie     ),
       .csr_ecl_timer_intr       (csr_ecl_timer_intr  ),
       
       .exu_ifu_ertn_e           (exu_ifu_ertn_e      ),
@@ -354,7 +359,10 @@ module cpu7_exu(
 
       .ecl_irf_rd_data_w        (ecl_irf_rd_data_w   ),
       .ecl_irf_rd_w             (ecl_irf_rd_w        ),
-      .ecl_irf_wen_w            (ecl_irf_wen_w       )
+      .ecl_irf_wen_w            (ecl_irf_wen_w       ),
+
+
+      .ext_intr                (ext_intr             )
       );
 
    // alu's result should pass to cpu7_exu_byp
@@ -490,7 +498,11 @@ module cpu7_exu(
       .ecl_csr_exccode_e (ecl_csr_exccode_e ),
       .ifu_exu_pc_e      (ifu_exu_pc_e      ),
       .ecl_csr_ertn_e    (ecl_csr_ertn_e    ),
-      .csr_ecl_timer_intr(csr_ecl_timer_intr)
+
+      .csr_ecl_crmd_ie   (csr_ecl_crmd_ie   ),
+      .csr_ecl_timer_intr(csr_ecl_timer_intr),
+
+      .ext_intr          (ext_intr          )  // as HWI0
       );
    
    
