@@ -20,6 +20,8 @@
 `define Lawscseti      2
 `define Lawid          4
 // for amba_axi_m2s2, slave awid 5-bit
+// for amba_axi_m2s3, two masters need 1 bit to distinguish, slave awid 5-bit
+// 1 Channel ID + 4 Transaction ID
 `define Ls_awid        5
 `define Lawaddr       32
 `define Lawlen         8
@@ -31,7 +33,7 @@
 `define Lawvalid       1
 `define Lawready       1
 `define Lwid           4
-`define Ls_wid         5
+`define Ls_wid         5 
 `ifdef AXI128
  `define Lwdata      128
 `elsif AXI64
