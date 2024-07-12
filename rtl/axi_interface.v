@@ -1,5 +1,8 @@
 `include "defines.vh"
 
+`define IFU_ID              4'b0000
+`define LSU_ID              4'b0001
+
 module axi_interface(
    
    input                        aclk   ,
@@ -173,7 +176,8 @@ module axi_interface(
    wire                arvalid_nxt;
    wire                arvalid_tmp;
    
-   assign arid    = `Larid'h0; 
+   //assign arid    = `Larid'h0; 
+   //assign arid    = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
    assign arlen   = `Larlen'h0;
    assign arsize  = `Larsize'h2; // 32 bits
    assign arburst = `Larburst'h0;
@@ -197,6 +201,27 @@ module axi_interface(
       .en    (inst_req),
       .q     (araddr), 
       .se(), .si(), .so());
+
+
+   //
+   // BUG!
+   //
+   // araddr always delay 1 cycle, so the arid has to
+   //
+   // this module is a mess, need code review
+   //
+
+   wire [`Larid-1:0] arid_in;
+   assign arid_in = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
+
+   dffrle_s #(`Larid) arid_reg (
+      .din   (arid_in),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .en    (inst_req),
+      .q     (arid), 
+      .se(), .si(), .so());
+
 
    // inst_req        : _-_____
    // arready         : _____-_
@@ -223,8 +248,11 @@ module axi_interface(
 
    wire inst_valid;
 
+   //assign inst_valid = (rready & rvalid) & ifu_fetch_f 
+   //                      & ~(|rresp); // rresp should be 0 to indicate no error, only OKAY
    assign inst_valid = (rready & rvalid) & ifu_fetch_f 
-                         & ~(|rresp); // rresp should be 0 to indicate no error, only OKAY
+                         & ~(|rresp) // rresp should be 0 to indicate no error, only OKAY
+			 & (rid == `IFU_ID);
    assign inst_rdata_f = (rdata          ) & {`GRLEN{ifu_fetch_f}};
 
    //assign data_data_ok = (rready & rvalid) & lsu_read; // uty: test + (lsu_read | lsu_write);
@@ -323,10 +351,12 @@ module axi_interface(
 
    //assign data_data_ok_m = (rready & rvalid) & (lsu_read_m | lsu_write_m); // lsu_read_e lsu_write data_data_ok_e
    //// should check bresp value, then signal data_data_ok
-   assign data_data_ok_m = ((rready & rvalid) & lsu_read_m) | ((bready & bvalid) & lsu_write_m); 
+   //assign data_data_ok_m = ((rready & rvalid) & lsu_read_m) | ((bready & bvalid) & lsu_write_m); 
+   assign data_data_ok_m = ((rready & rvalid) & lsu_read_m & (rid == `LSU_ID)) | ((bready & bvalid) & lsu_write_m & (bid == `LSU_ID)); 
    
    // set unimplemented signals to 0 
-   assign awid    = `Lawid'b0;
+   //assign awid    = `Lawid'b0;
+   assign awid    = `LSU_ID; // ifu fetch never writes
    //assign awaddr  = `Lawaddr'b0;
    assign awlen   = `Lawlen'b0;
    assign awsize  = `Lawsize'h2; // 32 bits
@@ -336,7 +366,8 @@ module axi_interface(
    assign awprot  = `Lawprot'b0;
    //assign awvalid = 1'b0;
 
-   assign wid     = `Lwid'b0;
+   //assign wid     = `Lwid'b0;
+   assign wid     = `LSU_ID;
    //assign wdata   = `Lwdata'b0;
    //assign wstrb   = `Lwstrb'b0;
    assign wstrb   = data_wstrb;

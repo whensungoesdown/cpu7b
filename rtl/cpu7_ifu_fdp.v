@@ -253,6 +253,7 @@ module cpu7_ifu_fdp(
    assign inst_addr = pc_bf;
 
    assign inst_req = ~reset;
+   //assign inst_req = ~reset & ~exu_ifu_stall_req;
 
    // when branch taken, inst_cancel need to be signal
    // so that the new target instruction can be fetched instead of the one previously requested

@@ -160,7 +160,19 @@ module axi_sram_bridge(
 //      .q   (rdata),
 //      .se(), .si(), .so());
    
-   assign m_rid = `Lrid'b0;
+   wire [`Larid-1:0] m_arid_q;
+
+   dffrle_s #(`Larid) arid_reg (
+      .din   (m_arid),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      //.en    (m_arvalid),
+      .en    (ar_enter),
+      .q     (m_arid_q), 
+      .se(), .si(), .so());
+
+   //assign m_rid = `Lrid'b0;
+   assign m_rid = m_arid_q;
    assign m_rlast = 1'b1;
    assign m_rresp = `Lrresp'b0; // optional
    assign m_rdata = ram_rdata;
@@ -208,15 +220,16 @@ module axi_sram_bridge(
 
    assign m_wready = ~w_busy;
    
-   wire [`Lwdata+`Lwstrb-1:0] wpayload_in;
-   wire [`Lwdata+`Lwstrb-1:0] wpayload_q;
+   wire [`Lwid+`Lwdata+`Lwstrb-1:0] wpayload_in;
+   wire [`Lwid+`Lwdata+`Lwstrb-1:0] wpayload_q;
+   wire [`Lwid-1:0] m_wid_q;
    wire [`Lwstrb-1:0] m_wstrb_q;
 
-   assign wpayload_in = {m_wdata, m_wstrb};
-   assign {ram_wdata, m_wstrb_q} = wpayload_q;
+   assign wpayload_in = {m_wid, m_wdata, m_wstrb};
+   assign {m_wid_q, ram_wdata, m_wstrb_q} = wpayload_q;
 
 
-   dffe_s #(`Lwdata+`Lwstrb) wpayload_reg (
+   dffe_s #(`Lwid+`Lwdata+`Lwstrb) wpayload_reg (
       .din   (wpayload_in),
       .clk   (aclk),
       .en    (w_enter),
@@ -264,7 +277,8 @@ module axi_sram_bridge(
 
    assign bresp_valid = bresp_valid_tmp | bresp_valid_start;
    
-   assign m_bid = `Lbid'b0;
+   //assign m_bid = `Lbid'b0;
+   assign m_bid = m_wid_q;
    assign m_bresp = `Lbresp'b0;
    assign m_bvalid = bresp_valid;
    
