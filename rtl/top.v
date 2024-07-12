@@ -114,7 +114,9 @@ module top(
       .rready       (cpu_rready      )
 );
 
-   
+  
+   wire tmp_bid_1bit;
+   wire tmp_rid_1bit;
 
    axi_sram_bridge u_axi_sram_bridge(
       .aclk         (clk             ),
@@ -127,7 +129,8 @@ module top(
       .ram_wdata    (ram_wdata       ),
       .ram_wen      (ram_wen         ),
 
-      .m_awid       (cpu_awid        ),           
+      //.m_awid       (cpu_awid        ),
+      .m_awid       ({1'b0, cpu_awid}),           
       .m_awaddr     (cpu_awaddr      ),
       .m_awlen      (cpu_awlen       ),
       .m_awsize     (cpu_awsize      ),
@@ -137,13 +140,15 @@ module top(
       .m_awprot     (cpu_awprot      ),
       .m_awvalid    (cpu_awvalid     ),
       .m_awready    (cpu_awready     ),
-      .m_wid        (cpu_wid         ),
+      //.m_wid        (cpu_wid         ),
+      .m_wid        ({1'b0, cpu_wid}),           
       .m_wdata      (cpu_wdata       ),
       .m_wstrb      (cpu_wstrb       ),
       .m_wlast      (cpu_wlast       ),
       .m_wvalid     (cpu_wvalid      ),
       .m_wready     (cpu_wready      ),
-      .m_bid        (cpu_bid         ),
+      //.m_bid        (cpu_bid         ),
+      .m_bid        ({tmp_bid_1bit, cpu_bid}),           
       .m_bresp      (cpu_bresp       ),
       .m_bvalid     (cpu_bvalid      ),
       .m_bready     (cpu_bready      ),
@@ -151,7 +156,8 @@ module top(
       .m_araddr     (cpu_araddr      ),
       .m_arburst    (cpu_arburst     ),
       .m_arcache    (cpu_arcache     ),
-      .m_arid       (cpu_arid        ),
+      //.m_arid       (cpu_arid        ),
+      .m_arid       ({1'b0, cpu_arid}),           
       .m_arlen      (cpu_arlen       ),
       .m_arlock     (cpu_arlock      ),
       .m_arprot     (cpu_arprot      ),
@@ -160,7 +166,8 @@ module top(
       .m_arvalid    (cpu_arvalid     ),
 
       .m_rdata      (cpu_rdata       ),
-      .m_rid        (cpu_rid         ),
+      //.m_rid        (cpu_rid         ),
+      .m_rid        ({tmp_rid_1bit, cpu_rid}),           
       .m_rlast      (cpu_rlast       ),
       .m_rready     (cpu_rready      ),
       .m_rresp      (cpu_rresp       ),
