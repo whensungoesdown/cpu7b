@@ -185,6 +185,10 @@ module axi_interface(
    assign arprot  = `Larprot'h0;
 
 
+   //
+   // aradd arid are sent out at the first cycle and last until arready
+   //
+
    wire [`Laraddr-1:0] araddr_nxt;
    wire [`Laraddr-1:0] araddr_q;
 
@@ -218,15 +222,13 @@ module axi_interface(
    assign new_ar = ifu_fetch | lsu_read;
    assign araddr = araddr_nxt | ({32{~new_ar}} & araddr_q);
 
-   //
-   // BUG!
-   //
-   // araddr always delay 1 cycle, so the arid has to
+
    //
    // this module is a mess, need code review
    //
 
    wire [`Larid-1:0] arid_in;
+   wire [`Larid-1:0] arid_q;
    assign arid_in = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
 
    dffrle_s #(`Larid) arid_reg (
@@ -234,9 +236,10 @@ module axi_interface(
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (inst_req | data_req),
-      .q     (arid), 
+      .q     (arid_q), 
       .se(), .si(), .so());
 
+   assign arid = arid_in | ({32{~new_ar}} & arid_q);
 
    // inst_req        : _-_____
    // arready         : _____-_
