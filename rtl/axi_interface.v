@@ -198,7 +198,7 @@ module axi_interface(
       .din   (araddr_nxt),
       .clk   (aclk),
       .rst_l (aresetn),
-      .en    (inst_req),
+      .en    (inst_req | data_req),
       .q     (araddr), 
       .se(), .si(), .so());
 
@@ -218,7 +218,7 @@ module axi_interface(
       .din   (arid_in),
       .clk   (aclk),
       .rst_l (aresetn),
-      .en    (inst_req),
+      .en    (inst_req | data_req),
       .q     (arid), 
       .se(), .si(), .so());
 
@@ -232,7 +232,7 @@ module axi_interface(
 
    // but since now inst_req is always high, so arvalid is always high
 
-   assign arvalid_nxt = (arvalid_tmp | inst_req) & (~arready); 
+   assign arvalid_nxt = (arvalid_tmp | (inst_req | data_req)) & (~arready); 
    dffrl_s #(1) arvalid_reg (
       .din   (arvalid_nxt),
       .clk   (aclk),
@@ -240,7 +240,7 @@ module axi_interface(
       .q     (arvalid_tmp), 
       .se(), .si(), .so());
    
-   assign arvalid = arvalid_tmp | inst_req;
+   assign arvalid = arvalid_tmp | (inst_req | data_req);
 
 
    assign rready = 1'b1;
