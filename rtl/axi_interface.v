@@ -172,7 +172,6 @@ module axi_interface(
 //      .se(), .si(), .so());
 
 
-   wire [`Laraddr-1:0] araddr_nxt;
    wire                arvalid_nxt;
    wire                arvalid_tmp;
    
@@ -185,6 +184,12 @@ module axi_interface(
    assign arcache = `Larcache'h0;
    assign arprot  = `Larprot'h0;
 
+
+   wire [`Laraddr-1:0] araddr_nxt;
+   wire [`Laraddr-1:0] araddr_q;
+
+   wire                new_ar;
+ 
 //   mux2ds #(`GRLEN) mux_araddr (.dout(araddr_nxt),
 //	   .in0  (inst_addr),
 //	   .in1  (data_addr),
@@ -194,14 +199,24 @@ module axi_interface(
    // becomes x
    assign araddr_nxt = {inst_addr & {32{ifu_fetch}}} | {data_addr & {32{lsu_read}}};
 
+//   dffrle_s #(`Laraddr) araddr_reg (
+//      .din   (araddr_nxt),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      .en    (inst_req | data_req),
+//      .q     (araddr), 
+//      .se(), .si(), .so());
+
    dffrle_s #(`Laraddr) araddr_reg (
       .din   (araddr_nxt),
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (inst_req | data_req),
-      .q     (araddr), 
+      .q     (araddr_q), 
       .se(), .si(), .so());
 
+   assign new_ar = ifu_fetch | lsu_read;
+   assign araddr = araddr_nxt | ({32{~new_ar}} & araddr_q);
 
    //
    // BUG!
