@@ -215,7 +215,8 @@ module axi_interface(
       .din   (araddr_nxt),
       .clk   (aclk),
       .rst_l (aresetn),
-      .en    (inst_req | data_req),
+      //.en    (inst_req | data_req),
+      .en    (ifu_fetch | lsu_read),
       .q     (araddr_q), 
       .se(), .si(), .so());
 
@@ -235,22 +236,25 @@ module axi_interface(
       .din   (arid_in),
       .clk   (aclk),
       .rst_l (aresetn),
-      .en    (inst_req | data_req),
+      //.en    (inst_req | data_req),
+      .en    (ifu_fetch | lsu_read),
       .q     (arid_q), 
       .se(), .si(), .so());
 
    assign arid = arid_in | ({32{~new_ar}} & arid_q);
 
+   
+
    // inst_req        : _-_____
    // arready         : _____-_
+   //
    // arvalid_nxt     : _----__
    // arvalid_tmp     : __----_
    // arvalid         : _-----_ 
-   
 
-   // but since now inst_req is always high, so arvalid is always high
 
    assign arvalid_nxt = (arvalid_tmp | (inst_req | data_req)) & (~arready); 
+
    dffrl_s #(1) arvalid_reg (
       .din   (arvalid_nxt),
       .clk   (aclk),
@@ -296,19 +300,22 @@ module axi_interface(
 
 
 
-   wire [`Lawaddr-1:0] awaddr_nxt;
-   wire                awvalid_nxt;
-   wire                awvalid_tmp;
-
-//   assign awaddr_nxt = data_addr;
+//   wire [`Lawaddr-1:0] awaddr_in;
+//   wire [`Lawaddr-1:0] awaddr_q;
+//
+//   wire                new_aw;
+//
+//   assign awaddr_in = data_addr;
 //
 //   dffrle_s #(`Lawaddr) awaddr_reg (
-//      .din   (awaddr_nxt),
+//      .din   (awaddr_in),
 //      .clk   (aclk),
 //      .rst_l (aresetn),
 //      .en    (data_wr),
-//      .q     (awaddr), 
+//      .q     (awaddr_q), 
 //      .se(), .si(), .so());
+//
+//   assign new_aw = lsu_write;
    assign awaddr = data_addr;     
 
    // data_req & data_wr : _-_____
@@ -317,6 +324,9 @@ module axi_interface(
    // awvalid_tmp        : __----_
    // awvalid            : _-----_ 
    
+
+   wire                awvalid_nxt;
+   wire                awvalid_tmp;
 
    assign awvalid_nxt = (awvalid_tmp | (data_req & data_wr)) & (~awready); 
    dffrl_s #(1) awvalid_reg (
