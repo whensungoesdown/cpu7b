@@ -172,6 +172,10 @@ module axi_interface(
 //      .se(), .si(), .so());
 
 
+   //
+   // code review, should combine all these to ar bus, ar payload
+   //
+
    wire                arvalid_nxt;
    wire                arvalid_tmp;
    
@@ -245,15 +249,15 @@ module axi_interface(
 
    
 
-   // inst_req        : _-_____
-   // arready         : _____-_
+   // ifu_fetch | lsu_read : _-_____
+   // arready              : _____-_
    //
-   // arvalid_nxt     : _----__
-   // arvalid_tmp     : __----_
-   // arvalid         : _-----_ 
+   // arvalid_nxt          : _----__
+   // arvalid_tmp          : __----_
+   // arvalid              : _-----_ 
 
 
-   assign arvalid_nxt = (arvalid_tmp | (inst_req | data_req)) & (~arready); 
+   assign arvalid_nxt = (arvalid_tmp | (ifu_fetch | lsu_read)) & (~arready); 
 
    dffrl_s #(1) arvalid_reg (
       .din   (arvalid_nxt),
@@ -262,7 +266,7 @@ module axi_interface(
       .q     (arvalid_tmp), 
       .se(), .si(), .so());
    
-   assign arvalid = arvalid_tmp | (inst_req | data_req);
+   assign arvalid = arvalid_tmp | (ifu_fetch | lsu_read);
 
 
    assign rready = 1'b1;
