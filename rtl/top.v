@@ -59,10 +59,12 @@ module top(
    // only for test purpose
    reg ext_intr;
 
-   always @(posedge clk or posedge resetn)
+   always @(posedge clk)
    begin
 	   if(resetn == 1'b0)
+	   begin
 		   ext_intr <= 0; //reset condition
+	   end
    end
    //
    

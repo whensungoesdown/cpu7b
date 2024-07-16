@@ -8,6 +8,7 @@ module cpu7_nocache(
     input                 ext_intr,
     
     output                inst_req       ,
+    input                 inst_busy      ,
     output  [ 31:0]       inst_addr      ,
     output                inst_cancel    ,
     input                 inst_addr_ok   ,
@@ -133,6 +134,7 @@ module cpu7_nocache(
       .inst_exccode            (inst_exccode       ),
       .inst_rdata_f            (inst_rdata_f       ),
       .inst_req                (inst_req           ),
+      .inst_busy               (inst_busy          ),
       .inst_uncache            (inst_uncache       ),
       .inst_valid_f            (inst_valid_f       ),
 

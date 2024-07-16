@@ -14,6 +14,7 @@ module cpu7_ifu_fdp(
    input  [5  :0]         inst_exccode   ,
    input  [`GRLEN-1:0]    inst_rdata_f   ,
    output                 inst_req       ,
+   input                  inst_busy      ,
    input                  inst_uncache   ,
    input                  inst_valid_f   ,
 
@@ -253,7 +254,7 @@ module cpu7_ifu_fdp(
    assign inst_addr = pc_bf;
 
    //assign inst_req = ~reset;
-   assign inst_req = ~reset & ~exu_ifu_stall_req;
+   assign inst_req = ~reset & ~inst_busy & ~exu_ifu_stall_req;
 
    // when branch taken, inst_cancel need to be signal
    // so that the new target instruction can be fetched instead of the one previously requested

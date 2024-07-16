@@ -307,25 +307,131 @@ module cpu7_lsu(
 
    
 
-   assign data_req      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
-   //assign data_req      = valid_e; // try lsu_ale_e at other places 
-   assign data_addr     = addr;
-   assign data_wr       = lsu_wr;
-
-   assign data_wstrb    = {4{lsu_sw||lsu_scw}} & (4'b1111              ) |
-			  {4{lsu_sh         }} & (4'b0011 << shift[1:0]) |
-			  {4{lsu_sb         }} & (4'b0001 << shift[1:0]) ;
-   
-//   assign data_wdata    = {32{lsu_sw||lsu_scw||tlb_req}} & {wdata[31:0]} |
+//   assign data_req      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
+//   //assign data_req      = valid_e; // try lsu_ale_e at other places 
+//   assign data_addr     = addr;
+//   assign data_wr       = lsu_wr;
+//
+//   assign data_wstrb    = {4{lsu_sw||lsu_scw}} & (4'b1111              ) |
+//			  {4{lsu_sh         }} & (4'b0011 << shift[1:0]) |
+//			  {4{lsu_sb         }} & (4'b0001 << shift[1:0]) ;
+//   
+////   assign data_wdata    = {32{lsu_sw||lsu_scw||tlb_req}} & {wdata[31:0]} |
+////			  {32{lsu_sh                  }} & {wdata[15:0], wdata[15:0]} |
+////			  {32{lsu_sb                  }} & {wdata[7:0], wdata[7:0], wdata[7:0], wdata[7:0]};
+//   assign data_wdata    = {32{lsu_sw||lsu_scw         }} & {wdata[31:0]} |
 //			  {32{lsu_sh                  }} & {wdata[15:0], wdata[15:0]} |
 //			  {32{lsu_sb                  }} & {wdata[7:0], wdata[7:0], wdata[7:0], wdata[7:0]};
-   assign data_wdata    = {32{lsu_sw||lsu_scw         }} & {wdata[31:0]} |
-			  {32{lsu_sh                  }} & {wdata[15:0], wdata[15:0]} |
-			  {32{lsu_sb                  }} & {wdata[7:0], wdata[7:0], wdata[7:0], wdata[7:0]};
+//
+//   assign data_prefetch = lsu_op == `LSOC1K_LSU_PRELD || lsu_op == `LSOC1K_LSU_PRELDX;
+//   assign data_ll       = lsu_llw || lsu_lld;
+//   assign data_sc       = lsu_scw || lsu_scd;
 
-   assign data_prefetch = lsu_op == `LSOC1K_LSU_PRELD || lsu_op == `LSOC1K_LSU_PRELDX;
-   assign data_ll       = lsu_llw || lsu_lld;
-   assign data_sc       = lsu_scw || lsu_scd;
+
+   //
+   // data_xxx memory interface
+   //
+   // currently, delay data_xxx singals one cycle to not cause conflict
+   // in axi_interface ar channel
+   //
+   // later, adds data_read_busy, data_write_busy to indicate lsu whether
+   // axi_interface is ready
+   //
+
+   wire              data_req_in;
+   wire [`GRLEN-1:0] data_addr_in;
+   wire              data_wr_in;
+   wire [ 3:0]       data_wstrb_in;
+   wire [`GRLEN-1:0] data_wdata_in;
+   wire              data_prefetch_in;
+   wire              data_ll_in;
+   wire              data_sc_in;
+
+   wire              data_req_q;
+   wire [`GRLEN-1:0] data_addr_q;
+   wire              data_wr_q;
+   wire [ 3:0]       data_wstrb_q;
+   wire [`GRLEN-1:0] data_wdata_q;
+   wire              data_prefetch_q;
+   wire              data_ll_q;
+   wire              data_sc_q;
+
+   assign data_req_in      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
+   assign data_addr_in     = addr;
+   assign data_wr_in       = lsu_wr;
+
+   assign data_wstrb_in    = {4{lsu_sw||lsu_scw}} & (4'b1111              ) |
+			     {4{lsu_sh         }} & (4'b0011 << shift[1:0]) |
+			     {4{lsu_sb         }} & (4'b0001 << shift[1:0]) ;
+   
+   assign data_wdata_in    = {32{lsu_sw||lsu_scw         }} & {wdata[31:0]} |
+			     {32{lsu_sh                  }} & {wdata[15:0], wdata[15:0]} |
+			     {32{lsu_sb                  }} & {wdata[7:0], wdata[7:0], wdata[7:0], wdata[7:0]};
+
+   assign data_prefetch_in = lsu_op == `LSOC1K_LSU_PRELD || lsu_op == `LSOC1K_LSU_PRELDX;
+   assign data_ll_in       = lsu_llw || lsu_lld;
+   assign data_sc_in       = lsu_scw || lsu_scd;
+
+
+   dff_s #(1) data_req_reg (
+      .din (data_req_in),
+      .clk (clk),
+      .q   (data_req_q),
+      .se(), .si(), .so());
+
+   dff_s #(`GRLEN) data_addr_reg (
+      .din (data_addr_in),
+      .clk (clk),
+      .q   (data_addr_q),
+      .se(), .si(), .so());
+
+   dff_s #(1) data_wr_reg (
+      .din (data_wr_in),
+      .clk (clk),
+      .q   (data_wr_q),
+      .se(), .si(), .so());
+
+   dff_s #(4) data_wstrb_reg (
+      .din (data_wstrb_in),
+      .clk (clk),
+      .q   (data_wstrb_q),
+      .se(), .si(), .so());
+
+   dff_s #(`GRLEN) data_wdata_reg (
+      .din (data_wdata_in),
+      .clk (clk),
+      .q   (data_wdata_q),
+      .se(), .si(), .so());
+
+   dff_s #(1) data_prefetch_reg (
+      .din (data_prefetch_in),
+      .clk (clk),
+      .q   (data_prefetch_q),
+      .se(), .si(), .so());
+
+   dff_s #(1) data_ll_reg (
+      .din (data_ll_in),
+      .clk (clk),
+      .q   (data_ll_q),
+      .se(), .si(), .so());
+
+   dff_s #(1) data_sc_reg (
+      .din (data_sc_in),
+      .clk (clk),
+      .q   (data_sc_q),
+      .se(), .si(), .so());
+
+
+   assign data_req      = data_req_q;
+   assign data_addr     = data_addr_q;
+   assign data_wr       = data_wr_q;
+   assign data_wstrb    = data_wstrb_q;
+   assign data_wdata    = data_wdata_q;
+   assign data_prefetch = data_prefetch_q;
+   assign data_ll       = data_ll_q;
+   assign data_sc       = data_sc_q;
+
+   //
 
 
    // except

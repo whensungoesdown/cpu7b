@@ -15,6 +15,7 @@ module cpu7_ifu(
    input  [5:0]                        inst_exccode,
    input  [`GRLEN-1:0]                 inst_rdata_f,
    output                              inst_req, // inst_req_bf
+   input                               inst_busy,
    input                               inst_uncache,
    input                               inst_valid_f,
 
@@ -113,6 +114,7 @@ module cpu7_ifu(
       .exu_ifu_ertn_e   (exu_ifu_ertn_e    ),
 
       .inst_req         (inst_req          ),
+      .inst_busy        (inst_busy         ),
       .inst_addr        (inst_addr         ),
       .inst_cancel      (inst_cancel       ),
       .inst_addr_ok     (inst_addr_ok      ),

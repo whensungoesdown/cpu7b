@@ -54,6 +54,7 @@ module cpu(
 
 
    wire                   inst_req      ;
+   wire                   inst_busy     ;
    wire [`GRLEN-1:0]      inst_addr     ;
    wire                   inst_cancel   ;
    wire                   inst_addr_ok  ;
@@ -93,6 +94,7 @@ module cpu(
 	.ext_intr         (ext_intr            ),
 
         .inst_req         (inst_req             ),
+        .inst_busy        (inst_busy            ),
         .inst_addr        (inst_addr            ),
         .inst_cancel      (inst_cancel          ),
         .inst_addr_ok     (inst_addr_ok         ),
@@ -175,6 +177,7 @@ module cpu(
       .bready	        (bready         ),
 
       .inst_req         (inst_req       ),
+      .inst_busy        (inst_busy      ),
       .inst_addr        (inst_addr      ),
       .inst_cancel      (inst_cancel    ),
       .inst_valid_f     (inst_valid_f   ),

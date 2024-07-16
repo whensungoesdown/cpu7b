@@ -53,6 +53,7 @@ module axi_interface(
 
 
    input                        inst_req,    
+   output                       inst_busy,    
    input  [`GRLEN-1:0]          inst_addr,
    input                        inst_cancel,
    output                       inst_addr_ok,
@@ -175,98 +176,282 @@ module axi_interface(
    //
    // code review, should combine all these to ar bus, ar payload
    //
-
-   wire                arvalid_nxt;
-   wire                arvalid_tmp;
    
-   //assign arid    = `Larid'h0; 
-   //assign arid    = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
-   assign arlen   = `Larlen'h0;
-   assign arsize  = `Larsize'h2; // 32 bits
-   assign arburst = `Larburst'h0;
-   assign arlock  = `Larlock'h0;
-   assign arcache = `Larcache'h0;
-   assign arprot  = `Larprot'h0;
+
+   ///////////////////////
+   // ar bus
+   //
+   ///////////////////////
+
+
+   // scenario 0
+   //
+   // ifu_fetch | lsu_read : _-_____
+   // arready              : _____-_
+   //
+   // arvalid_in           : _----__
+   // arvalid_q            : __----_
+   // arvalid              : _-----_ 
+
+   // scenario 1
+   // 
+   // ifu_fetch | lsu_read : _-_____
+   // arready              : _-_____
+   //
+   // arvalid_in           : _______
+   // arvalid_q            : _______ 
+   // arvalid              : _-_____ 
+
+   // scenario 2
+   // 
+   // ifu_fetch | lsu_read : -______
+   // arready              : -______
+   //
+   // arvalid_in           : _______
+   // arvalid_q            : -______ 
+   // arvalid              : -______ 
+
+   wire arvalid_in;
+   wire arvalid_q;
+
+   assign arvalid_in = (arvalid_q | (ifu_fetch | lsu_read)) & (~arready); 
+   assign arvalid = arvalid_q | (ifu_fetch | lsu_read);
+
+   dffrl_s #(1) arvalid_reg (
+      .din   (arvalid_in),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (arvalid_q), 
+      .se(), .si(), .so());
+   
+
+   wire new_ar;
+   assign new_ar = ifu_fetch | lsu_read;
+
+   wire ar_bus_en;
+   assign ar_bus_en = new_ar;
+
+   wire [`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot-1:0] ar_bus_in;
+   wire [`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot-1:0] ar_bus_q;
+   wire [`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot-1:0] ar_bus;
+
+   wire [`Larid-1:0]    arid_in;
+   //wire [`Larid-1:0]    arid_q;
+
+   wire [`Laraddr-1:0]  araddr_in;
+   //wire [`Laraddr-1:0]  araddr_q;
+
+   wire [`Larlen-1:0]   arlen_in;
+   //wire [`Larlen-1:0]   arlen_q;
+
+   wire [`Larsize-1:0]  arsize_in;
+   //wire [`Larsize-1:0]  arsize_q;
+
+   wire [`Larburst-1:0] arburst_in;
+   //wire [`Larburst-1:0] arburst_q;
+
+   wire [`Larlock-1:0]  arlock_in;
+   //wire [`Larlock-1:0]  arlock_q;
+
+   wire [`Larcache-1:0] arcache_in;
+   //wire [`Larcache-1:0] arcache_q;
+
+   wire [`Larprot-1:0]  arprot_in;
+   //wire [`Larprot-1:0]  arprot_q;
+
+
+   assign arid_in     = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
+   assign araddr_in   = {inst_addr & {32{ifu_fetch}}} | {data_addr & {32{lsu_read}}};
+
+   assign arlen_in    = `Larlen'h0;
+   assign arsize_in   = `Larsize'h2; // 32 bits
+   assign arburst_in  = `Larburst'h0;
+   assign arlock_in   = `Larlock'h0;
+   assign arcache_in  = `Larcache'h0;
+   assign arprot_in   = `Larprot'h0;
+
+   assign ar_bus_in = { arid_in,
+                        araddr_in,
+			arlen_in,
+			arsize_in,
+			arburst_in,
+			arlock_in,
+			arcache_in,
+			arprot_in
+			};
+
+   assign ar_bus = ar_bus_in | ({`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot{~new_ar}} & ar_bus_q);
+
+//   assign {arid_q,
+//	   araddr_q,
+//	   arlen_q,
+//	   arsize_q,
+//	   arburst_q,
+//	   arlock_q,
+//	   arcache_q,
+//	   arprot_q
+//	   } = ar_bus_q & {`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot{arvalid}}; 
+
+
+   dffrle_s #(`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot) ar_bus_reg (
+      .din   (ar_bus_in),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .en    (ar_bus_en),
+      .q     (ar_bus_q), 
+      .se(), .si(), .so());
 
 
    //
-   // aradd arid are sent out at the first cycle and last until arready
+   // read_busy
    //
+   
 
-   wire [`Laraddr-1:0] araddr_nxt;
-   wire [`Laraddr-1:0] araddr_q;
+   //
+   //
+   // new_ar             : __-____
+   // read_fin           : _____-_
+   //
+   // read_busy_in       : __---__
+   // read_busy_q        : ___---_
 
-   wire                new_ar;
- 
-//   mux2ds #(`GRLEN) mux_araddr (.dout(araddr_nxt),
-//	   .in0  (inst_addr),
-//	   .in1  (data_addr),
-//	   .sel0 (ifu_fetch),
-//	   .sel1 (lsu_read));
-   // when lsu_write, ifu_fetch and lsu_read are both 0, then araddr_nxt
-   // becomes x
-   assign araddr_nxt = {inst_addr & {32{ifu_fetch}}} | {data_addr & {32{lsu_read}}};
 
+   wire read_busy_in;
+   wire read_busy_q;
+
+   wire read_fin;
+   assign read_fin = rvalid & rready;
+
+   assign read_busy_in = (read_busy_q | new_ar) & (~read_fin);
+
+   dffrl_s #(1) read_busy_reg (
+      .din   (read_busy_in),
+      .clk   (aclk),
+      .rst_l (aresetn),
+      .q     (read_busy_q), 
+      .se(), .si(), .so());    
+
+   //
+   // cannot use read_busy_in here, read_busy_in and inst_fetch in ifu_fdp
+   // form a loop.
+   // registed signal breaks loop
+   //
+   assign inst_busy = read_busy_q;
+
+
+
+//   assign arid      = arid_q;
+//   assign araddr    = araddr_q;
+//   assign arlen     = arlen_q;
+//   assign arsize    = arsize_q;
+//   assign arburst   = arburst_q;
+//   assign arlock    = arlock_q;
+//   assign arcache   = arcache_q;
+//   assign arprot    = arprot_q;
+
+   assign {arid,
+	   araddr,
+	   arlen,
+	   arsize,
+	   arburst,
+	   arlock,
+	   arcache,
+	   arprot
+	   } = ar_bus & {`Larid+`Laraddr+`Larlen+`Larsize+`Larburst+`Larlock+`Larcache+`Larprot{arvalid}}; 
+
+
+
+//   wire                arvalid_nxt;
+//   wire                arvalid_tmp;
+//   
+//   //assign arid    = `Larid'h0; 
+//   //assign arid    = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
+//   assign arlen   = `Larlen'h0;
+//   assign arsize  = `Larsize'h2; // 32 bits
+//   assign arburst = `Larburst'h0;
+//   assign arlock  = `Larlock'h0;
+//   assign arcache = `Larcache'h0;
+//   assign arprot  = `Larprot'h0;
+//
+//
+//   //
+//   // aradd arid are sent out at the first cycle and last until arready
+//   //
+//
+//   wire [`Laraddr-1:0] araddr_nxt;
+//   wire [`Laraddr-1:0] araddr_q;
+//
+//   wire                new_ar;
+// 
+////   mux2ds #(`GRLEN) mux_araddr (.dout(araddr_nxt),
+////	   .in0  (inst_addr),
+////	   .in1  (data_addr),
+////	   .sel0 (ifu_fetch),
+////	   .sel1 (lsu_read));
+//   // when lsu_write, ifu_fetch and lsu_read are both 0, then araddr_nxt
+//   // becomes x
+//   assign araddr_nxt = {inst_addr & {32{ifu_fetch}}} | {data_addr & {32{lsu_read}}};
+//
+////   dffrle_s #(`Laraddr) araddr_reg (
+////      .din   (araddr_nxt),
+////      .clk   (aclk),
+////      .rst_l (aresetn),
+////      .en    (inst_req | data_req),
+////      .q     (araddr), 
+////      .se(), .si(), .so());
+//
 //   dffrle_s #(`Laraddr) araddr_reg (
 //      .din   (araddr_nxt),
 //      .clk   (aclk),
 //      .rst_l (aresetn),
-//      .en    (inst_req | data_req),
-//      .q     (araddr), 
+//      //.en    (inst_req | data_req),
+//      .en    (ifu_fetch | lsu_read),
+//      .q     (araddr_q), 
 //      .se(), .si(), .so());
-
-   dffrle_s #(`Laraddr) araddr_reg (
-      .din   (araddr_nxt),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      //.en    (inst_req | data_req),
-      .en    (ifu_fetch | lsu_read),
-      .q     (araddr_q), 
-      .se(), .si(), .so());
-
-   assign new_ar = ifu_fetch | lsu_read;
-   assign araddr = araddr_nxt | ({32{~new_ar}} & araddr_q);
-
-
-   //
-   // this module is a mess, need code review
-   //
-
-   wire [`Larid-1:0] arid_in;
-   wire [`Larid-1:0] arid_q;
-   assign arid_in = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
-
-   dffrle_s #(`Larid) arid_reg (
-      .din   (arid_in),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      //.en    (inst_req | data_req),
-      .en    (ifu_fetch | lsu_read),
-      .q     (arid_q), 
-      .se(), .si(), .so());
-
-   assign arid = arid_in | ({32{~new_ar}} & arid_q);
-
-   
-
-   // ifu_fetch | lsu_read : _-_____
-   // arready              : _____-_
-   //
-   // arvalid_nxt          : _----__
-   // arvalid_tmp          : __----_
-   // arvalid              : _-----_ 
-
-
-   assign arvalid_nxt = (arvalid_tmp | (ifu_fetch | lsu_read)) & (~arready); 
-
-   dffrl_s #(1) arvalid_reg (
-      .din   (arvalid_nxt),
-      .clk   (aclk),
-      .rst_l (aresetn),
-      .q     (arvalid_tmp), 
-      .se(), .si(), .so());
-   
-   assign arvalid = arvalid_tmp | (ifu_fetch | lsu_read);
+//
+//   assign new_ar = ifu_fetch | lsu_read;
+//   assign araddr = araddr_nxt | ({32{~new_ar}} & araddr_q);
+//
+//
+//   //
+//   // this module is a mess, need code review
+//   //
+//
+//   wire [`Larid-1:0] arid_in;
+//   wire [`Larid-1:0] arid_q;
+//   assign arid_in = ifu_fetch ? `IFU_ID : `LSU_ID; // lsu_read & lsu_write use the same LSU_ID
+//
+//   dffrle_s #(`Larid) arid_reg (
+//      .din   (arid_in),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      //.en    (inst_req | data_req),
+//      .en    (ifu_fetch | lsu_read),
+//      .q     (arid_q), 
+//      .se(), .si(), .so());
+//
+//   assign arid = arid_in | ({32{~new_ar}} & arid_q);
+//
+//   
+//
+//   // ifu_fetch | lsu_read : _-_____
+//   // arready              : _____-_
+//   //
+//   // arvalid_nxt          : _----__
+//   // arvalid_tmp          : __----_
+//   // arvalid              : _-----_ 
+//
+//
+//   assign arvalid_nxt = (arvalid_tmp | (ifu_fetch | lsu_read)) & (~arready); 
+//
+//   dffrl_s #(1) arvalid_reg (
+//      .din   (arvalid_nxt),
+//      .clk   (aclk),
+//      .rst_l (aresetn),
+//      .q     (arvalid_tmp), 
+//      .se(), .si(), .so());
+//   
+//   assign arvalid = arvalid_tmp | (ifu_fetch | lsu_read);
 
 
    assign rready = 1'b1;

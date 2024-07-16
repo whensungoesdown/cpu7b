@@ -3,6 +3,11 @@ add wave -position end  result:/top_tb/resetn
 
 add wave -divider
 
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_busy
+
+add wave -divider
+
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_bf
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_f
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_d
