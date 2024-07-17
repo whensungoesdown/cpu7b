@@ -254,7 +254,37 @@ module cpu7_ifu_fdp(
    assign inst_addr = pc_bf;
 
    //assign inst_req = ~reset;
-   assign inst_req = ~reset & ~inst_busy & ~exu_ifu_stall_req;
+   //assign inst_req = ~reset & ~inst_busy & ~exu_ifu_stall_req;
+   
+   //
+   // inst_req_bgn : -------
+   // inst_req_end : ___-___
+   //
+   // inst_req_in  : __-____
+   // inst_req_q   : ___-___
+   //
+   wire inst_req_bgn;
+   wire inst_req_end;
+   wire inst_req_in;
+   wire inst_req_q;
+
+   assign inst_req_bgn = ~reset & ~exu_ifu_stall_req;
+   assign inst_req_end = inst_valid_f;
+
+   assign inst_req_in = (inst_req_q | inst_req_bgn) & (~inst_req_end);
+
+   dffrl_s #(1) inst_req_reg (
+      .din   (inst_req_in),
+      .clk   (clk),
+      .rst_l (~reset),
+      .q     (inst_req_q), 
+      .se(), .si(), .so());    
+
+   //
+   // inst_req : -_-_-_-_
+   //
+   assign inst_req = inst_req_in;
+
 
    // when branch taken, inst_cancel need to be signal
    // so that the new target instruction can be fetched instead of the one previously requested

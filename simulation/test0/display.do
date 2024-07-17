@@ -4,6 +4,12 @@ add wave -position end  result:/top_tb/resetn
 add wave -divider
 
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_bgn
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_end
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_in
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_q
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_busy
 
 add wave -divider
