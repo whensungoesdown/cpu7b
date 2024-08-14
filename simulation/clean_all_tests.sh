@@ -212,3 +212,10 @@ echo "test30_ext_intr"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test31_andi
+echo "test31_andi"
+./clean.sh
+echo ""
+cd ..

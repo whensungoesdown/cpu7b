@@ -355,3 +355,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test31_andi
+echo "test31_andi"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
