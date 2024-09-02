@@ -78,12 +78,6 @@ module c7bbiu(
    input  [1:0]     ext_biu_b_resp 
 );
 
-   // ifu_has_prio
-   // lsu_has_prio
-  
-   // biu_ifu_ack
-   // assign biu_ifu_ack = axi_ar_ready & ifu_has_prio 
-
    wire                axi_ar_ready;
 
    wire                arb_rd_val;

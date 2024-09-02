@@ -38,28 +38,6 @@ module c7bbiu_rd_arb(
    assign ifu_select = ~lsu_biu_rd_req &
 	                ifu_biu_rd_req;
 
-//   assign arb_rd_in = 
-//           {57{ifu_select}} & {AXI_RID_IFU, ifu_biu_rd_addr, 8'h0, AXI_SIZE_WORD, 2'b00, 1'b0, 4'b0000, 3'b000} |
-//           {57{lsu_select}} & {AXI_RID_LSU, lsu_biu_rd_addr, 8'h0, AXI_SIZE_WORD, 2'b00, 1'b0, 4'b0000, 3'b000}
-//	   ;
-//
-//   dffe_s #(57) arb_rd_reg (
-//      .din   (arb_rd_in),
-//      .en    (ifu_biu_rd_req | lsu_biu_rd_req),
-//      .clk   (clk),
-//      .q     (arb_rd_q),
-//      .se(), .si(), .so());
-//
-//   assign {arb_rd_id,
-//	   arb_rd_addr,
-//	   arb_rd_len,
-//	   arb_rd_size,
-//           arb_rd_burst,
-//           arb_rd_lock,
-//           arb_rd_cache,
-//           arb_rd_prot
-//	   } = arb_rd_q;
-
    assign {arb_rd_id,
            arb_rd_addr,
            arb_rd_len,
