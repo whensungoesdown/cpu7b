@@ -35,6 +35,10 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/sram.v \
                 ../../rtl/cpu.v \
                 ../../rtl/cpu7_csr_timer.v \
+                ../../rtl/c7bbiu/c7bbiu.v \
+                ../../rtl/c7bbiu/c7bbiu_rd_arb.v \
+                ../../rtl/c7bbiu/c7bbiu_wr_arb.v \
+                ../../rtl/c7bbiu/c7bbiu_axi_interface.v \
 		../../rtl/top.v
 
 

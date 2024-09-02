@@ -14,7 +14,7 @@ module cpu7_ifu_fdp(
    input  [5  :0]         inst_exccode   ,
    input  [`GRLEN-1:0]    inst_rdata_f   ,
    output                 inst_req       ,
-   input                  inst_busy      ,
+   input                  inst_ack       ,
    input                  inst_uncache   ,
    input                  inst_valid_f   ,
 
@@ -254,7 +254,6 @@ module cpu7_ifu_fdp(
    assign inst_addr = pc_bf;
 
    //assign inst_req = ~reset;
-   //assign inst_req = ~reset & ~inst_busy & ~exu_ifu_stall_req;
    
    //
    // inst_req_bgn : -------
@@ -270,6 +269,8 @@ module cpu7_ifu_fdp(
 
    assign inst_req_bgn = ~reset & ~exu_ifu_stall_req;
    assign inst_req_end = inst_valid_f;
+   // uty: test !! inst_ack causes loop with inst_req
+   //assign inst_req_end = inst_ack;
 
    assign inst_req_in = (inst_req_q | inst_req_bgn) & (~inst_req_end);
 
