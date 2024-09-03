@@ -144,14 +144,14 @@ module cpu(
 // uty: test
 
       // LSU Interface
-      .lsu_biu_rd_req     (data_req & data_wr   ),
+      .lsu_biu_rd_req     (data_req & ~data_wr  ),
       .lsu_biu_rd_addr    (data_addr            ),
    
       .biu_lsu_rd_ack     (                     ),
       .biu_lsu_data_valid (data_data_ok_m       ),
       .biu_lsu_data       (data_rdata_m         ),
 
-      .lsu_biu_wr_req     (data_req & ~data_wr  ),
+      .lsu_biu_wr_req     (data_req & data_wr   ),
       .lsu_biu_wr_addr    (data_addr            ),
       .lsu_biu_wr_data    (data_wdata           ),
       .lsu_biu_wr_strb    (data_wstrb           ),

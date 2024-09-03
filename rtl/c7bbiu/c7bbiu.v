@@ -271,6 +271,6 @@ module c7bbiu(
    assign biu_ifu_data = axi_rdata;
 
    assign biu_lsu_data_valid = axi_rdata_lsu_val;
-   assign biu_ifu_data = axi_rdata;
+   assign biu_lsu_data = axi_rdata;
 
 endmodule
