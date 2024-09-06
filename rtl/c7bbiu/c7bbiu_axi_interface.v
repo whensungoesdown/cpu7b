@@ -35,10 +35,14 @@ module c7bbiu_axi_interface(
 
       // Arbitrated write signals
       input            arb_wr_val ,
-      input [3:0]      arb_wr_id  ,
-      input [31:0]     arb_wr_addr,
-      input [7:0]      arb_wr_len ,
-      input [2:0]      arb_wr_size,
+      input  [3:0]     arb_wr_id  ,
+      input  [31:0]    arb_wr_addr,
+      input  [7:0]     arb_wr_len ,
+      input  [2:0]     arb_wr_size,
+      input  [1:0]     arb_wr_burst,
+      input            arb_wr_lock,
+      input  [3:0]     arb_wr_cache,
+      input  [2:0]     arb_wr_prot,
 
       input  [31:0]    arb_wr_data,
       input  [3:0]     arb_wr_strb,
@@ -82,6 +86,11 @@ module c7bbiu_axi_interface(
 
 `include "axi_types.v"
 
+   ///////////////////////
+   // ar channel
+   //
+   ///////////////////////
+   
    wire [3:0]  arb_rd_id_q;
    wire [31:0] arb_rd_addr_q; 
    wire [1:0]  arb_rd_burst_q;
@@ -105,16 +114,15 @@ module c7bbiu_axi_interface(
                        arb_rd_prot
                        };
 
-
-
-
-   dffrl_s #(57) arb_rd_reg (
+   dffrle_s #(57) arb_rd_reg (
       .din   (arb_rd_in),
       .rst_l (resetn),
-//      .en    (arb_rd_val),  
+      .en    (arb_rd_val),  
 //      buffered here for timing's sake, arbitrated     
 //      request should be sent out immediately, 
-//      so, only buffered for one cycle
+//
+//      so, only buffered for one cycle (WRONG!), these signals also need to
+//      be registered, to wait for the ar_ready 
       .clk   (clk),
       .q     (arb_rd_q),
       .se(), .si(), .so());
@@ -133,64 +141,6 @@ module c7bbiu_axi_interface(
 
    wire r_fin;
    assign r_fin = ext_biu_r_valid & biu_ext_r_ready;
-
-
-// now have arb_rd, rd_busy no longer needed
-   
-//   // arb_rd_val           : _-_____
-//   // r_fin                : _____-_
-//   //
-//   // rd_busy_in           : _----__
-//   // rd_busy_q            : __----_
-//   // biu_ext_ar_valid     : __----_ 
-//   wire rd_busy_in;
-//   wire rd_busy_q;
-//
-//   // uty: review      ~arb_wr_val is still needed?
-//   //
-//   // (r_fin & ~arb_wr_val) indicates that "r_fin" should be the state that follows when data_req goes low.
-//   // also, when rd_busy_q is 1, arb_wr_val should not be set to 1 again
-//   assign rd_busy_in = (rd_busy_q & ~(r_fin & ~arb_wr_val)) | arb_rd_val_q;
-//
-//   dffrl_s #(1) rd_busy_reg (
-//      .din   (rd_busy_in),
-//      .clk   (clk),
-//      .rst_l (resetn),
-//      .q     (rd_busy_q), 
-//      .se(), .si(), .so());    
-
-
-
-   wire b_fin;
-   assign b_fin = ext_biu_b_valid & biu_ext_b_ready;
-
-//   //
-//   // wr_busy_q          : ___---_
-//   //
-//   // arb_wr_val         : __-____
-//   // bvalid & bready    : _____-_
-//   //
-//   wire wr_busy_in;
-//   wire wr_busy_q;
-//
-//   assign wr_busy_in = (wr_busy_q | arb_wr_val) & ~(b_fin & ~arb_wr_val);
-//
-//
-//   dffrl_s #(1) wr_busy_reg (
-//      .din   (wr_busy_in),
-//      .clk   (clk),
-//      .rst_l (resetn),
-//      .q     (wr_busy_q), 
-//      .se(), .si(), .so());
-
-
-
-
-
-   ///////////////////////
-   // ar bus
-   //
-   ///////////////////////
 
 
    // 
@@ -219,7 +169,6 @@ module c7bbiu_axi_interface(
    wire ar_valid_in;
    wire ar_valid_q;
 
-   
    assign ar_valid_in = (ar_valid_q & ~ext_biu_ar_ready) | arb_rd_val; 
    assign biu_ext_ar_valid = ar_valid_q;
 
@@ -243,37 +192,39 @@ module c7bbiu_axi_interface(
 
 
 
+   // r channel
+
    assign biu_ext_r_ready = 1'b1;
 
+   // now, r channel data not registered after received
 
-
-   wire [38:0] r_in;
-   wire [38:0] r_q;
-
-   assign r_in = {ext_biu_r_data,
-	          ext_biu_r_id,
-	          ext_biu_r_last,
-	          ext_biu_r_resp
-	          };
-
-   dffrle_s #(39) r_reg (
-      .din   (r_in),
-      .clk   (clk),
-      .rst_l (resetn),
-      .en    (ext_biu_r_valid),
-      .q     (r_q), 
-      .se(), .si(), .so());
-	   
-   wire [31:0] r_data_q;
-   wire [3:0]  r_id_q;
-   wire        r_last_q;
-   wire [1:0]  r_resp_q;
-
-   assign { r_data_q,
-            r_id_q,
-	    r_last_q,
-	    r_resp_q } = r_q;
-
+//   wire [38:0] r_in;
+//   wire [38:0] r_q;
+//
+//   assign r_in = {ext_biu_r_data,
+//	          ext_biu_r_id,
+//	          ext_biu_r_last,
+//	          ext_biu_r_resp
+//	          };
+//
+//   dffrle_s #(39) r_reg (
+//      .din   (r_in),
+//      .clk   (clk),
+//      .rst_l (resetn),
+//      .en    (ext_biu_r_valid),
+//      .q     (r_q), 
+//      .se(), .si(), .so());
+//	   
+//   wire [31:0] r_data_q;
+//   wire [3:0]  r_id_q;
+//   wire        r_last_q;
+//   wire [1:0]  r_resp_q;
+//
+//   assign { r_data_q,
+//            r_id_q,
+//	    r_last_q,
+//	    r_resp_q } = r_q;
+//
 
    wire rdata_val;
 
@@ -287,76 +238,149 @@ module c7bbiu_axi_interface(
    assign axi_rdata = ext_biu_r_data;
 
 
-   assign biu_ext_aw_addr = arb_wr_addr;
 
 
-   // arb_wr_val         : _-_____
-   // ext_biu_aw_ready   : _____-_
-   // aw_valid_in        : _----__
-   // aw_valid_q         : __----_
-   // biu_ext_aw_valid   : _-----_ 
-   
+   ///////////////////////
+   // aw w channel
+   //
+   ///////////////////////
+
+   // aw
+   wire [3:0]  arb_wr_id_q;
+   wire [31:0] arb_wr_addr_q;
+   wire [7:0]  arb_wr_len_q;
+   wire [2:0]  arb_wr_size_q;
+   wire [1:0]  arb_wr_burst_q;
+   wire        arb_wr_lock_q;
+   wire [3:0]  arb_wr_cache_q;
+   wire [2:0]  arb_wr_prot_q;
+
+   // w
+   wire [31:0] arb_wr_data_q;
+   wire [3:0]  arb_wr_strb_q;
+   wire        arb_wr_last_q;
+
+   wire [93:0] arb_wr_in;
+   wire [93:0] arb_wr_q;
+
+   assign arb_wr_in = {arb_wr_id,
+                       arb_wr_addr,
+                       arb_wr_len,
+                       arb_wr_size,
+                       arb_wr_burst,
+                       arb_wr_lock,
+                       arb_wr_cache,
+                       arb_wr_prot,
+
+		       arb_wr_data,
+		       arb_wr_strb,
+		       arb_wr_last
+                       };
+
+   dffrle_s #(94) arb_wr_reg (
+      .din   (arb_wr_in),
+      .rst_l (resetn),
+      .en    (arb_wr_val),  
+      .clk   (clk),
+      .q     (arb_wr_q),
+      .se(), .si(), .so());
+
+   assign {arb_wr_id_q,
+           arb_wr_addr_q,
+           arb_wr_len_q,
+           arb_wr_size_q,
+           arb_wr_burst_q,
+           arb_wr_lock_q,
+           arb_wr_cache_q,
+           arb_wr_prot_q,
+           
+           arb_wr_data_q,
+           arb_wr_strb_q,
+           arb_wr_last_q
+	   } = arb_wr_q;
+
+
+   wire b_fin;
+   assign b_fin = ext_biu_b_valid & biu_ext_b_ready;
+
+
+
+
+   // 
+   // arb_wr_val is 1 cycle ahead of arb_wr_xx_q
+   //
+   //
+   // scenario 0
+   //
+   // arb_wr_val           : _-_____
+   // ext_biu_aw_ready     : _____-_
+   //
+   // aw_valid_in          : _----__
+   // aw_valid_q           : __----_
+   // biu_ext_aw_valid     : __----_ 
+
+   // scenario 1
+   // 
+   // arb_wr_val           : _-_____
+   // ext_biu_aw_ready     : ---____
+   //
+   // aw_valid_in          : _-_____
+   // aw_valid_q           : __-____ 
+   // biu_ext_aw_valid     : __-____ 
 
    wire aw_valid_in;
    wire aw_valid_q;
 
-   assign aw_valid_in = (aw_valid_q | arb_wr_val) & (~ext_biu_aw_ready); 
+   assign aw_valid_in = (aw_valid_q & ~ext_biu_aw_ready) | arb_wr_val; 
+   assign biu_ext_aw_valid = aw_valid_q;
+
    dffrl_s #(1) aw_valid_reg (
       .din   (aw_valid_in),
       .clk   (clk),
       .rst_l (resetn),
       .q     (aw_valid_q), 
       .se(), .si(), .so());
-   
-   assign biu_ext_aw_valid = aw_valid_q | arb_wr_val;
 
-   assign biu_ext_w_data = arb_wr_data;
+   assign biu_ext_aw_id = arb_wr_id_q;
+   assign biu_ext_aw_addr = arb_wr_addr_q;
+   assign biu_ext_aw_len = arb_wr_len_q;
+   assign biu_ext_aw_size = arb_wr_size_q;
+   assign biu_ext_aw_burst = arb_wr_burst_q;
+   assign biu_ext_aw_lock  = arb_wr_lock_q;
+   assign biu_ext_aw_cache = arb_wr_cache_q;
+   assign biu_ext_aw_prot  = arb_wr_prot_q;
 
 
+
+
+   // aw channel
 
    wire w_valid_in;
    wire w_valid_q;
 
 
-   // arb_wr_val         : _-_____
-   // ext_biu_w_ready    : _____-_
-   // w_valid_in         : _----__
-   // w_valid_q          : __----_
-   // biu_ext_w_valid    : _-----_ 
-   
+   assign w_valid_in = (w_valid_q & ~ext_biu_w_ready) | arb_wr_val; 
+   assign biu_ext_w_valid = w_valid_q;
 
-   assign w_valid_in = (w_valid_q | arb_wr_val) & (~ext_biu_w_ready); 
    dffrl_s #(1) w_valid_reg (
       .din   (w_valid_in),
       .clk   (clk),
       .rst_l (resetn),
       .q     (w_valid_q), 
       .se(), .si(), .so());
-   
-   assign biu_ext_w_valid = w_valid_q | arb_wr_val;
+
+
+   assign biu_ext_w_id = arb_wr_id_q;
+   assign biu_ext_w_data = arb_wr_data_q;
+   assign biu_ext_w_strb = arb_wr_strb_q;
+   assign biu_ext_w_last = arb_wr_last_q;
 
 
 
-   //assign bready = 1'b1;
+
+   // b channel
    assign biu_ext_b_ready = 1'b1;
-
    assign axi_write_lsu_val = b_fin & (ext_biu_b_id == AXI_WID_LSU);
-
-
-   assign biu_ext_aw_id = AXI_WID_LSU;
-   assign biu_ext_aw_len = arb_wr_len;
-   assign biu_ext_aw_size = arb_wr_size;
-
-   assign biu_ext_aw_burst = `Lawburst'b0;
-   assign biu_ext_aw_lock  = `Lawlock'b0;
-   assign biu_ext_aw_cache = `Lawcache'b0;
-   assign biu_ext_aw_prot  = `Lawprot'b0;
-
-
-
-   assign biu_ext_w_id = AXI_WID_LSU;
-   assign biu_ext_w_strb = arb_wr_strb;
-   assign biu_ext_w_last = arb_wr_last;
 
 
 endmodule

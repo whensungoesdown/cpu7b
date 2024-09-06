@@ -231,6 +231,10 @@ module c7bbiu(
       .arb_wr_addr          (arb_wr_addr       ),
       .arb_wr_len           (arb_wr_len        ),
       .arb_wr_size          (arb_wr_size       ),
+      .arb_wr_burst         (arb_wr_burst      ),
+      .arb_wr_lock          (arb_wr_lock       ),
+      .arb_wr_cache         (arb_wr_cache      ),
+      .arb_wr_prot          (arb_wr_prot       ),
 
       .arb_wr_data          (arb_wr_data       ),
       .arb_wr_strb          (arb_wr_strb       ),

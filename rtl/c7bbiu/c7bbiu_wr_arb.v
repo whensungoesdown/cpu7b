@@ -48,7 +48,7 @@ module c7bbiu_wr_arb(
            arb_wr_strb,
            arb_wr_last
 	   } =
-           {89{lsu_select}} & {lsu_biu_wr_addr, 8'h0, AXI_SIZE_WORD, 2'b00, 1'b0, 4'b0000, 3'b000, lsu_biu_wr_data, lsu_biu_wr_strb, lsu_biu_wr_last}
+           {90{lsu_select}} & {lsu_biu_wr_addr, 8'h0, AXI_SIZE_WORD, 2'b00, 1'b0, 4'b0000, 3'b000, lsu_biu_wr_data, lsu_biu_wr_strb, lsu_biu_wr_last}
 	   ;
 
    assign biu_lsu_wr_ack = axi_aw_ready & axi_w_ready & lsu_select;
