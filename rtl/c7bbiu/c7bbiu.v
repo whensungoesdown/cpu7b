@@ -275,7 +275,22 @@ module c7bbiu(
       .axi_write_lsu_val    (axi_write_lsu_val )
    );
 
-   assign biu_ifu_data_valid = axi_rdata_ifu_val;
+
+   //
+   // ifu cancel(ignore) next coming data
+   //
+
+   wire ifu_cancel_q;
+
+   dffrle_s #(1) ifu_cancel_reg (
+      .din   (ifu_biu_cancel),
+      .clk   (clk),
+      .rst_l (resetn),
+      .en    (ifu_biu_cancel | axi_rdata_ifu_val),
+      .q     (ifu_cancel_q), 
+      .se(), .si(), .so());
+
+   assign biu_ifu_data_valid = axi_rdata_ifu_val & ~ifu_cancel_q;
    assign biu_ifu_data = axi_rdata;
 
    assign biu_lsu_data_valid = axi_rdata_lsu_val;
