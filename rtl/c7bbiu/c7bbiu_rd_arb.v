@@ -42,6 +42,7 @@ module c7bbiu_rd_arb(
    wire axi_ar_busy_lsu_in;
    wire axi_ar_busy_lsu_q;
 
+   //
    // lsu has the highest priority, otherwise lsu read have no change to finish
    //
    // can not be selected if ar is busy (no interleaving)
@@ -81,7 +82,6 @@ module c7bbiu_rd_arb(
    // it is not busy on the cycle of ifu_select, so do not use axi_ar_busy_ifu_q
    // if set busy on ifu_select, then arb_rd_val can not be set 
    assign axi_ar_busy_ifu = axi_ar_busy_ifu_q;
-   //assign axi_ar_busy_ifu = axi_ar_busy_ifu_q & ~axi_rdata_ifu_val;
 
    
    // axi_ar_busy_lsu, the same

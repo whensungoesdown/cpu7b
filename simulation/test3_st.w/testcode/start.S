@@ -20,7 +20,6 @@ start:
     addi.w $r7, $r0, 0x5a
 # rd is the data to be stored
     st.w $r7, $r6, 0x0
-#    nop
     ld.w $r5, $r6, 0x0
     addi.w $r0, $r0, 0x0
     nop

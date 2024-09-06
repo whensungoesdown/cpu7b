@@ -340,12 +340,6 @@ module c7bbiu_axi_interface(
    //assign bready = 1'b1;
    assign biu_ext_b_ready = 1'b1;
 
-
-   //assign data_data_ok_m = (rready & rvalid) & (lsu_read_m | lsu_write_m); // lsu_read_e lsu_write data_data_ok_e
-   //// should check bresp value, then signal data_data_ok
-   //assign data_data_ok_m = ((rready & rvalid) & lsu_read_m) | ((bready & bvalid) & lsu_write_m); 
-//   assign data_data_ok_m = ((rready & rvalid) & lsu_read_m & (rid == `LSU_ID)) | ((bready & bvalid) & lsu_write_m & (bid == `LSU_ID)); 
-
    assign axi_write_lsu_val = b_fin & (ext_biu_b_id == AXI_WID_LSU);
 
 
