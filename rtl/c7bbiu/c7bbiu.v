@@ -28,6 +28,7 @@ module c7bbiu(
    input               lsu_biu_wr_last,
   
    output              biu_lsu_wr_ack, 
+   output              biu_lsu_write_valid,  
 
    //output              biu_lsu_fault,
 
@@ -135,6 +136,9 @@ module c7bbiu(
       .lsu_biu_rd_req  (lsu_biu_rd_req  ),
       .biu_lsu_rd_ack  (biu_lsu_rd_ack  ),
       .lsu_biu_rd_addr (lsu_biu_rd_addr ),
+
+      .axi_rdata_ifu_val    (axi_rdata_ifu_val ),
+      .axi_rdata_lsu_val    (axi_rdata_lsu_val ),
 
       .arb_rd_val      (arb_rd_val      ), 
       .arb_rd_id       (arb_rd_id       ),
@@ -272,5 +276,7 @@ module c7bbiu(
 
    assign biu_lsu_data_valid = axi_rdata_lsu_val;
    assign biu_lsu_data = axi_rdata;
+
+   assign biu_lsu_write_valid = axi_write_lsu_val;
 
 endmodule

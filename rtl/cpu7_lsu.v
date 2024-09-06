@@ -356,7 +356,6 @@ module cpu7_lsu(
    wire              data_ll_q;
    wire              data_sc_q;
 
-   assign data_req_in      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
    assign data_addr_in     = addr;
    assign data_wr_in       = lsu_wr;
 
@@ -372,11 +371,21 @@ module cpu7_lsu(
    assign data_ll_in       = lsu_llw || lsu_lld;
    assign data_sc_in       = lsu_scw || lsu_scd;
 
+   //
+   // valid_e & ~lsu_ale_e : _-_____
+   // data_data_ok_m       : _____-_
+   //
+   // data_req_in          : _----__
+   // data_req_q           : __----_
 
-   dff_s #(1) data_req_reg (
-      .din (data_req_in),
-      .clk (clk),
-      .q   (data_req_q),
+   //assign data_req_in      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
+   assign data_req_in      = (data_req_q & ~data_data_ok_m) | (valid_e & ~lsu_ale_e); 
+
+   dffrl_s #(1) data_req_reg (
+      .din   (data_req_in),
+      .clk   (clk),
+      .rst_l (resetn),
+      .q     (data_req_q),
       .se(), .si(), .so());
 
    dff_s #(`GRLEN) data_addr_reg (

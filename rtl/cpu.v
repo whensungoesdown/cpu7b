@@ -85,6 +85,15 @@ module cpu(
    wire [ 5:0]            data_exccode;
 
 
+   wire biu_lsu_data_valid;
+   wire biu_lsu_write_valid;
+
+   assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_valid;
+
+   wire biu_lsu_rd_ack;
+   wire biu_lsu_wr_ack;
+
+   assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_ack;
 
 
    cpu7_nocache cpu(
@@ -147,17 +156,18 @@ module cpu(
       .lsu_biu_rd_req     (data_req & ~data_wr  ),
       .lsu_biu_rd_addr    (data_addr            ),
    
-      .biu_lsu_rd_ack     (                     ),
-      .biu_lsu_data_valid (data_data_ok_m       ),
+      .biu_lsu_rd_ack     (biu_lsu_rd_ack       ), //
+      .biu_lsu_data_valid (biu_lsu_data_valid   ),
       .biu_lsu_data       (data_rdata_m         ),
 
       .lsu_biu_wr_req     (data_req & data_wr   ),
       .lsu_biu_wr_addr    (data_addr            ),
       .lsu_biu_wr_data    (data_wdata           ),
       .lsu_biu_wr_strb    (data_wstrb           ),
-      .lsu_biu_wr_last    (                     ),
+      .lsu_biu_wr_last    (1'b1                 ),
 
-      .biu_lsu_wr_ack     (                     ),
+      .biu_lsu_wr_ack     (biu_lsu_wr_ack       ), //
+      .biu_lsu_write_valid(biu_lsu_write_valid  ),
 //
 
       // AXI Read Address Channel

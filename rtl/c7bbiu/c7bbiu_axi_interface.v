@@ -82,7 +82,6 @@ module c7bbiu_axi_interface(
 
 `include "axi_types.v"
 
-   wire        arb_rd_val_q;
    wire [3:0]  arb_rd_id_q;
    wire [31:0] arb_rd_addr_q; 
    wire [1:0]  arb_rd_burst_q;
@@ -93,11 +92,10 @@ module c7bbiu_axi_interface(
    wire [2:0]  arb_rd_prot_q;
 
 
-   wire [57:0] arb_rd_in;
-   wire [57:0] arb_rd_q;
+   wire [56:0] arb_rd_in;
+   wire [56:0] arb_rd_q;
 
-   assign arb_rd_in = {arb_rd_val,
-                       arb_rd_id,
+   assign arb_rd_in = {arb_rd_id,
                        arb_rd_addr,
                        arb_rd_len,
                        arb_rd_size,
@@ -110,16 +108,18 @@ module c7bbiu_axi_interface(
 
 
 
-   dffrle_s #(58) arb_rd_reg (
+   dffrl_s #(57) arb_rd_reg (
       .din   (arb_rd_in),
       .rst_l (resetn),
-      .en    (arb_rd_val),
+//      .en    (arb_rd_val),  
+//      buffered here for timing's sake, arbitrated     
+//      request should be sent out immediately, 
+//      so, only buffered for one cycle
       .clk   (clk),
       .q     (arb_rd_q),
       .se(), .si(), .so());
 
-   assign {arb_rd_val_q,
-	   arb_rd_id_q,
+   assign {arb_rd_id_q,
 	   arb_rd_addr_q,
 	   arb_rd_len_q,
 	   arb_rd_size_q,
@@ -134,50 +134,54 @@ module c7bbiu_axi_interface(
    wire r_fin;
    assign r_fin = ext_biu_r_valid & biu_ext_r_ready;
 
-   //
-   // rd_busy            : ___---_
-   //
-   // arb_rd_val_q       : __-____
-   // rvalid & rready    : _____-_
-   wire rd_busy_in;
-   wire rd_busy_q;
 
-   // uty: review      ~arb_wr_val is still needed?
-   //
-   // (r_fin & ~arb_wr_val) indicates that "r_fin" should be the state that follows when data_req goes low.
-   // also, when rd_busy_q is 1, arb_wr_val should not be set to 1 again
-   assign rd_busy_in = (rd_busy_q | arb_rd_val_q) & ~(r_fin & ~arb_wr_val);
-
-   dffrl_s #(1) rd_busy_reg (
-      .din   (rd_busy_in),
-      .clk   (clk),
-      .rst_l (resetn),
-      .q     (rd_busy_q), 
-      .se(), .si(), .so());    
+// now have arb_rd, rd_busy no longer needed
+   
+//   // arb_rd_val           : _-_____
+//   // r_fin                : _____-_
+//   //
+//   // rd_busy_in           : _----__
+//   // rd_busy_q            : __----_
+//   // biu_ext_ar_valid     : __----_ 
+//   wire rd_busy_in;
+//   wire rd_busy_q;
+//
+//   // uty: review      ~arb_wr_val is still needed?
+//   //
+//   // (r_fin & ~arb_wr_val) indicates that "r_fin" should be the state that follows when data_req goes low.
+//   // also, when rd_busy_q is 1, arb_wr_val should not be set to 1 again
+//   assign rd_busy_in = (rd_busy_q & ~(r_fin & ~arb_wr_val)) | arb_rd_val_q;
+//
+//   dffrl_s #(1) rd_busy_reg (
+//      .din   (rd_busy_in),
+//      .clk   (clk),
+//      .rst_l (resetn),
+//      .q     (rd_busy_q), 
+//      .se(), .si(), .so());    
 
 
 
    wire b_fin;
    assign b_fin = ext_biu_b_valid & biu_ext_b_ready;
 
-   //
-   // wr_busy_q          : ___---_
-   //
-   // arb_wr_val         : __-____
-   // bvalid & bready    : _____-_
-   //
-   wire wr_busy_in;
-   wire wr_busy_q;
-
-   assign wr_busy_in = (wr_busy_q | arb_wr_val) & ~(b_fin & ~arb_wr_val);
-
-
-   dffrl_s #(1) wr_busy_reg (
-      .din   (wr_busy_in),
-      .clk   (clk),
-      .rst_l (resetn),
-      .q     (wr_busy_q), 
-      .se(), .si(), .so());
+//   //
+//   // wr_busy_q          : ___---_
+//   //
+//   // arb_wr_val         : __-____
+//   // bvalid & bready    : _____-_
+//   //
+//   wire wr_busy_in;
+//   wire wr_busy_q;
+//
+//   assign wr_busy_in = (wr_busy_q | arb_wr_val) & ~(b_fin & ~arb_wr_val);
+//
+//
+//   dffrl_s #(1) wr_busy_reg (
+//      .din   (wr_busy_in),
+//      .clk   (clk),
+//      .rst_l (resetn),
+//      .q     (wr_busy_q), 
+//      .se(), .si(), .so());
 
 
 
@@ -189,39 +193,35 @@ module c7bbiu_axi_interface(
    ///////////////////////
 
 
+   // 
+   // arb_rd_val is 1 cycle ahead of arb_rd_xx_q
+   //
+   //
    // scenario 0
    //
-   // arb_rd_val_q         : _-_____
+   // arb_rd_val           : _-_____
    // ext_biu_ar_ready     : _____-_
    //
    // ar_valid_in          : _----__
    // ar_valid_q           : __----_
-   // biu_ext_ar_valid     : _-----_ 
+   // biu_ext_ar_valid     : __----_ 
 
    // scenario 1
    // 
-   // arb_rd_val_q         : _-_____
-   // ext_biu_ar_ready     : _-_____
+   // arb_rd_val           : _-_____
+   // ext_biu_ar_ready     : ---____
    //
-   // ar_valid_in          : _______
-   // ar_valid_q           : _______ 
-   // biu_ext_ar_valid     : _-_____ 
+   // ar_valid_in          : _-_____
+   // ar_valid_q           : __-____ 
+   // biu_ext_ar_valid     : __-____ 
 
-   // scenario 2
-   // 
-   // arb_rd_val_q         : -______
-   // ext_biu_ar_ready     : -______
-   //
-   // ar_valid_in          : _______
-   // ar_valid_q           : -______ 
-   // biu_ext_ar_valid     : -______ 
 
    wire ar_valid_in;
    wire ar_valid_q;
 
    
-   assign ar_valid_in = (ar_valid_q | arb_rd_val_q) & (~ext_biu_ar_ready); 
-   assign biu_ext_ar_valid = ar_valid_q | arb_rd_val_q;
+   assign ar_valid_in = (ar_valid_q & ~ext_biu_ar_ready) | arb_rd_val; 
+   assign biu_ext_ar_valid = ar_valid_q;
 
    dffrl_s #(1) ar_valid_reg (
       .din   (ar_valid_in),
