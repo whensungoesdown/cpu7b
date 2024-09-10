@@ -315,8 +315,8 @@ module c7bbiu_axi_interface(
    wire [3:0]  arb_wr_aw_cache_q;
    wire [2:0]  arb_wr_aw_prot_q;
 
-   wire [57:0] arb_wr_aw_in;
-   wire [57:0] arb_wr_aw_q;
+   wire [56:0] arb_wr_aw_in;
+   wire [56:0] arb_wr_aw_q;
 
    assign arb_wr_aw_in = {arb_wr_aw_id,
                           arb_wr_aw_addr,
@@ -328,7 +328,7 @@ module c7bbiu_axi_interface(
                           arb_wr_aw_prot
                           };
 
-   dffrle_s #(58) arb_wr_aw_reg (
+   dffrle_s #(57) arb_wr_aw_reg (
       .din   (arb_wr_aw_in),
       .rst_l (resetn),
       .en    (aw_enable),  
@@ -386,8 +386,8 @@ module c7bbiu_axi_interface(
    wire [3:0]  arb_wr_w_strb_q;
    wire        arb_wr_w_last_q;
 
-   wire [36:0] arb_wr_w_in;
-   wire [36:0] arb_wr_w_q;
+   wire [40:0] arb_wr_w_in;
+   wire [40:0] arb_wr_w_q;
 
 
    assign arb_wr_w_in = {arb_wr_w_id,
