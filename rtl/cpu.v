@@ -91,9 +91,10 @@ module cpu(
    assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_valid;
 
    wire biu_lsu_rd_ack;
-   wire biu_lsu_wr_ack;
+   wire biu_lsu_wr_aw_ack;
+   wire biu_lsu_wr_w_ack;
 
-   assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_ack;
+   assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_aw_ack;
 
 
    cpu7_nocache cpu(
@@ -160,13 +161,15 @@ module cpu(
       .biu_lsu_data_valid (biu_lsu_data_valid   ),
       .biu_lsu_data       (data_rdata_m         ),
 
-      .lsu_biu_wr_req     (data_req & data_wr   ),
+      .lsu_biu_wr_aw_req  (data_req & data_wr   ),
       .lsu_biu_wr_addr    (data_addr            ),
+      .lsu_biu_wr_w_req   (data_req & data_wr   ),
       .lsu_biu_wr_data    (data_wdata           ),
       .lsu_biu_wr_strb    (data_wstrb           ),
       .lsu_biu_wr_last    (1'b1                 ),
 
-      .biu_lsu_wr_ack     (biu_lsu_wr_ack       ), //
+      .biu_lsu_wr_aw_ack  (biu_lsu_wr_aw_ack    ), //
+      .biu_lsu_wr_w_ack   (biu_lsu_wr_w_ack     ), //
       .biu_lsu_write_valid(biu_lsu_write_valid  ),
 //
 

@@ -251,6 +251,11 @@ module cpu7_ifu_fdp(
    // Memory Interface
    //===================================================
 
+   // inst_ack             : _-_____
+   // if_fin               : _____-_
+   //
+   // if_in_prog_in        : _----__
+   // if_in_prog_q         : __----_
 
    // instruction fetch in progress
    wire if_in_prog_in; 
@@ -272,6 +277,7 @@ module cpu7_ifu_fdp(
       .rst_l (~reset),
       .q     (if_in_prog_q),
       .se(), .si(), .so());
+
 
 
    assign inst_req = ~reset & 

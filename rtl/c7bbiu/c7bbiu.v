@@ -21,13 +21,15 @@ module c7bbiu(
    output              biu_lsu_data_valid,
    output [31:0]       biu_lsu_data,
 
-   input               lsu_biu_wr_req,
+   input               lsu_biu_wr_aw_req,
    input  [31:0]       lsu_biu_wr_addr,
+   input               lsu_biu_wr_w_req,
    input  [31:0]       lsu_biu_wr_data,
    input  [ 3:0]       lsu_biu_wr_strb,
    input               lsu_biu_wr_last,
   
-   output              biu_lsu_wr_ack, 
+   output              biu_lsu_wr_aw_ack, 
+   output              biu_lsu_wr_w_ack, 
    output              biu_lsu_write_valid,  
 
    //output              biu_lsu_fault,
@@ -98,19 +100,21 @@ module c7bbiu(
    wire                axi_aw_ready;
    wire                axi_w_ready;
 
-   wire                arb_wr_val; 
-   wire [3:0]          arb_wr_id;  
-   wire [31:0]         arb_wr_addr;
-   wire [7:0]          arb_wr_len; 
-   wire [2:0]          arb_wr_size;
-   wire [1:0]          arb_wr_burst;
-   wire                arb_wr_lock;
-   wire [3:0]          arb_wr_cache;
-   wire [2:0]          arb_wr_prot;
+   wire                arb_wr_aw_val; 
+   wire [3:0]          arb_wr_aw_id;  
+   wire [31:0]         arb_wr_aw_addr;
+   wire [7:0]          arb_wr_aw_len; 
+   wire [2:0]          arb_wr_aw_size;
+   wire [1:0]          arb_wr_aw_burst;
+   wire                arb_wr_aw_lock;
+   wire [3:0]          arb_wr_aw_cache;
+   wire [2:0]          arb_wr_aw_prot;
 
-   wire [31:0]         arb_wr_data;
-   wire [3:0]          arb_wr_strb;
-   wire                arb_wr_last;
+   wire                arb_wr_w_val; 
+   wire [3:0]          arb_wr_w_id;
+   wire [31:0]         arb_wr_w_data;
+   wire [3:0]          arb_wr_w_strb;
+   wire                arb_wr_w_last;
 
    // Read data from the AXI interface
    wire [31:0]         axi_rdata;
@@ -159,26 +163,31 @@ module c7bbiu(
       .axi_w_ready     (axi_w_ready     ),
 
       // now, only one requester
-      .lsu_biu_wr_req  (lsu_biu_wr_req  ),
-      .biu_lsu_wr_ack  (biu_lsu_wr_ack  ),
+      .lsu_biu_wr_aw_req (lsu_biu_wr_aw_req ),
+      .biu_lsu_wr_aw_ack (biu_lsu_wr_aw_ack ),
+      .lsu_biu_wr_w_req  (lsu_biu_wr_w_req  ),
+      .biu_lsu_wr_w_ack  (biu_lsu_wr_w_ack  ),
+
       .lsu_biu_wr_addr (lsu_biu_wr_addr ),
       .lsu_biu_wr_data (lsu_biu_wr_data ),
       .lsu_biu_wr_strb (lsu_biu_wr_strb ),
       .lsu_biu_wr_last (lsu_biu_wr_last ),
 
-      .arb_wr_val      (arb_wr_val      ), 
-      .arb_wr_id       (arb_wr_id       ),
-      .arb_wr_addr     (arb_wr_addr     ), 
-      .arb_wr_len      (arb_wr_len      ),
-      .arb_wr_size     (arb_wr_size     ),
-      .arb_wr_burst    (arb_wr_burst    ),
-      .arb_wr_lock     (arb_wr_lock     ),
-      .arb_wr_cache    (arb_wr_cache    ),
-      .arb_wr_prot     (arb_wr_prot     ),
+      .arb_wr_aw_val   (arb_wr_aw_val   ), 
+      .arb_wr_aw_id    (arb_wr_aw_id    ),
+      .arb_wr_aw_addr  (arb_wr_aw_addr  ), 
+      .arb_wr_aw_len   (arb_wr_aw_len   ),
+      .arb_wr_aw_size  (arb_wr_aw_size  ),
+      .arb_wr_aw_burst (arb_wr_aw_burst ),
+      .arb_wr_aw_lock  (arb_wr_aw_lock  ),
+      .arb_wr_aw_cache (arb_wr_aw_cache ),
+      .arb_wr_aw_prot  (arb_wr_aw_prot  ),
 
-      .arb_wr_data     (arb_wr_data     ),
-      .arb_wr_strb     (arb_wr_strb     ),
-      .arb_wr_last     (arb_wr_last     )
+      .arb_wr_w_val    (arb_wr_w_val    ), 
+      .arb_wr_w_id     (arb_wr_w_id     ), 
+      .arb_wr_w_data   (arb_wr_w_data   ),
+      .arb_wr_w_strb   (arb_wr_w_strb   ),
+      .arb_wr_w_last   (arb_wr_w_last   )
    );
 
 
@@ -222,21 +231,24 @@ module c7bbiu(
       .ext_biu_r_resp       (ext_biu_r_resp    ),
 
       // Arbitrated write signals
-      .arb_wr_val           (arb_wr_val        ),
-      .arb_wr_id            (arb_wr_id         ),
-      .arb_wr_addr          (arb_wr_addr       ),
-      .arb_wr_len           (arb_wr_len        ),
-      .arb_wr_size          (arb_wr_size       ),
-      .arb_wr_burst         (arb_wr_burst      ),
-      .arb_wr_lock          (arb_wr_lock       ),
-      .arb_wr_cache         (arb_wr_cache      ),
-      .arb_wr_prot          (arb_wr_prot       ),
-
-      .arb_wr_data          (arb_wr_data       ),
-      .arb_wr_strb          (arb_wr_strb       ),
-      .arb_wr_last          (arb_wr_last       ),
+      .arb_wr_aw_val        (arb_wr_aw_val     ),
+      .arb_wr_aw_id         (arb_wr_aw_id      ),
+      .arb_wr_aw_addr       (arb_wr_aw_addr    ),
+      .arb_wr_aw_len        (arb_wr_aw_len     ),
+      .arb_wr_aw_size       (arb_wr_aw_size    ),
+      .arb_wr_aw_burst      (arb_wr_aw_burst   ),
+      .arb_wr_aw_lock       (arb_wr_aw_lock    ),
+      .arb_wr_aw_cache      (arb_wr_aw_cache   ),
+      .arb_wr_aw_prot       (arb_wr_aw_prot    ),
 
       .axi_aw_ready         (axi_aw_ready      ),
+
+      .arb_wr_w_val         (arb_wr_w_val      ),
+      .arb_wr_w_id          (arb_wr_w_id       ),
+      .arb_wr_w_data        (arb_wr_w_data     ),
+      .arb_wr_w_strb        (arb_wr_w_strb     ),
+      .arb_wr_w_last        (arb_wr_w_last     ),
+
       .axi_w_ready          (axi_w_ready       ),
 
       // AXI Write address channel
