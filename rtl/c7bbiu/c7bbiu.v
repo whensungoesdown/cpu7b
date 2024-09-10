@@ -121,8 +121,6 @@ module c7bbiu(
    wire                axi_write_lsu_val;
 
 
-   assign axi_ar_ready = ext_biu_ar_ready;
-
    c7bbiu_rd_arb u_read_arbiter(
       .clk             (clk             ),
       .resetn          (resetn          ),
@@ -150,10 +148,6 @@ module c7bbiu(
       .arb_rd_cache    (arb_rd_cache    ),
       .arb_rd_prot     (arb_rd_prot     )
    );
-
-
-   assign axi_aw_ready = ext_biu_aw_ready;
-   assign axi_w_ready = ext_biu_w_ready;
 
 
 
@@ -205,6 +199,8 @@ module c7bbiu(
       .arb_rd_cache         (arb_rd_cache      ),
       .arb_rd_prot          (arb_rd_prot       ),
 
+      .axi_ar_ready         (axi_ar_ready      ),
+
       // AXI Read Address Channel
       .ext_biu_ar_ready	    (ext_biu_ar_ready  ),
       .biu_ext_ar_valid	    (biu_ext_ar_valid  ),
@@ -239,6 +235,9 @@ module c7bbiu(
       .arb_wr_data          (arb_wr_data       ),
       .arb_wr_strb          (arb_wr_strb       ),
       .arb_wr_last          (arb_wr_last       ),
+
+      .axi_aw_ready         (axi_aw_ready      ),
+      .axi_w_ready          (axi_w_ready       ),
 
       // AXI Write address channel
       .ext_biu_aw_ready     (ext_biu_aw_ready  ),

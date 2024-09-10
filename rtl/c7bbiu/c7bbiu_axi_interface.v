@@ -13,6 +13,8 @@ module c7bbiu_axi_interface(
       input  [3:0]     arb_rd_cache,
       input  [2:0]     arb_rd_prot,
 
+      output           axi_ar_ready,
+
       // AXI Read Address Channel
       input            ext_biu_ar_ready	 ,
       output           biu_ext_ar_valid	 ,
@@ -47,6 +49,11 @@ module c7bbiu_axi_interface(
       input  [31:0]    arb_wr_data,
       input  [3:0]     arb_wr_strb,
       input            arb_wr_last,
+
+
+      output           axi_aw_ready,
+      output           axi_w_ready,
+
 
       // AXI Write address channel
       input            ext_biu_aw_ready,
@@ -91,51 +98,6 @@ module c7bbiu_axi_interface(
    //
    ///////////////////////
    
-   wire [3:0]  arb_rd_id_q;
-   wire [31:0] arb_rd_addr_q; 
-   wire [1:0]  arb_rd_burst_q;
-   wire [7:0]  arb_rd_len_q;
-   wire [2:0]  arb_rd_size_q;
-   wire        arb_rd_lock_q;
-   wire [3:0]  arb_rd_cache_q;
-   wire [2:0]  arb_rd_prot_q;
-
-
-   wire [56:0] arb_rd_in;
-   wire [56:0] arb_rd_q;
-
-   assign arb_rd_in = {arb_rd_id,
-                       arb_rd_addr,
-                       arb_rd_len,
-                       arb_rd_size,
-                       arb_rd_burst,
-                       arb_rd_lock,
-                       arb_rd_cache,
-                       arb_rd_prot
-                       };
-
-   dffrle_s #(57) arb_rd_reg (
-      .din   (arb_rd_in),
-      .rst_l (resetn),
-      .en    (arb_rd_val),  
-//      buffered here for timing's sake, arbitrated     
-//      request should be sent out immediately, 
-//
-//      so, only buffered for one cycle (WRONG!), these signals also need to
-//      be registered, to wait for the ar_ready 
-      .clk   (clk),
-      .q     (arb_rd_q),
-      .se(), .si(), .so());
-
-   assign {arb_rd_id_q,
-	   arb_rd_addr_q,
-	   arb_rd_len_q,
-	   arb_rd_size_q,
-           arb_rd_burst_q,
-           arb_rd_lock_q,
-           arb_rd_cache_q,
-           arb_rd_prot_q
-	   } = arb_rd_q;
 
 
 
@@ -179,6 +141,64 @@ module c7bbiu_axi_interface(
       .q     (ar_valid_q), 
       .se(), .si(), .so());
    
+
+
+
+   //           1                  0                   0
+   //           1                  0                   1
+   //           0                  1                   0
+   //           1                  1                   1
+   assign axi_ar_ready = ~(biu_ext_ar_valid & ~ext_biu_ar_ready);
+
+   wire ar_enable;
+   assign ar_enable = axi_ar_ready & arb_rd_val;
+
+
+   wire [3:0]  arb_rd_id_q;
+   wire [31:0] arb_rd_addr_q; 
+   wire [1:0]  arb_rd_burst_q;
+   wire [7:0]  arb_rd_len_q;
+   wire [2:0]  arb_rd_size_q;
+   wire        arb_rd_lock_q;
+   wire [3:0]  arb_rd_cache_q;
+   wire [2:0]  arb_rd_prot_q;
+
+
+   wire [56:0] arb_rd_in;
+   wire [56:0] arb_rd_q;
+
+   assign arb_rd_in = {arb_rd_id,
+                       arb_rd_addr,
+                       arb_rd_len,
+                       arb_rd_size,
+                       arb_rd_burst,
+                       arb_rd_lock,
+                       arb_rd_cache,
+                       arb_rd_prot
+                       };
+
+   dffrle_s #(57) arb_rd_reg (
+      .din   (arb_rd_in),
+      .rst_l (resetn),
+      .en    (ar_enable),  
+//      buffered here for timing's sake, arbitrated     
+//      request should be sent out immediately, 
+//
+//      so, only buffered for one cycle (WRONG!), these signals also need to
+//      be registered, to wait for the ar_ready 
+      .clk   (clk),
+      .q     (arb_rd_q),
+      .se(), .si(), .so());
+
+   assign {arb_rd_id_q,
+	   arb_rd_addr_q,
+	   arb_rd_len_q,
+	   arb_rd_size_q,
+           arb_rd_burst_q,
+           arb_rd_lock_q,
+           arb_rd_cache_q,
+           arb_rd_prot_q
+	   } = arb_rd_q;
 
 
    assign biu_ext_ar_id = arb_rd_id_q;
@@ -368,6 +388,11 @@ module c7bbiu_axi_interface(
       .rst_l (resetn),
       .q     (w_valid_q), 
       .se(), .si(), .so());
+
+
+   
+   assign axi_aw_ready = ~(biu_ext_aw_valid & ~ext_biu_aw_ready);
+   assign axi_w_ready = ~(biu_ext_w_valid & ~ext_biu_w_ready);
 
 
    assign biu_ext_w_id = arb_wr_id_q;

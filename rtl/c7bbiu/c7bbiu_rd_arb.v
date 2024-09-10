@@ -32,78 +32,14 @@ module c7bbiu_rd_arb(
    wire lsu_select;
 
 
-   wire axi_ar_busy;
-
-   wire axi_ar_busy_ifu;
-   wire axi_ar_busy_ifu_in;
-   wire axi_ar_busy_ifu_q;
-
-   wire axi_ar_busy_lsu;
-   wire axi_ar_busy_lsu_in;
-   wire axi_ar_busy_lsu_q;
-
-   //
-   // lsu has the highest priority, otherwise lsu read have no change to finish
-   //
-   // can not be selected if ar is busy (no interleaving)
-   //
-   assign lsu_select = lsu_biu_rd_req & ~axi_ar_busy;
+   assign lsu_select = lsu_biu_rd_req;
 
    assign ifu_select = ~lsu_biu_rd_req &
-	                ifu_biu_rd_req & ~axi_ar_busy;
+	                ifu_biu_rd_req;
 
 
-
-   // scenario 0
-   //
-   // ifu_select           : _-_____
-   // axi_rdata_ifu_val    : _____-_
-   //
-   // axi_ar_busy_ifu_in   : _----__
-   // axi_ar_busy_ifu_q    : __----_
-
-   // scenario 1
-   // 
-   // ifu_select           : _-_____
-   // axi_rdata_ifu_val    : _-_____
-   //
-   // axi_ar_busy_ifu_in   : _-_____
-   // axi_ar_busy_ifu_q    : __-____ 
-
-   assign axi_ar_busy_ifu_in = (axi_ar_busy_ifu_q & ~axi_rdata_ifu_val) | ifu_select;
-
-   dffrl_s #(1) axi_ar_busy_ifu_reg (
-      .din   (axi_ar_busy_ifu_in),
-      .clk   (clk),
-      .rst_l (resetn),
-      .q     (axi_ar_busy_ifu_q),
-      .se(), .si(), .so());
-
-   // it is not busy on the cycle of ifu_select, so do not use axi_ar_busy_ifu_q
-   // if set busy on ifu_select, then arb_rd_val can not be set 
-   assign axi_ar_busy_ifu = axi_ar_busy_ifu_q;
-
-   
-   // axi_ar_busy_lsu, the same
-
-   assign axi_ar_busy_lsu_in = (axi_ar_busy_lsu_q & ~axi_rdata_lsu_val) | lsu_select;
-
-   dffrl_s #(1) axi_ar_busy_lsu_reg (
-      .din   (axi_ar_busy_lsu_in),
-      .clk   (clk),
-      .rst_l (resetn),
-      .q     (axi_ar_busy_lsu_q),
-      .se(), .si(), .so());
-
-   assign axi_ar_busy_lsu = axi_ar_busy_lsu_q;
-
-
-   // currently, axi_sram_bridge does not support interleaving
-   // therefore, ifu or lsu, there can be only one that grant ar channel 
-   assign axi_ar_busy = axi_ar_busy_ifu | axi_ar_busy_lsu;
-
-   assign biu_ifu_rd_ack = axi_ar_ready /*& ~axi_ar_busy_ifu*/ & ~axi_ar_busy & ifu_select;
-   assign biu_lsu_rd_ack = axi_ar_ready /*& ~axi_ar_busy_lsu*/ & ~axi_ar_busy & lsu_select;
+   assign biu_ifu_rd_ack = axi_ar_ready & ifu_select;
+   assign biu_lsu_rd_ack = axi_ar_ready & lsu_select;
 
    assign arb_rd_val = biu_ifu_rd_ack | biu_lsu_rd_ack;
 

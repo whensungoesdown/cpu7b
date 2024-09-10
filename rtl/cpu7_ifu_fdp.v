@@ -184,9 +184,9 @@ module cpu7_ifu_fdp(
 
 
    assign ifu_pcbf_sel_usemux1_l = ifu_pcbf_sel_init_bf_l  &
-				   ifu_pcbf_sel_old_bf_l   &
-				   ifu_pcbf_sel_pcinc_bf_l &
-				   ifu_pcbf_sel_brpc_bf_l;
+                                   ifu_pcbf_sel_old_bf_l   &
+                                   ifu_pcbf_sel_pcinc_bf_l &
+                                   ifu_pcbf_sel_brpc_bf_l;
    
    assign ifu_pcbf_sel_excpc_bf_l = ~exu_ifu_except;
    assign ifu_pcbf_sel_ertnpc_bf_l = ~exu_ifu_ertn_e;
@@ -251,40 +251,35 @@ module cpu7_ifu_fdp(
    // Memory Interface
    //===================================================
 
-   assign inst_addr = pc_bf;
 
-   //assign inst_req = ~reset;
-   
-   //
-   // inst_req_bgn : -------
-   // inst_req_end : ___-___
-   //
-   // inst_req_in  : __-____
-   // inst_req_q   : ___-___
-   //
-   wire inst_req_bgn;
-   wire inst_req_end;
-   wire inst_req_in;
-   wire inst_req_q;
+   // instruction fetch in progress
+   wire if_in_prog_in; 
+   wire if_in_prog_q; 
 
-   assign inst_req_bgn = ~reset & ~exu_ifu_stall_req;
-   assign inst_req_end = inst_valid_f;
-   // uty: test !! inst_ack causes loop with inst_req
-   //assign inst_req_end = inst_ack;
+   wire biu_busy;
+   assign biu_busy = if_in_prog_q; // | others
 
-   assign inst_req_in = (inst_req_q | inst_req_bgn) & (~inst_req_end);
 
-   dffrl_s #(1) inst_req_reg (
-      .din   (inst_req_in),
+   // if inst_cancel, inst_valid_f will not coming, so let if_in_prog_in finish
+   wire if_fin;
+   assign if_fin = inst_valid_f | inst_cancel;
+
+   assign if_in_prog_in = (if_in_prog_q & ~if_fin) | inst_ack;                
+
+   dffrl_s #(1) lf_in_prog_reg (
+      .din   (if_in_prog_in),
       .clk   (clk),
       .rst_l (~reset),
-      .q     (inst_req_q), 
-      .se(), .si(), .so());    
+      .q     (if_in_prog_q),
+      .se(), .si(), .so());
 
-   //
-   // inst_req : -_-_-_-_
-   //
-   assign inst_req = inst_req_in;
+
+   assign inst_req = ~reset & 
+                     ~exu_ifu_stall_req &
+                     ~biu_busy;
+
+
+   assign inst_addr = pc_bf;
 
 
    // when branch taken, inst_cancel need to be signal
