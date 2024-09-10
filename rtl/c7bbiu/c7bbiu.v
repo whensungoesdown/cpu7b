@@ -30,7 +30,7 @@ module c7bbiu(
   
    output              biu_lsu_wr_aw_ack, 
    output              biu_lsu_wr_w_ack, 
-   output              biu_lsu_write_valid,  
+   output              biu_lsu_write_done,  
 
    //output              biu_lsu_fault,
 
@@ -307,6 +307,6 @@ module c7bbiu(
    assign biu_lsu_data_valid = axi_rdata_lsu_val;
    assign biu_lsu_data = axi_rdata;
 
-   assign biu_lsu_write_valid = axi_write_lsu_val;
+   assign biu_lsu_write_done = axi_write_lsu_val;
 
 endmodule

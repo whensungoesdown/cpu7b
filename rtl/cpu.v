@@ -86,9 +86,9 @@ module cpu(
 
 
    wire biu_lsu_data_valid;
-   wire biu_lsu_write_valid;
+   wire biu_lsu_write_done;
 
-   assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_valid;
+   assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_done;
 
    wire biu_lsu_rd_ack;
    wire biu_lsu_wr_aw_ack;
@@ -170,7 +170,7 @@ module cpu(
 
       .biu_lsu_wr_aw_ack  (biu_lsu_wr_aw_ack    ), //
       .biu_lsu_wr_w_ack   (biu_lsu_wr_w_ack     ), //
-      .biu_lsu_write_valid(biu_lsu_write_valid  ),
+      .biu_lsu_write_done (biu_lsu_write_done   ),
 //
 
       // AXI Read Address Channel
