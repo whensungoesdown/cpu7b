@@ -1,4 +1,4 @@
-`include "common.vh"
+`include "../common.vh"
  
 module cpu7_ifu_fdp(
    input                  clk            ,

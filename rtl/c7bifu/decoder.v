@@ -1,4 +1,4 @@
-`include "decoded.vh"
+`include "../decoded.vh"
 
 
 module decoder (
