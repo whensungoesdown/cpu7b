@@ -119,6 +119,7 @@ module c7bbiu(
    // Read data from the AXI interface
    wire [31:0]         axi_rdata;
    wire                axi_rdata_ifu_val;
+   wire                axi_rdata_ifu_val_qual;
    wire                axi_rdata_lsu_val; 
 
    // Write data to the AXI interface
@@ -301,7 +302,10 @@ module c7bbiu(
       .q     (ifu_cancel_q), 
       .se(), .si(), .so());
 
-   assign biu_ifu_data_valid = axi_rdata_ifu_val & ~ifu_cancel_q;
+   assign axi_rdata_ifu_val_qual = axi_rdata_ifu_val & ~ifu_cancel_q;
+
+
+   assign biu_ifu_data_valid = axi_rdata_ifu_val_qual;
    assign biu_ifu_data = axi_rdata;
 
    assign biu_lsu_data_valid = axi_rdata_lsu_val;
