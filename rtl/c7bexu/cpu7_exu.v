@@ -174,7 +174,7 @@ module cpu7_exu(
    wire [`GRLEN-1:0] dumb_rdata2_0;
    wire [`GRLEN-1:0] dumb_rdata2_1;
    
-   reg_file registers(
+   cpu7_exu_rf registers(
         .clk        (clk                  ),
 	.rst        (~resetn              ),
 

@@ -1,6 +1,6 @@
 // register file for MIPS 32
 
-module reg_file(
+module cpu7_exu_rf(
 	input clk,
 	input rst,
 

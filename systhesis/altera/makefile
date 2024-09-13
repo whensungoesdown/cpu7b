@@ -15,6 +15,7 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/c7bexu/cpu7_exu_eclbyplog_rs1.v \
                 ../../rtl/c7bexu/cpu7_exu_eclbyplog.v \
                 ../../rtl/c7bexu/cpu7_exu_ecl.v \
+                ../../rtl/c7bexu/cpu7_exu_rf.v \
                 ../../rtl/c7bexu/cpu7_exu.v \
                 ../../rtl/c7bifu/cpu7_ifu_dec.v \
                 ../../rtl/c7bifu/cpu7_ifu_fdp.v \
@@ -27,7 +28,6 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/decoded.vh \
                 ../../rtl/mul32x32.v \
                 ../../rtl/mul64x64.v \
-                ../../rtl/reg_file.v \
                 ../../rtl/models/swrvr_clib.v \
                 ../../rtl/models/swrvr_dlib.v \
                 ../../rtl/models/sram.v \
