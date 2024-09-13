@@ -9,8 +9,9 @@ PROJECT = top
 SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/branch.v \
                 ../../rtl/common.vh \
-                ../../rtl/cpu7_csr_byplog.v \
-                ../../rtl/cpu7_csr.v \
+                ../../rtl/c7bcsr/cpu7_csr_byplog.v \
+                ../../rtl/c7bcsr/cpu7_csr.v \
+                ../../rtl/c7bcsr/cpu7_csr_timer.v \
                 ../../rtl/cpu7_exu_eclbyplog_rs1.v \
                 ../../rtl/cpu7_exu_eclbyplog.v \
                 ../../rtl/cpu7_exu_ecl.v \
@@ -33,7 +34,6 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/axi_sram_bridge.v \
                 ../../rtl/sram.v \
                 ../../rtl/cpu.v \
-                ../../rtl/cpu7_csr_timer.v \
                 ../../rtl/c7bbiu/c7bbiu.v \
                 ../../rtl/c7bbiu/c7bbiu_rd_arb.v \
                 ../../rtl/c7bbiu/c7bbiu_wr_arb.v \

@@ -1,4 +1,4 @@
-`include "common.vh"
+`include "../common.vh"
 
 module cpu7_csr_byplog(
    input  [`LSOC1K_CSR_BIT-1:0]        csr_raddr_d,
