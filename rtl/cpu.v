@@ -97,7 +97,7 @@ module cpu(
    assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_aw_ack;
 
 
-   cpu7_nocache cpu(
+   cpu7_core cpu(
         .clk              (clk                 ),
         .resetn           (resetn              ),
 

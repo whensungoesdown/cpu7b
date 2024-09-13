@@ -1,7 +1,7 @@
 `include "common.vh"
 `include "decoded.vh"
 
-module cpu7_nocache(
+module cpu7_core(
     input                 clk,
     input                 resetn,            //low active
     

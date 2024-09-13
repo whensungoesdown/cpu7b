@@ -23,7 +23,7 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/c7bifu/cpu7_ifu.v \
                 ../../rtl/c7bifu/decoder.v \
                 ../../rtl/cpu7_lsu.v \
-                ../../rtl/cpu7_nocache.v \
+                ../../rtl/cpu7_core.v \
                 ../../rtl/decoded.vh \
                 ../../rtl/mul32x32.v \
                 ../../rtl/mul64x64.v \
