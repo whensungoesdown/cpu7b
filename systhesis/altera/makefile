@@ -12,10 +12,10 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/c7bcsr/cpu7_csr_byplog.v \
                 ../../rtl/c7bcsr/cpu7_csr.v \
                 ../../rtl/c7bcsr/cpu7_csr_timer.v \
-                ../../rtl/cpu7_exu_eclbyplog_rs1.v \
-                ../../rtl/cpu7_exu_eclbyplog.v \
-                ../../rtl/cpu7_exu_ecl.v \
-                ../../rtl/cpu7_exu.v \
+                ../../rtl/c7bexu/cpu7_exu_eclbyplog_rs1.v \
+                ../../rtl/c7bexu/cpu7_exu_eclbyplog.v \
+                ../../rtl/c7bexu/cpu7_exu_ecl.v \
+                ../../rtl/c7bexu/cpu7_exu.v \
                 ../../rtl/c7bifu/cpu7_ifu_dec.v \
                 ../../rtl/c7bifu/cpu7_ifu_fdp.v \
                 ../../rtl/c7bifu/cpu7_ifu_imd.v \

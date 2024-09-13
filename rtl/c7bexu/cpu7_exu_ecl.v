@@ -1,5 +1,5 @@
-`include "common.vh"
-`include "decoded.vh"
+`include "../common.vh"
+`include "../decoded.vh"
 
 module cpu7_exu_ecl(
    input                                clk,
