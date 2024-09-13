@@ -28,11 +28,11 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/mul32x32.v \
                 ../../rtl/mul64x64.v \
                 ../../rtl/reg_file.v \
-                ../../rtl/swrvr_clib.v \
-                ../../rtl/swrvr_dlib.v \
+                ../../rtl/models/swrvr_clib.v \
+                ../../rtl/models/swrvr_dlib.v \
+                ../../rtl/models/sram.v \
                 ../../rtl/defines.vh \
                 ../../rtl/axi_sram_bridge.v \
-                ../../rtl/sram.v \
                 ../../rtl/cpu.v \
                 ../../rtl/c7bbiu/c7bbiu.v \
                 ../../rtl/c7bbiu/c7bbiu_rd_arb.v \
