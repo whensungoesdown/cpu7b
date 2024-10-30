@@ -66,23 +66,6 @@ module cpu(
    wire                   inst_exception;
    wire [  5:0]           inst_exccode  ;
    
-//   wire                   data_req;
-//   wire [`GRLEN-1:0]      data_pc;
-//   wire                   data_wr;
-//   wire [3 :0]            data_wstrb;
-//   wire [`GRLEN-1:0]      data_addr;
-//   wire                   data_cancel_ex2;
-//   wire                   data_cancel;
-//   wire [`GRLEN-1:0]      data_wdata;
-//   wire                   data_recv;
-//   wire                   data_prefetch;
-//   wire                   data_ll;
-//   wire                   data_sc;
-//
-//   wire [`GRLEN-1:0]      data_rdata_m;
-//   wire                   data_addr_ok;
-//   wire                   data_data_ok_m;
-//   wire [ 5:0]            data_exccode;
 
    wire                   lsu_biu_rd_req;
    wire [`GRLEN-1:0]      lsu_biu_rd_addr;
@@ -99,53 +82,30 @@ module cpu(
    wire                   biu_lsu_write_done;
 
 
-   //assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_done;
-
    wire biu_lsu_wr_aw_ack;
    wire biu_lsu_wr_w_ack;
 
-   //assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_aw_ack;
 
 
    cpu7_core cpu(
-        .clk              (clk                 ),
-        .resetn           (resetn              ),
+      .clk              (clk                 ),
+      .resetn           (resetn              ),
 
-	.ext_intr         (ext_intr            ),
+      .ext_intr         (ext_intr            ),
 
-        .inst_req         (inst_req             ),
-        .inst_ack         (inst_ack             ),
-        .inst_addr        (inst_addr            ),
-        .inst_cancel      (inst_cancel          ),
-        .inst_addr_ok     (inst_addr_ok         ),
-        .inst_rdata_f     (inst_rdata_f         ),
-        .inst_valid_f     (inst_valid_f         ),
-        .inst_count       (inst_count           ),
-        .inst_uncache     (inst_uncache         ),
-        .inst_exccode     (inst_exccode         ),
-        .inst_exception   (inst_exception       ),
+      .inst_req         (inst_req             ),
+      .inst_ack         (inst_ack             ),
+      .inst_addr        (inst_addr            ),
+      .inst_cancel      (inst_cancel          ),
+      .inst_addr_ok     (inst_addr_ok         ),
+      .inst_rdata_f     (inst_rdata_f         ),
+      .inst_valid_f     (inst_valid_f         ),
+      .inst_count       (inst_count           ),
+      .inst_uncache     (inst_uncache         ),
+      .inst_exccode     (inst_exccode         ),
+      .inst_exception   (inst_exception       ),
 
 
-//        .data_req         (data_req             ), 
-//        .data_pc          (data_pc              ),
-//        .data_wr          (data_wr              ),
-//        .data_wstrb       (data_wstrb           ),
-//        .data_addr        (data_addr            ),
-//        .data_cancel_ex2  (data_cancel_ex2      ),
-//        .data_cancel      (data_cancel          ),
-//        .data_wdata       (data_wdata           ),
-//        .data_recv        (data_recv            ),
-//        .data_prefetch    (data_prefetch        ),
-//        .data_ll          (data_ll              ),
-//        .data_sc          (data_sc              ),
-//                                          
-//        .data_rdata_m     (data_rdata_m         ),
-//        .data_addr_ok     (data_addr_ok         ),
-//        .data_data_ok_m   (data_data_ok_m       ),
-//        .data_exccode     (data_exccode         ),
-//
-//	.data_scsucceed   (1'b0                 ) // figure it out, later
-//
       .lsu_biu_rd_req           (lsu_biu_rd_req        ),
       .lsu_biu_rd_addr          (lsu_biu_rd_addr       ),
 
@@ -176,7 +136,6 @@ module cpu(
       .biu_ifu_data_valid (inst_valid_f         ),
       .biu_ifu_data       (inst_rdata_f         ),
 
-// uty: test
 
       // LSU Interface
       .lsu_biu_rd_req     (lsu_biu_rd_req       ),
@@ -196,7 +155,7 @@ module cpu(
       .biu_lsu_wr_aw_ack  (biu_lsu_wr_aw_ack    ), //
       .biu_lsu_wr_w_ack   (biu_lsu_wr_w_ack     ), //
       .biu_lsu_write_done (biu_lsu_write_done   ),
-//
+
 
       // AXI Read Address Channel
       .ext_biu_ar_ready   (arready              ),
