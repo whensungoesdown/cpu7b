@@ -11,28 +11,45 @@ module cpu7_exu(
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
 
    // memory interface  E M
-   output                               data_req,
-   output [`GRLEN-1:0]                  data_addr,
-   output                               data_wr,
-   output [3:0]                         data_wstrb,
-   output [`GRLEN-1:0]                  data_wdata,
-   output                               data_prefetch,
-   output                               data_ll,
-   output                               data_sc,
-   input                                data_addr_ok,
-   
-   output                               data_recv,
-   input                                data_scsucceed,
-   input  [`GRLEN-1:0]                  data_rdata_m,
-   input                                data_exception,
-   input  [5:0]                         data_excode,
-   input  [`GRLEN-1:0]                  data_badvaddr,
-   input                                data_data_ok_m,
+//   output                               data_req,
+//   output [`GRLEN-1:0]                  data_addr,
+//   output                               data_wr,
+//   output [3:0]                         data_wstrb,
+//   output [`GRLEN-1:0]                  data_wdata,
+//   output                               data_prefetch,
+//   output                               data_ll,
+//   output                               data_sc,
+//   input                                data_addr_ok,
+//   
+//   output                               data_recv,
+//   input                                data_scsucceed,
+//   input  [`GRLEN-1:0]                  data_rdata_m,
+//   input                                data_exception,
+//   input  [5:0]                         data_excode,
+//   input  [`GRLEN-1:0]                  data_badvaddr,
+//   input                                data_data_ok_m,
+//
+//   output [`GRLEN-1:0]                  data_pc,
+//   output                               data_cancel,
+//   output                               data_cancel_ex2,
+//   input                                data_req_empty,
 
-   output [`GRLEN-1:0]                  data_pc,
-   output                               data_cancel,
-   output                               data_cancel_ex2,
-   input                                data_req_empty,
+   output                               lsu_biu_rd_req,
+   output [`GRLEN-1:0]                  lsu_biu_rd_addr,
+
+   input                                biu_lsu_rd_ack,
+   input                                biu_lsu_data_valid,
+   input  [31:0]                        biu_lsu_data,
+
+   output                               lsu_biu_wr_req,
+   output [`GRLEN-1:0]                  lsu_biu_wr_addr,
+   output [31:0]                        lsu_biu_wr_data,
+   output [3:0]                         lsu_biu_wr_strb,
+
+   input                                biu_lsu_wr_ack,
+   input                                biu_lsu_write_done,
+
+
 
    output                               exu_ifu_stall_req,
    output [`GRLEN-1:0]                  exu_ifu_brpc_e,
@@ -394,23 +411,37 @@ module cpu7_exu(
       .ecl_lsu_wen_e            (ecl_lsu_wen_e         ),
 
       // memory interface
-      .data_req                 (data_req              ),
-      .data_addr                (data_addr             ),
-      .data_wr                  (data_wr               ),
-      .data_wstrb               (data_wstrb            ),
-      .data_wdata               (data_wdata            ),
-      .data_prefetch            (data_prefetch         ),
-      .data_ll                  (data_ll               ),
-      .data_sc                  (data_sc               ),
-      .data_addr_ok             (data_addr_ok          ),
+//      .data_req                 (data_req              ),
+//      .data_addr                (data_addr             ),
+//      .data_wr                  (data_wr               ),
+//      .data_wstrb               (data_wstrb            ),
+//      .data_wdata               (data_wdata            ),
+//      .data_prefetch            (data_prefetch         ),
+//      .data_ll                  (data_ll               ),
+//      .data_sc                  (data_sc               ),
+//      .data_addr_ok             (data_addr_ok          ),
+//
+//      .data_recv                (data_recv             ),
+//      .data_scsucceed           (data_scsucceed        ),
+//      .data_rdata_m             (data_rdata_m          ),
+//      .data_exception           (data_exception        ),
+//      .data_excode              (data_excode           ),
+//      .data_badvaddr            (data_badvaddr         ),
+//      .data_data_ok_m           (data_data_ok_m        ),
+      .lsu_biu_rd_req           (lsu_biu_rd_req        ),
+      .lsu_biu_rd_addr          (lsu_biu_rd_addr       ),
 
-      .data_recv                (data_recv             ),
-      .data_scsucceed           (data_scsucceed        ),
-      .data_rdata_m             (data_rdata_m          ),
-      .data_exception           (data_exception        ),
-      .data_excode              (data_excode           ),
-      .data_badvaddr            (data_badvaddr         ),
-      .data_data_ok_m           (data_data_ok_m        ),
+      .biu_lsu_rd_ack           (biu_lsu_rd_ack        ),
+      .biu_lsu_data_valid       (biu_lsu_data_valid    ),
+      .biu_lsu_data             (biu_lsu_data          ),
+
+      .lsu_biu_wr_req           (lsu_biu_wr_req        ),
+      .lsu_biu_wr_addr          (lsu_biu_wr_addr       ),
+      .lsu_biu_wr_data          (lsu_biu_wr_data       ),
+      .lsu_biu_wr_strb          (lsu_biu_wr_strb       ),
+
+      .biu_lsu_wr_ack           (biu_lsu_wr_ack        ),
+      .biu_lsu_write_done       (biu_lsu_write_done    ),
 
 
       // lsu output
@@ -424,9 +455,9 @@ module cpu7_exu(
       .lsu_csr_badv_e           (lsu_csr_badv_e        )
       );
 
-   assign data_pc = ifu_exu_pc_e;
-   assign data_cancel = 1'b0;
-   assign data_cancel_ex2 = 1'b0;
+//   assign data_pc = ifu_exu_pc_e;
+//   assign data_cancel = 1'b0;
+//   assign data_cancel_ex2 = 1'b0;
 
 
    //

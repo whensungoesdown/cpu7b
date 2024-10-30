@@ -14,22 +14,37 @@ module cpu7_lsu(
    input                              ecl_lsu_wen_e,
 
    //memory interface
-   output                             data_req,
-   output [`GRLEN-1:0]                data_addr,
-   output                             data_wr,
-   output [ 3:0]                      data_wstrb,
-   output [`GRLEN-1:0]                data_wdata,
-   output                             data_prefetch,
-   output                             data_ll,
-   output                             data_sc,
-   input                              data_addr_ok,
-   output                             data_recv,
-   input                              data_scsucceed,
-   input   [`GRLEN-1:0]               data_rdata_m,
-   input                              data_exception,
-   input   [ 5:0]                     data_excode,
-   input   [`GRLEN-1:0]               data_badvaddr,
-   input                              data_data_ok_m,
+   output                             lsu_biu_rd_req,
+   output [`GRLEN-1:0]                lsu_biu_rd_addr,
+
+   input                              biu_lsu_rd_ack,
+   input                              biu_lsu_data_valid,
+   input  [31:0]                      biu_lsu_data,
+
+   output                             lsu_biu_wr_req,
+   output [`GRLEN-1:0]                lsu_biu_wr_addr,
+   output [31:0]                      lsu_biu_wr_data,
+   output [3:0]                       lsu_biu_wr_strb,
+
+   input                              biu_lsu_wr_ack,
+   input                              biu_lsu_write_done,
+
+//   output                             data_req,
+//   output [`GRLEN-1:0]                data_addr,
+//   output                             data_wr,
+//   output [ 3:0]                      data_wstrb,
+//   output [`GRLEN-1:0]                data_wdata,
+//   output                             data_prefetch,
+//   output                             data_ll,
+//   output                             data_sc,
+//   input                              data_addr_ok,
+//   output                             data_recv,
+//   input                              data_scsucceed,
+//   input   [`GRLEN-1:0]               data_rdata_m,
+//   input                              data_exception,
+//   input   [ 5:0]                     data_excode,
+//   input   [`GRLEN-1:0]               data_badvaddr,
+//   input                              data_data_ok_m,
 
    //result 
    output                             lsu_addr_finish, // addr ok
@@ -41,12 +56,18 @@ module cpu7_lsu(
    output [`GRLEN-1:0]                lsu_csr_badv_e
    );
 
+   // tmp
+   wire data_scsucceed = 1'b1;
 
    //wire lsu_except;
    wire lsu_ale_e;
    wire lsu_ale_m;
    
    wire valid_m;
+
+   wire valid_val_e;
+
+   assign valid_val_e = valid_e & ~lsu_ale_e;
 
    //wire data_data_ok_m;
    
@@ -235,7 +256,7 @@ module cpu7_lsu(
 
    
 
-   wire [`GRLEN-1:0]    addr         = base + offset;
+   wire [`GRLEN-1:0]    addr     = base + offset;
    wire [ 2:0]          shift        = addr[2:0];
    wire                 lsu_wr       = lsu_sw || lsu_sb || lsu_sh || lsu_scw || lsu_scd || lsu_sd;
 
@@ -264,7 +285,8 @@ module cpu7_lsu(
 
 
    //result process
-   wire [`GRLEN-1:0] data_rdata_input = data_rdata_m;
+   //wire [`GRLEN-1:0] data_rdata_input = data_rdata_m;
+   wire [`GRLEN-1:0] data_rdata_input = biu_lsu_data;
 
    
    wire [4:0] align_mode_m;
@@ -303,7 +325,8 @@ module cpu7_lsu(
    // bug fix: data_data_ok is actually data_data_ok_e
    //          lsu_finish_m needs data_data_ok_m
    //assign lsu_finish_m = data_data_ok | (lsu_ale_m & valid_m); 
-   assign lsu_finish_m = data_data_ok_m | (lsu_ale_m & valid_m); // uty: review why lsu_ale_m here?
+   //assign lsu_finish_m = data_data_ok_m | (lsu_ale_m & valid_m); // uty: review why lsu_ale_m here?
+   assign lsu_finish_m = (biu_lsu_data_valid | biu_lsu_write_done) | (lsu_ale_m & valid_m); // uty: review why lsu_ale_m here?
 
    
 
@@ -338,109 +361,203 @@ module cpu7_lsu(
    // axi_interface is ready
    //
 
-   wire              data_req_in;
-   wire [`GRLEN-1:0] data_addr_in;
-   wire              data_wr_in;
-   wire [ 3:0]       data_wstrb_in;
-   wire [`GRLEN-1:0] data_wdata_in;
-   wire              data_prefetch_in;
-   wire              data_ll_in;
-   wire              data_sc_in;
+//   wire              data_req_in;
+//   wire [`GRLEN-1:0] data_addr_in;
+//   wire              data_wr_in;
+//   wire [ 3:0]       data_wstrb_in;
+//   wire [`GRLEN-1:0] data_wdata_in;
+//   wire              data_prefetch_in;
+//   wire              data_ll_in;
+//   wire              data_sc_in;
+//
+//   wire              data_req_q;
+//   wire [`GRLEN-1:0] data_addr_q;
+//   wire              data_wr_q;
+//   wire [ 3:0]       data_wstrb_q;
+//   wire [`GRLEN-1:0] data_wdata_q;
+//   wire              data_prefetch_q;
+//   wire              data_ll_q;
+//   wire              data_sc_q;
+//
+//   assign data_addr_in     = addr;
+//   assign data_wr_in       = lsu_wr;
+//
+//   assign data_wstrb_in    = {4{lsu_sw||lsu_scw}} & (4'b1111              ) |
+//			     {4{lsu_sh         }} & (4'b0011 << shift[1:0]) |
+//			     {4{lsu_sb         }} & (4'b0001 << shift[1:0]) ;
+//   
+//   assign data_wdata_in    = {32{lsu_sw||lsu_scw         }} & {wdata[31:0]} |
+//			     {32{lsu_sh                  }} & {wdata[15:0], wdata[15:0]} |
+//			     {32{lsu_sb                  }} & {wdata[7:0], wdata[7:0], wdata[7:0], wdata[7:0]};
+//
+//   assign data_prefetch_in = lsu_op == `LSOC1K_LSU_PRELD || lsu_op == `LSOC1K_LSU_PRELDX;
+//   assign data_ll_in       = lsu_llw || lsu_lld;
+//   assign data_sc_in       = lsu_scw || lsu_scd;
 
-   wire              data_req_q;
-   wire [`GRLEN-1:0] data_addr_q;
-   wire              data_wr_q;
-   wire [ 3:0]       data_wstrb_q;
-   wire [`GRLEN-1:0] data_wdata_q;
-   wire              data_prefetch_q;
-   wire              data_ll_q;
-   wire              data_sc_q;
 
-   assign data_addr_in     = addr;
-   assign data_wr_in       = lsu_wr;
+   wire [ 3:0]         lsu_wstrb;
+   wire [`GRLEN-1:0]   lsu_wdata;
+   wire                lsu_prefetch;
+   wire                lsu_ll;
+   wire                lsu_sc;
 
-   assign data_wstrb_in    = {4{lsu_sw||lsu_scw}} & (4'b1111              ) |
+
+   assign lsu_wstrb        = {4{lsu_sw||lsu_scw}} & (4'b1111              ) |
 			     {4{lsu_sh         }} & (4'b0011 << shift[1:0]) |
 			     {4{lsu_sb         }} & (4'b0001 << shift[1:0]) ;
    
-   assign data_wdata_in    = {32{lsu_sw||lsu_scw         }} & {wdata[31:0]} |
+   assign lsu_wdata        = {32{lsu_sw||lsu_scw         }} & {wdata[31:0]} |
 			     {32{lsu_sh                  }} & {wdata[15:0], wdata[15:0]} |
 			     {32{lsu_sb                  }} & {wdata[7:0], wdata[7:0], wdata[7:0], wdata[7:0]};
 
-   assign data_prefetch_in = lsu_op == `LSOC1K_LSU_PRELD || lsu_op == `LSOC1K_LSU_PRELDX;
-   assign data_ll_in       = lsu_llw || lsu_lld;
-   assign data_sc_in       = lsu_scw || lsu_scd;
+   assign lsu_prefetch     = lsu_op == `LSOC1K_LSU_PRELD || lsu_op == `LSOC1K_LSU_PRELDX;
+   assign lsu_ll           = lsu_llw || lsu_lld;
+   assign lsu_sc           = lsu_scw || lsu_scd;
+
+
+ //  //
+ //  // valid_e & ~lsu_ale_e : _-_____
+ //  // data_data_ok_m       : _____-_
+ //  //
+ //  // data_req_in          : _----__
+ //  // data_req_q           : __----_
+
+ //  //assign data_req_in      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
+ //  assign data_req_in      = (data_req_q & ~data_data_ok_m) | (valid_e & ~lsu_ale_e); 
+
+ //  dffrl_s #(1) data_req_reg (
+ //     .din   (data_req_in),
+ //     .clk   (clk),
+ //     .rst_l (resetn),
+ //     .q     (data_req_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(`GRLEN) data_addr_reg (
+ //     .din (data_addr_in),
+ //     .clk (clk),
+ //     .q   (data_addr_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(1) data_wr_reg (
+ //     .din (data_wr_in),
+ //     .clk (clk),
+ //     .q   (data_wr_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(4) data_wstrb_reg (
+ //     .din (data_wstrb_in),
+ //     .clk (clk),
+ //     .q   (data_wstrb_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(`GRLEN) data_wdata_reg (
+ //     .din (data_wdata_in),
+ //     .clk (clk),
+ //     .q   (data_wdata_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(1) data_prefetch_reg (
+ //     .din (data_prefetch_in),
+ //     .clk (clk),
+ //     .q   (data_prefetch_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(1) data_ll_reg (
+ //     .din (data_ll_in),
+ //     .clk (clk),
+ //     .q   (data_ll_q),
+ //     .se(), .si(), .so());
+
+ //  dff_s #(1) data_sc_reg (
+ //     .din (data_sc_in),
+ //     .clk (clk),
+ //     .q   (data_sc_q),
+ //     .se(), .si(), .so());
+//
+//
+//   assign data_req      = data_req_q;
+//   assign data_addr     = data_addr_q;
+//   assign data_wr       = data_wr_q;
+//   assign data_wstrb    = data_wstrb_q;
+//   assign data_wdata    = data_wdata_q;
+//   assign data_prefetch = data_prefetch_q;
+//   assign data_ll       = data_ll_q;
+//   assign data_sc       = data_sc_q;
 
    //
-   // valid_e & ~lsu_ale_e : _-_____
-   // data_data_ok_m       : _____-_
+
+   //===================================================
+   // Memory Interface
+   //===================================================
+
+   // biu_lsu_rd_ack       : _-_____
+   // rd_fin               : _____-_
    //
-   // data_req_in          : _----__
-   // data_req_q           : __----_
+   // rd_in_prog_in        : _----__
+   // rd_in_prog_q         : __----_
 
-   //assign data_req_in      = valid_e & !lsu_ale_e; // if ale, do not send out data req 
-   assign data_req_in      = (data_req_q & ~data_data_ok_m) | (valid_e & ~lsu_ale_e); 
+   // data read in progress
+   wire rd_in_prog_in; 
+   wire rd_in_prog_q; 
 
-   dffrl_s #(1) data_req_reg (
-      .din   (data_req_in),
+   wire biu_rd_busy;
+   assign biu_rd_busy = rd_in_prog_q; // | others
+
+
+   wire rd_fin;
+   assign rd_fin = biu_lsu_data_valid;
+
+   assign rd_in_prog_in = (rd_in_prog_q & ~rd_fin) | biu_lsu_rd_ack;                
+
+   dffrl_s #(1) rd_in_prog_reg (
+      .din   (rd_in_prog_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (data_req_q),
-      .se(), .si(), .so());
-
-   dff_s #(`GRLEN) data_addr_reg (
-      .din (data_addr_in),
-      .clk (clk),
-      .q   (data_addr_q),
-      .se(), .si(), .so());
-
-   dff_s #(1) data_wr_reg (
-      .din (data_wr_in),
-      .clk (clk),
-      .q   (data_wr_q),
-      .se(), .si(), .so());
-
-   dff_s #(4) data_wstrb_reg (
-      .din (data_wstrb_in),
-      .clk (clk),
-      .q   (data_wstrb_q),
-      .se(), .si(), .so());
-
-   dff_s #(`GRLEN) data_wdata_reg (
-      .din (data_wdata_in),
-      .clk (clk),
-      .q   (data_wdata_q),
-      .se(), .si(), .so());
-
-   dff_s #(1) data_prefetch_reg (
-      .din (data_prefetch_in),
-      .clk (clk),
-      .q   (data_prefetch_q),
-      .se(), .si(), .so());
-
-   dff_s #(1) data_ll_reg (
-      .din (data_ll_in),
-      .clk (clk),
-      .q   (data_ll_q),
-      .se(), .si(), .so());
-
-   dff_s #(1) data_sc_reg (
-      .din (data_sc_in),
-      .clk (clk),
-      .q   (data_sc_q),
+      .q     (rd_in_prog_q),
       .se(), .si(), .so());
 
 
-   assign data_req      = data_req_q;
-   assign data_addr     = data_addr_q;
-   assign data_wr       = data_wr_q;
-   assign data_wstrb    = data_wstrb_q;
-   assign data_wdata    = data_wdata_q;
-   assign data_prefetch = data_prefetch_q;
-   assign data_ll       = data_ll_q;
-   assign data_sc       = data_sc_q;
+   assign lsu_biu_rd_req = (valid_val_e & ~lsu_wr) &
+                           ~biu_rd_busy;
 
+   assign lsu_biu_rd_addr = addr;
+
+
+   // biu_lsu_wr_ack       : _-_____
+   // wr_fin               : _____-_
    //
+   // wr_in_prog_in        : _----__
+   // wr_in_prog_q         : __----_
+
+   // data write in progress
+   wire wr_in_prog_in; 
+   wire wr_in_prog_q; 
+
+   wire biu_wr_busy;
+   assign biu_wr_busy = wr_in_prog_q; // | others
+
+
+   wire wr_fin;
+   assign wr_fin = biu_lsu_write_done;
+
+   assign wr_in_prog_in = (wr_in_prog_q & ~wr_fin) | biu_lsu_wr_ack;                
+
+   dffrl_s #(1) wr_in_prog_reg (
+      .din   (wr_in_prog_in),
+      .clk   (clk),
+      .rst_l (resetn),
+      .q     (wr_in_prog_q),
+      .se(), .si(), .so());
+
+
+
+   assign lsu_biu_wr_req = (valid_val_e & lsu_wr) &
+                           ~biu_wr_busy;
+   
+   assign lsu_biu_wr_addr = addr;
+   assign lsu_biu_wr_data = lsu_wdata; //
+   assign lsu_biu_wr_strb = lsu_wstrb; //
+
 
 
    // except
@@ -480,7 +597,8 @@ module cpu7_lsu(
    assign lsu_csr_badv_e = addr;
 
 
-   assign lsu_addr_finish = lsu_ecl_ale_e && (data_addr_ok || (lsu_op == `LSOC1K_LSU_IDLE));
+   //assign lsu_addr_finish = lsu_ecl_ale_e && (data_addr_ok || (lsu_op == `LSOC1K_LSU_IDLE));
+   assign lsu_addr_finish = lsu_ecl_ale_e && (biu_lsu_wr_ack || (lsu_op == `LSOC1K_LSU_IDLE));
 
 
 
@@ -489,7 +607,8 @@ module cpu7_lsu(
    wire lsu_recv_next;
 
    //assign lsu_recv_next = (lsu_recv | data_addr_ok) & (~data_data_ok); // uty: review
-   assign lsu_recv_next = (lsu_recv | data_addr_ok) & (~data_data_ok_m); 
+   //assign lsu_recv_next = (lsu_recv | data_addr_ok) & (~data_data_ok_m); 
+   assign lsu_recv_next = (lsu_recv | (biu_lsu_rd_ack | biu_lsu_wr_ack)) & (~biu_lsu_data_valid); 
 
    dff_s #(1) lsu_recv_reg (
       .din (lsu_recv_next),
@@ -497,7 +616,7 @@ module cpu7_lsu(
       .q   (lsu_recv),
       .se(), .si(), .so());
    
-   assign data_recv  = lsu_recv;
+//   assign data_recv  = lsu_recv;
    
 
    

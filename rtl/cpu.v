@@ -66,35 +66,45 @@ module cpu(
    wire                   inst_exception;
    wire [  5:0]           inst_exccode  ;
    
-   wire                   data_req;
-   wire [`GRLEN-1:0]      data_pc;
-   wire                   data_wr;
-   wire [3 :0]            data_wstrb;
-   wire [`GRLEN-1:0]      data_addr;
-   wire                   data_cancel_ex2;
-   wire                   data_cancel;
-   wire [`GRLEN-1:0]      data_wdata;
-   wire                   data_recv;
-   wire                   data_prefetch;
-   wire                   data_ll;
-   wire                   data_sc;
+//   wire                   data_req;
+//   wire [`GRLEN-1:0]      data_pc;
+//   wire                   data_wr;
+//   wire [3 :0]            data_wstrb;
+//   wire [`GRLEN-1:0]      data_addr;
+//   wire                   data_cancel_ex2;
+//   wire                   data_cancel;
+//   wire [`GRLEN-1:0]      data_wdata;
+//   wire                   data_recv;
+//   wire                   data_prefetch;
+//   wire                   data_ll;
+//   wire                   data_sc;
+//
+//   wire [`GRLEN-1:0]      data_rdata_m;
+//   wire                   data_addr_ok;
+//   wire                   data_data_ok_m;
+//   wire [ 5:0]            data_exccode;
 
-   wire [`GRLEN-1:0]      data_rdata_m;
-   wire                   data_addr_ok;
-   wire                   data_data_ok_m;
-   wire [ 5:0]            data_exccode;
+   wire                   lsu_biu_rd_req;
+   wire [`GRLEN-1:0]      lsu_biu_rd_addr;
+
+   wire                   biu_lsu_rd_ack;
+   wire                   biu_lsu_data_valid;
+   wire [31:0]            biu_lsu_data;
+
+   wire                   lsu_biu_wr_req;
+   wire [`GRLEN-1:0]      lsu_biu_wr_addr;
+   wire [31:0]            lsu_biu_wr_data;
+   wire [3:0]             lsu_biu_wr_strb;
+
+   wire                   biu_lsu_write_done;
 
 
-   wire biu_lsu_data_valid;
-   wire biu_lsu_write_done;
+   //assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_done;
 
-   assign data_data_ok_m = biu_lsu_data_valid | biu_lsu_write_done;
-
-   wire biu_lsu_rd_ack;
    wire biu_lsu_wr_aw_ack;
    wire biu_lsu_wr_w_ack;
 
-   assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_aw_ack;
+   //assign data_addr_ok = biu_lsu_rd_ack | biu_lsu_wr_aw_ack;
 
 
    cpu7_core cpu(
@@ -116,25 +126,40 @@ module cpu(
         .inst_exception   (inst_exception       ),
 
 
-        .data_req         (data_req             ), 
-        .data_pc          (data_pc              ),
-        .data_wr          (data_wr              ),
-        .data_wstrb       (data_wstrb           ),
-        .data_addr        (data_addr            ),
-        .data_cancel_ex2  (data_cancel_ex2      ),
-        .data_cancel      (data_cancel          ),
-        .data_wdata       (data_wdata           ),
-        .data_recv        (data_recv            ),
-        .data_prefetch    (data_prefetch        ),
-        .data_ll          (data_ll              ),
-        .data_sc          (data_sc              ),
-                                          
-        .data_rdata_m     (data_rdata_m         ),
-        .data_addr_ok     (data_addr_ok         ),
-        .data_data_ok_m   (data_data_ok_m       ),
-        .data_exccode     (data_exccode         ),
+//        .data_req         (data_req             ), 
+//        .data_pc          (data_pc              ),
+//        .data_wr          (data_wr              ),
+//        .data_wstrb       (data_wstrb           ),
+//        .data_addr        (data_addr            ),
+//        .data_cancel_ex2  (data_cancel_ex2      ),
+//        .data_cancel      (data_cancel          ),
+//        .data_wdata       (data_wdata           ),
+//        .data_recv        (data_recv            ),
+//        .data_prefetch    (data_prefetch        ),
+//        .data_ll          (data_ll              ),
+//        .data_sc          (data_sc              ),
+//                                          
+//        .data_rdata_m     (data_rdata_m         ),
+//        .data_addr_ok     (data_addr_ok         ),
+//        .data_data_ok_m   (data_data_ok_m       ),
+//        .data_exccode     (data_exccode         ),
+//
+//	.data_scsucceed   (1'b0                 ) // figure it out, later
+//
+      .lsu_biu_rd_req           (lsu_biu_rd_req        ),
+      .lsu_biu_rd_addr          (lsu_biu_rd_addr       ),
 
-	.data_scsucceed   (1'b0                 ) // figure it out, later
+      .biu_lsu_rd_ack           (biu_lsu_rd_ack        ),
+      .biu_lsu_data_valid       (biu_lsu_data_valid    ),
+      .biu_lsu_data             (biu_lsu_data          ),
+
+      .lsu_biu_wr_req           (lsu_biu_wr_req        ),
+      .lsu_biu_wr_addr          (lsu_biu_wr_addr       ),
+      .lsu_biu_wr_data          (lsu_biu_wr_data       ),
+      .lsu_biu_wr_strb          (lsu_biu_wr_strb       ),
+
+      .biu_lsu_wr_ack           (biu_lsu_wr_aw_ack & biu_lsu_wr_aw_ack),
+      .biu_lsu_write_done       (biu_lsu_write_done    )
    );
 
 
@@ -154,18 +179,18 @@ module cpu(
 // uty: test
 
       // LSU Interface
-      .lsu_biu_rd_req     (data_req & ~data_wr  ),
-      .lsu_biu_rd_addr    (data_addr            ),
-   
+      .lsu_biu_rd_req     (lsu_biu_rd_req       ),
+      .lsu_biu_rd_addr    (lsu_biu_rd_addr      ),
+                                             
       .biu_lsu_rd_ack     (biu_lsu_rd_ack       ), //
       .biu_lsu_data_valid (biu_lsu_data_valid   ),
-      .biu_lsu_data       (data_rdata_m         ),
-
-      .lsu_biu_wr_aw_req  (data_req & data_wr   ),
-      .lsu_biu_wr_addr    (data_addr            ),
-      .lsu_biu_wr_w_req   (data_req & data_wr   ),
-      .lsu_biu_wr_data    (data_wdata           ),
-      .lsu_biu_wr_strb    (data_wstrb           ),
+      .biu_lsu_data       (biu_lsu_data         ),
+                                             
+      .lsu_biu_wr_aw_req  (lsu_biu_wr_req       ), // aw w are requested at the same time
+      .lsu_biu_wr_addr    (lsu_biu_wr_addr      ),
+      .lsu_biu_wr_w_req   (lsu_biu_wr_req       ),
+      .lsu_biu_wr_data    (lsu_biu_wr_data      ),
+      .lsu_biu_wr_strb    (lsu_biu_wr_strb      ),
       .lsu_biu_wr_last    (1'b1                 ),
 
       .biu_lsu_wr_aw_ack  (biu_lsu_wr_aw_ack    ), //
