@@ -47,17 +47,30 @@ module cpu7_lsu(
    wire lsu_ale_e;
    wire lsu_ale_m;
    
-   wire valid_m;
 
    wire valid_val_e;
+   wire valid_val_m;
 
-   assign valid_val_e = valid_e & ~lsu_ale_e;
+   wire valid_m;
 
-   
    dff_s #(1) valid_e2m_reg (
       .din (valid_e),
       .clk (clk),
       .q   (valid_m),
+      .se(), .si(), .so());
+
+   assign valid_val_e = valid_e & ~lsu_ale_e;
+
+  
+   // valid_val_m is used to send requests to the BIU. The LSU registers all
+   // parameters until it receives an acknowledgment, indicating that the BIU
+   // has completed arbitration and the parameters are registered.
+   dffrle_s #(1) valid_val_e2m_reg (
+      .din (valid_val_e),
+      .rst_l (resetn),
+      .en  (valid_val_e | (biu_lsu_rd_ack | biu_lsu_wr_ack)),
+      .clk (clk),
+      .q   (valid_val_m),
       .se(), .si(), .so());
 
    
@@ -260,6 +273,14 @@ module cpu7_lsu(
       .se(), .si(), .so());
 
 
+   wire lsu_wr_m;
+
+   dffe_s #(1) lsu_wr_e2m_reg (
+      .din (lsu_wr),
+      .en  (valid_e),
+      .clk (clk),
+      .q   (lsu_wr_m),
+      .se(), .si(), .so());
 
 
    //result process
@@ -298,12 +319,11 @@ module cpu7_lsu(
 
    // if ale, data req is not sent out, so there will be no data_data_ok back
    // lsu_ale is at _e, wait for the next cycle to signal lsu_finish_m
-   
-   // bug fix: data_data_ok is actually data_data_ok_e
-   //          lsu_finish_m needs data_data_ok_m
-   //assign lsu_finish_m = data_data_ok | (lsu_ale_m & valid_m); 
-   //assign lsu_finish_m = data_data_ok_m | (lsu_ale_m & valid_m); // uty: review why lsu_ale_m here?
-   assign lsu_finish_m = (biu_lsu_data_valid | biu_lsu_write_done) | (lsu_ale_m & valid_m); // uty: review why lsu_ale_m here?
+
+   // uty: review why lsu_ale_m here?
+   // A: `(lsu_ale_m & valid_m)` indicates that an ALE event has occurred in
+   // the LSU. The LSU needs to complete this process.
+   assign lsu_finish_m = (biu_lsu_data_valid | biu_lsu_write_done) | (lsu_ale_m & valid_m);  
 
    
 
@@ -366,10 +386,10 @@ module cpu7_lsu(
       .se(), .si(), .so());
 
 
-   assign lsu_biu_rd_req = (valid_val_e & ~lsu_wr) &
+   assign lsu_biu_rd_req = (valid_val_m & ~lsu_wr_m) &
                            ~biu_rd_busy;
 
-   assign lsu_biu_rd_addr = addr;
+   assign lsu_biu_rd_addr = addr_m;
 
 
    // biu_lsu_wr_ack       : _-_____

@@ -71,13 +71,21 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_rd_req
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_addr
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_data
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_last
-add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_req
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_strb
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/data_req
-add wave -position end  result:/top_tb/u_top/u_cpu/data_wr
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_finish_m
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_data_ok_m
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/ecl_lsu_valid_e
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready_delay_in
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready_delay_q
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready_val
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/arb_rd_val
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/biu_ifu_rd_ack
+add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/biu_lsu_rd_ack
+
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/biu_lsu_rd_ack
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_biu_rd_req
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/biu_rd_busy
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/valid_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_ale_e
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/addr

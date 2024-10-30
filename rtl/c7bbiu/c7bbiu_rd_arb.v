@@ -31,15 +31,38 @@ module c7bbiu_rd_arb(
    wire ifu_select;
    wire lsu_select;
 
-
    assign lsu_select = lsu_biu_rd_req;
 
    assign ifu_select = ~lsu_biu_rd_req &
 	                ifu_biu_rd_req;
 
 
-   assign biu_ifu_rd_ack = axi_ar_ready & ifu_select;
-   assign biu_lsu_rd_ack = axi_ar_ready & lsu_select;
+   // If either the IFU or LSU is selected, there is a 1-cycle delay from the
+   // AXI interface in registering the signals. As a result, axi_ar_ready also
+   // experiences a 1-cycle delay to indicate the channel's busy state. 
+
+   // Thus, if the BIU selects in the previous cycle, it should be marked as
+   // busy in the next cycle and will depend on `axi_ar_ready` for the
+   // following cycles.
+
+   wire axi_ar_ready_val;
+   wire axi_ar_ready_delay_in;
+   wire axi_ar_ready_delay_q;
+
+   assign axi_ar_ready_delay_in = biu_ifu_rd_ack | biu_lsu_rd_ack;
+
+   dffrl_s #(1) axi_ar_ready_delay_reg (
+      .din   (axi_ar_ready_delay_in),
+      .rst_l (resetn),
+      .clk   (clk),
+      .q     (axi_ar_ready_delay_q),
+      .se(), .si(), .so());
+
+   assign axi_ar_ready_val = axi_ar_ready & ~axi_ar_ready_delay_q;
+
+
+   assign biu_ifu_rd_ack = axi_ar_ready_val & ifu_select;
+   assign biu_lsu_rd_ack = axi_ar_ready_val & lsu_select;
 
    assign arb_rd_val = biu_ifu_rd_ack | biu_lsu_rd_ack;
 
