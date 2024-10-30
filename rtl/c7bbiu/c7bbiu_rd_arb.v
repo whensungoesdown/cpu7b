@@ -45,25 +45,28 @@ module c7bbiu_rd_arb(
    // busy in the next cycle and will depend on `axi_ar_ready` for the
    // following cycles.
 
-   wire axi_ar_ready_val;
-   wire axi_ar_ready_delay_in;
-   wire axi_ar_ready_delay_q;
+//   wire axi_ar_ready_val;
+//   wire axi_ar_ready_delay_in;
+//   wire axi_ar_ready_delay_q;
+//
+//   assign axi_ar_ready_delay_in = biu_ifu_rd_ack | biu_lsu_rd_ack;
+//
+//   dffrl_s #(1) axi_ar_ready_delay_reg (
+//      .din   (axi_ar_ready_delay_in),
+//      .rst_l (resetn),
+//      .clk   (clk),
+//      .q     (axi_ar_ready_delay_q),
+//      .se(), .si(), .so());
+//
+//   assign axi_ar_ready_val = axi_ar_ready & ~axi_ar_ready_delay_q;
+//
+//
+//   assign biu_ifu_rd_ack = axi_ar_ready_val & ifu_select;
+//   assign biu_lsu_rd_ack = axi_ar_ready_val & lsu_select;
 
-   assign axi_ar_ready_delay_in = biu_ifu_rd_ack | biu_lsu_rd_ack;
-
-   dffrl_s #(1) axi_ar_ready_delay_reg (
-      .din   (axi_ar_ready_delay_in),
-      .rst_l (resetn),
-      .clk   (clk),
-      .q     (axi_ar_ready_delay_q),
-      .se(), .si(), .so());
-
-   assign axi_ar_ready_val = axi_ar_ready & ~axi_ar_ready_delay_q;
-
-
-   assign biu_ifu_rd_ack = axi_ar_ready_val & ifu_select;
-   assign biu_lsu_rd_ack = axi_ar_ready_val & lsu_select;
-
+   assign biu_ifu_rd_ack = axi_ar_ready & ifu_select;
+   assign biu_lsu_rd_ack = axi_ar_ready & lsu_select;
+   
    assign arb_rd_val = biu_ifu_rd_ack | biu_lsu_rd_ack;
 
 
