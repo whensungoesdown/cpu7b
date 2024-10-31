@@ -75,10 +75,6 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_strb
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready_delay_in
-add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready_delay_q
-add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready
-add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/axi_ar_ready_val
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/arb_rd_val
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/biu_ifu_rd_ack
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_read_arbiter/biu_lsu_rd_ack
@@ -89,3 +85,21 @@ add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/biu_rd_busy
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/valid_e
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_ale_e
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/addr
+
+add wave -divider
+
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARADDR
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARBURST
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARID
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARLEN
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARLOCK
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARQOS
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARREADY
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARREADY_S0
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARREADY_S1
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARREADY_S2
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARREADY_SD
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARREGION
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARSIZE
+add wave -position end  result:/top_tb/u_top/u_amba_axi_m2s3/M0_ARVALID
+

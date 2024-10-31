@@ -4,12 +4,6 @@ add wave -position end  result:/top_tb/resetn
 add wave -divider
 
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_bgn
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_end
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_in
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_q
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
 
 add wave -divider
 
@@ -57,7 +51,6 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_axi_interface/arb_rd_
 add wave -divider
 
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_axi_interface/ext_biu_r_id
-add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_axi_interface/r_id_q
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_axi_interface/ext_biu_r_id
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_axi_interface/ext_biu_r_last
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/u_axi_interface/ext_biu_r_resp

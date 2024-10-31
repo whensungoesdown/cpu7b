@@ -37,4 +37,5 @@
 ../../rtl/c7bbiu/c7bbiu_wr_arb.v
 ../../rtl/c7bbiu/c7bbiu_axi_interface.v
 ../../rtl/cpu.v 
+../../rtl/amba_axi_m2s3.v
 ../../rtl/top.v
