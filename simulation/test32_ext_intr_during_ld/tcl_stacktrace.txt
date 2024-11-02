@@ -1,0 +1,18 @@
+Sun Jun 23 06:21:33 AM EDT 2024
+Trace back: bad window path name ""
+    while executing
+"winfo toplevel [focus]"
+    (procedure "Vsimmenu::WindowListDialog" line 54)
+    invoked from within
+"Vsimmenu::WindowListDialog"
+    invoked from within
+".#mBar.#mBar#window invoke active"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel #0 [list $w invoke active]"
+    (procedure "tk::MenuInvoke" line 50)
+    invoked from within
+"tk::MenuInvoke .#mBar.#mBar#window 1"
+    (command bound to event)
+  <2: ::tkerror {bad window path name ""}
+  <1: ::bgerror {bad window path name ""}

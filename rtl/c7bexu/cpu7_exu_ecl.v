@@ -646,47 +646,36 @@ module cpu7_exu_ecl(
    // interrupt
    //
 
-   // intr wait for ifu_exu_valid_e to be 1
-   // meaning, only _e has a valid instruction to signal intrrupt to core
-   // there may be bubble in _e stage
-
-   // scenario 1:
    //
-   // intr_in            : _-______
-   // ifu_exu_valid_e    : _-______
+   // intr_all              : ____--------
+   // ifu_exu_valid_risinge : ______-_____
    //
-   // intr_hold_q        : ________
-   // intr               : _-______
+   // intr_all_sync         : ______-_____
    //
+   // Later, intr_all also becomes
+   //                       : ______-_____
+   // Because csr_ecl_crmd_ie will be cleared by exu_ifu_except
 
-   // scenario 2:
-   //
-   // intr_in            : _-______
-   // ifu_exu_valid_e    : ___-____
-   //
-   // intr_hold_q        : __--____
-   // intr               : ___-____
-   //
-   wire intr_in;
-   wire intr;
 
-   wire intr_hold_in;
-   wire intr_hold_q;
-   wire intr_hold_en;
+   wire intr_all;
+   assign intr_all = (csr_ecl_timer_intr | ext_intr) & csr_ecl_crmd_ie; // ext_intr as HWI0
+   
+   wire intr_all_sync; // intr_all_sync to ifu_exu_valid_e rising edge
+   
+   wire ifu_exu_valid_rising_e;
 
-   assign intr_in = (csr_ecl_timer_intr | ext_intr) & csr_ecl_crmd_ie; // ext_intr as HWI0
-   assign intr_hold_in = intr_in & (~ifu_exu_valid_e);
-   assign intr_hold_en = intr_in | ifu_exu_valid_e;
+   wire prev_ifu_exu_valid_e;
 
-   assign intr = (intr_in & ifu_exu_valid_e) | (intr_hold_q & ifu_exu_valid_e);
-
-   dffrle_s #(1) intr_hold_reg (
-      .din   (intr_hold_in),
-      .rst_l (resetn),
-      .en    (intr_hold_en),
-      .clk   (clk),
-      .q     (intr_hold_q),
+   dff_s #(1) ifu_exu_valid_e_posedge_detect_reg (
+      .din (ifu_exu_valid_e),
+      .clk (clk),
+      .q   (prev_ifu_exu_valid_e),
       .se(), .si(), .so());
+
+   assign ifu_exu_valid_rising_e = ~prev_ifu_exu_valid_e & ifu_exu_valid_e;
+
+   assign intr_all_sync = intr_all & ifu_exu_valid_rising_e;
+
 
    
    //
@@ -703,18 +692,18 @@ module cpu7_exu_ecl(
    // first, the casue-exception instruction will be reexecuted
    //
    // interrupt ecode is 0
-   assign exccode_all_e = intr ? 6'b0 : ifu_exu_exccode_e;
+   assign exccode_all_e = intr_all_sync ? 6'b0 : ifu_exu_exccode_e;
    assign ecl_csr_exccode_e = exccode_all_e;
 
    // exu_ifu_except tells ifu to change pc_bf
-   assign exu_ifu_except = exception_all_e | intr;
+   assign exu_ifu_except = exception_all_e | intr_all_sync;
    
                  
    // BUG FIX
    // exu_ifu_except consists of lsu_ecl_ale_e | ecl_csr_illinst_e | csr_ecl_timer_intr, lsu_ecl_ale_e is signal from _e
    // so kill_e = exu_ifu_except may cause a loop
    // modelsim: ** Error: (vsim-3601) Iteration limit reached at time xxx us.
-   assign kill_e = intr; // exu_ifu_except;
+   assign kill_e = intr_all_sync; // exu_ifu_except;
 
 
    //

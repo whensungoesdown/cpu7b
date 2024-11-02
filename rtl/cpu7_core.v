@@ -110,7 +110,7 @@ module cpu7_core(
    wire                              ifu_exu_exception_e;
    wire [5:0]                        ifu_exu_exccode_e;
 
-   
+
    cpu7_ifu ifu(
       .clock                   (clk                ),
       .resetn                  (resetn             ),
@@ -300,7 +300,7 @@ module cpu7_core(
       .exu_ifu_era              (exu_ifu_era              ),
       .exu_ifu_ertn_e           (exu_ifu_ertn_e           ),
 
-      .ext_intr                 (ext_intr                 )
+      .ext_intr                 (ext_intr                 ) // ext_intr will be synced at exu_ecl, intr_all_sync
       );
    
 endmodule // cpu7

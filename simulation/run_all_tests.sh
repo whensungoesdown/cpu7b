@@ -367,3 +367,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test32_ext_intr_during_ld
+echo "test32_ext_intr_during_ld"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
