@@ -239,7 +239,7 @@ module cpu7_ifu_fdp(
 
    dffe_s #(32) inst_f2d_reg (
       .din (inst_f),
-      .en  (inst_kill_vld_f),
+      .en  (inst_kill_vld_f & ~exu_ifu_stall_req), // same as pc_f2d_reg.en
       .clk (clk),
       .q   (fdp_dec_inst_d),
       .se(), .si(), .so());
@@ -292,6 +292,11 @@ module cpu7_ifu_fdp(
    // so that the new target instruction can be fetched instead of the one previously requested
    assign inst_cancel = br_taken | exu_ifu_except | exu_ifu_ertn_e;
 
+//   assign inst_cancel = br_taken
+//                      | exu_ifu_ertn_e
+//                      | (exu_ifu_except & biu_busy);  // for the ext_intr case, inst_cancel should be issed when the instruction fetch is ongoing
+//                     // uty: review biu_busy
+//
 endmodule // cpu7_ifu_fdp
 
 
