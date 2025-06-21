@@ -6,208 +6,208 @@ module top(
    );
    
 
-   wire [`Larid       -1 :0] cpu_arid;
-   wire [`Laraddr     -1 :0] cpu_araddr;
-   wire [`Larlen      -1 :0] cpu_arlen;
-   wire [`Larsize     -1 :0] cpu_arsize;
-   wire [`Larburst    -1 :0] cpu_arburst;
-   wire [`Larlock     -1 :0] cpu_arlock;
-   wire [`Larcache    -1 :0] cpu_arcache;
-   wire [`Larprot     -1 :0] cpu_arprot;
-   wire                      cpu_arvalid;
-   wire                      cpu_arready;
+   wire [3:0]   cpu_arid;
+   wire [31:0]  cpu_araddr;
+   wire [7:0]   cpu_arlen;
+   wire [2:0]   cpu_arsize;
+   wire [1:0]   cpu_arburst;
+   wire         cpu_arlock;
+   wire [3:0]   cpu_arcache;
+   wire [2:0]   cpu_arprot;
+   wire         cpu_arvalid;
+   wire         cpu_arready;
    
-   wire [`Lrid        -1 :0] cpu_rid;
-   wire [`Lrdata      -1 :0] cpu_rdata;
-   wire [`Lrresp      -1 :0] cpu_rresp;
-   wire                      cpu_rlast;
-   wire                      cpu_rvalid;
-   wire                      cpu_rready;
+   wire [3:0]   cpu_rid;
+   wire [63:0]  cpu_rdata;
+   wire [1:0]   cpu_rresp;
+   wire         cpu_rlast;
+   wire         cpu_rvalid;
+   wire         cpu_rready;
 
-   wire [`Lawid       -1 :0] cpu_awid;
-   wire [`Lawaddr     -1 :0] cpu_awaddr;
-   wire [`Lawlen      -1 :0] cpu_awlen;
-   wire [`Lawsize     -1 :0] cpu_awsize;
-   wire [`Lawburst    -1 :0] cpu_awburst;
-   wire [`Lawlock     -1 :0] cpu_awlock;
-   wire [`Lawcache    -1 :0] cpu_awcache;
-   wire [`Lawprot     -1 :0] cpu_awprot;
-   wire                      cpu_awvalid;
-   wire                      cpu_awready;
-   wire [`Lwid        -1 :0] cpu_wid;
-   wire [`Lwdata      -1 :0] cpu_wdata;
-   wire [`Lwstrb      -1 :0] cpu_wstrb;
-   wire                      cpu_wlast;
-   wire                      cpu_wvalid;
-   wire                      cpu_wready;
+   wire [3:0]   cpu_awid;
+   wire [31:0]  cpu_awaddr;
+   wire [7:0]   cpu_awlen;
+   wire [2:0]   cpu_awsize;
+   wire [1:0]   cpu_awburst;
+   wire         cpu_awlock;
+   wire [3:0]   cpu_awcache;
+   wire [2:0]   cpu_awprot;
+   wire         cpu_awvalid;
+   wire         cpu_awready;
+   wire [3:0]   cpu_wid;
+   wire [63:0]  cpu_wdata;
+   wire [7:0]   cpu_wstrb;
+   wire         cpu_wlast;
+   wire         cpu_wvalid;
+   wire         cpu_wready;
    
-   wire [`Lbid        -1 :0] cpu_bid;
-   wire [`Lbresp      -1 :0] cpu_bresp;
-   wire                      cpu_bvalid;
-   wire                      cpu_bready;
+   wire [3:0]   cpu_bid;
+   wire [1:0]   cpu_bresp;
+   wire         cpu_bvalid;
+   wire         cpu_bready;
    
 
-   wire [`Larid       -1 :0] dma_arid;
-   wire [`Laraddr     -1 :0] dma_araddr;
-   wire [`Larlen      -1 :0] dma_arlen;
-   wire [`Larsize     -1 :0] dma_arsize;
-   wire [`Larburst    -1 :0] dma_arburst;
-   wire [`Larlock     -1 :0] dma_arlock;
-   wire [`Larcache    -1 :0] dma_arcache;
-   wire [`Larprot     -1 :0] dma_arprot;
-   wire                      dma_arvalid;
-   wire                      dma_arready;
+   wire [3:0]   dma_arid;
+   wire [31:0]  dma_araddr;
+   wire [7:0]   dma_arlen;
+   wire [2:0]   dma_arsize;
+   wire [1:0]   dma_arburst;
+   wire         dma_arlock;
+   wire [3:0]   dma_arcache;
+   wire [2:0]   dma_arprot;
+   wire         dma_arvalid;
+   wire         dma_arready;
    
-   wire [`Lrid        -1 :0] dma_rid;
-   wire [`Lrdata      -1 :0] dma_rdata;
-   wire [`Lrresp      -1 :0] dma_rresp;
-   wire                      dma_rlast;
-   wire                      dma_rvalid;
-   wire                      dma_rready;
+   wire [3:0]   dma_rid;
+   wire [63:0]  dma_rdata;
+   wire [1:0]   dma_rresp;
+   wire         dma_rlast;
+   wire         dma_rvalid;
+   wire         dma_rready;
+                
+   wire [3:0]   dma_awid;
+   wire [31:0]  dma_awaddr;
+   wire [7:0]   dma_awlen;
+   wire [2:0]   dma_awsize;
+   wire [1:0]   dma_awburst;
+   wire         dma_awlock;
+   wire [3:0]   dma_awcache;
+   wire [2:0]   dma_awprot;
+   wire         dma_awvalid;
+   wire         dma_awready;
+   wire [3:0]   dma_wid;
+   wire [63:0]  dma_wdata;
+   wire [7:0]   dma_wstrb;
+   wire         dma_wlast;
+   wire         dma_wvalid;
+   wire         dma_wready;
+                
+   wire [3:0]   dma_bid;
+   wire [1:0]   dma_bresp;
+   wire         dma_bvalid;
+   wire         dma_bready;
 
-   wire [`Lawid       -1 :0] dma_awid;
-   wire [`Lawaddr     -1 :0] dma_awaddr;
-   wire [`Lawlen      -1 :0] dma_awlen;
-   wire [`Lawsize     -1 :0] dma_awsize;
-   wire [`Lawburst    -1 :0] dma_awburst;
-   wire [`Lawlock     -1 :0] dma_awlock;
-   wire [`Lawcache    -1 :0] dma_awcache;
-   wire [`Lawprot     -1 :0] dma_awprot;
-   wire                      dma_awvalid;
-   wire                      dma_awready;
-   wire [`Lwid        -1 :0] dma_wid;
-   wire [`Lwdata      -1 :0] dma_wdata;
-   wire [`Lwstrb      -1 :0] dma_wstrb;
-   wire                      dma_wlast;
-   wire                      dma_wvalid;
-   wire                      dma_wready;
+   wire [3:0]   s0_arid;
+   wire [31:0]  s0_araddr;
+   wire [7:0]   s0_arlen;
+   wire [2:0]   s0_arsize;
+   wire [1:0]   s0_arburst;
+   wire         s0_arlock;
+   wire [3:0]   s0_arcache;
+   wire [2:0]   s0_arprot;
+   wire         s0_arvalid;
+   wire         s0_arready;
    
-   wire [`Lbid        -1 :0] dma_bid;
-   wire [`Lbresp      -1 :0] dma_bresp;
-   wire                      dma_bvalid;
-   wire                      dma_bready;
-
-   wire [`Ls_arid       -1 :0] s0_arid;
-   wire [`Laraddr     -1 :0] s0_araddr;
-   wire [`Larlen      -1 :0] s0_arlen;
-   wire [`Larsize     -1 :0] s0_arsize;
-   wire [`Larburst    -1 :0] s0_arburst;
-   wire [`Larlock     -1 :0] s0_arlock;
-   wire [`Larcache    -1 :0] s0_arcache;
-   wire [`Larprot     -1 :0] s0_arprot;
-   wire                      s0_arvalid;
-   wire                      s0_arready;
-   
-   wire [`Ls_rid        -1 :0] s0_rid;
-   wire [`Lrdata      -1 :0] s0_rdata;
-   wire [`Lrresp      -1 :0] s0_rresp;
-   wire                      s0_rlast;
-   wire                      s0_rvalid;
-   wire                      s0_rready;
-
-   wire [`Ls_awid       -1 :0] s0_awid;
-   wire [`Lawaddr     -1 :0] s0_awaddr;
-   wire [`Lawlen      -1 :0] s0_awlen;
-   wire [`Lawsize     -1 :0] s0_awsize;
-   wire [`Lawburst    -1 :0] s0_awburst;
-   wire [`Lawlock     -1 :0] s0_awlock;
-   wire [`Lawcache    -1 :0] s0_awcache;
-   wire [`Lawprot     -1 :0] s0_awprot;
-   wire                      s0_awvalid;
-   wire                      s0_awready;
-   wire [`Ls_wid        -1 :0] s0_wid;
-   wire [`Lwdata      -1 :0] s0_wdata;
-   wire [`Lwstrb      -1 :0] s0_wstrb;
-   wire                      s0_wlast;
-   wire                      s0_wvalid;
-   wire                      s0_wready;
-   
-   wire [`Ls_bid        -1 :0] s0_bid;
-   wire [`Lbresp      -1 :0] s0_bresp;
-   wire                      s0_bvalid;
-   wire                      s0_bready;
+   wire [3:0]   s0_rid;
+   wire [63:0]  s0_rdata;
+   wire [1:0]   s0_rresp;
+   wire         s0_rlast;
+   wire         s0_rvalid;
+   wire         s0_rready;
+                
+   wire [3:0]   s0_awid;
+   wire [31:0]  s0_awaddr;
+   wire [7:0]   s0_awlen;
+   wire [2:0]   s0_awsize;
+   wire [1:0]   s0_awburst;
+   wire         s0_awlock;
+   wire [3:0]   s0_awcache;
+   wire [2:0]   s0_awprot;
+   wire         s0_awvalid;
+   wire         s0_awready;
+   wire [3:0]   s0_wid;
+   wire [63:0]  s0_wdata;
+   wire [7:0]   s0_wstrb;
+   wire         s0_wlast;
+   wire         s0_wvalid;
+   wire         s0_wready;
+                
+   wire [3:0]   s0_bid;
+   wire [1:0]   s0_bresp;
+   wire         s0_bvalid;
+   wire         s0_bready;
 
 
 
-   wire [`Ls_arid       -1 :0] s1_arid;
-   wire [`Laraddr     -1 :0] s1_araddr;
-   wire [`Larlen      -1 :0] s1_arlen;
-   wire [`Larsize     -1 :0] s1_arsize;
-   wire [`Larburst    -1 :0] s1_arburst;
-   wire [`Larlock     -1 :0] s1_arlock;
-   wire [`Larcache    -1 :0] s1_arcache;
-   wire [`Larprot     -1 :0] s1_arprot;
-   wire                      s1_arvalid;
-   wire                      s1_arready;
-   
-   wire [`Ls_rid        -1 :0] s1_rid;
-   wire [`Lrdata      -1 :0] s1_rdata;
-   wire [`Lrresp      -1 :0] s1_rresp;
-   wire                      s1_rlast;
-   wire                      s1_rvalid;
-   wire                      s1_rready;
+   wire [3:0]   s1_arid;
+   wire [31:0]  s1_araddr;
+   wire [7:0]   s1_arlen;
+   wire [2:0]   s1_arsize;
+   wire [1:0]   s1_arburst;
+   wire         s1_arlock;
+   wire [3:0]   s1_arcache;
+   wire [2:0]   s1_arprot;
+   wire         s1_arvalid;
+   wire         s1_arready;
+                
+   wire [3:0]   s1_rid;
+   wire [63:0]  s1_rdata;
+   wire [1:0]   s1_rresp;
+   wire         s1_rlast;
+   wire         s1_rvalid;
+   wire         s1_rready;
+                
+   wire [3:0]   s1_awid;
+   wire [31:0]  s1_awaddr;
+   wire [7:0]   s1_awlen;
+   wire [2:0]   s1_awsize;
+   wire [1:0]   s1_awburst;
+   wire         s1_awlock;
+   wire [3:0]   s1_awcache;
+   wire [2:0]   s1_awprot;
+   wire         s1_awvalid;
+   wire         s1_awready;
+   wire [3:0]   s1_wid;
+   wire [63:0]  s1_wdata;
+   wire [7:0]   s1_wstrb;
+   wire         s1_wlast;
+   wire         s1_wvalid;
+   wire         s1_wready;
+                
+   wire [3:0]   s1_bid;
+   wire [1:0]   s1_bresp;
+   wire         s1_bvalid;
+   wire         s1_bready;
 
-   wire [`Ls_awid       -1 :0] s1_awid;
-   wire [`Lawaddr     -1 :0] s1_awaddr;
-   wire [`Lawlen      -1 :0] s1_awlen;
-   wire [`Lawsize     -1 :0] s1_awsize;
-   wire [`Lawburst    -1 :0] s1_awburst;
-   wire [`Lawlock     -1 :0] s1_awlock;
-   wire [`Lawcache    -1 :0] s1_awcache;
-   wire [`Lawprot     -1 :0] s1_awprot;
-   wire                      s1_awvalid;
-   wire                      s1_awready;
-   wire [`Ls_wid        -1 :0] s1_wid;
-   wire [`Lwdata      -1 :0] s1_wdata;
-   wire [`Lwstrb      -1 :0] s1_wstrb;
-   wire                      s1_wlast;
-   wire                      s1_wvalid;
-   wire                      s1_wready;
-   
-   wire [`Ls_bid        -1 :0] s1_bid;
-   wire [`Lbresp      -1 :0] s1_bresp;
-   wire                      s1_bvalid;
-   wire                      s1_bready;
-
-   wire [`Ls_arid     -1 :0] s2_arid;
-   wire [`Laraddr     -1 :0] s2_araddr;
-   wire [`Larlen      -1 :0] s2_arlen;
-   wire [`Larsize     -1 :0] s2_arsize;
-   wire [`Larburst    -1 :0] s2_arburst;
-   wire [`Larlock     -1 :0] s2_arlock;
-   wire [`Larcache    -1 :0] s2_arcache;
-   wire [`Larprot     -1 :0] s2_arprot;
-   wire                      s2_arvalid;
-   wire                      s2_arready;
-   
-   wire [`Ls_rid      -1 :0] s2_rid;
-   wire [`Lrdata      -1 :0] s2_rdata;
-   wire [`Lrresp      -1 :0] s2_rresp;
-   wire                      s2_rlast;
-   wire                      s2_rvalid;
-   wire                      s2_rready;
-
-   wire [`Ls_awid     -1 :0] s2_awid;
-   wire [`Lawaddr     -1 :0] s2_awaddr;
-   wire [`Lawlen      -1 :0] s2_awlen;
-   wire [`Lawsize     -1 :0] s2_awsize;
-   wire [`Lawburst    -1 :0] s2_awburst;
-   wire [`Lawlock     -1 :0] s2_awlock;
-   wire [`Lawcache    -1 :0] s2_awcache;
-   wire [`Lawprot     -1 :0] s2_awprot;
-   wire                      s2_awvalid;
-   wire                      s2_awready;
-   wire [`Ls_wid      -1 :0] s2_wid;
-   wire [`Lwdata      -1 :0] s2_wdata;
-   wire [`Lwstrb      -1 :0] s2_wstrb;
-   wire                      s2_wlast;
-   wire                      s2_wvalid;
-   wire                      s2_wready;
-   
-   wire [`Ls_bid      -1 :0] s2_bid;
-   wire [`Lbresp      -1 :0] s2_bresp;
-   wire                      s2_bvalid;
-   wire                      s2_bready;
+   wire [3:0]   s2_arid;
+   wire [31:0]  s2_araddr;
+   wire [7:0]   s2_arlen;
+   wire [2:0]   s2_arsize;
+   wire [1:0]   s2_arburst;
+   wire         s2_arlock;
+   wire [3:0]   s2_arcache;
+   wire [2:0]   s2_arprot;
+   wire         s2_arvalid;
+   wire         s2_arready;
+                
+   wire [3:0]   s2_rid;
+   wire [63:0]  s2_rdata;
+   wire [1:0]   s2_rresp;
+   wire         s2_rlast;
+   wire         s2_rvalid;
+   wire         s2_rready;
+                
+   wire [3:0]   s2_awid;
+   wire [31:0]  s2_awaddr;
+   wire [7:0]   s2_awlen;
+   wire [2:0]   s2_awsize;
+   wire [1:0]   s2_awburst;
+   wire         s2_awlock;
+   wire [3:0]   s2_awcache;
+   wire [2:0]   s2_awprot;
+   wire         s2_awvalid;
+   wire         s2_awready;
+   wire [3:0]   s2_wid;
+   wire [63:0]  s2_wdata;
+   wire [7:0]   s2_wstrb;
+   wire         s2_wlast;
+   wire         s2_wvalid;
+   wire         s2_wready;
+                
+   wire [3:0]   s2_bid;
+   wire [1:0]   s2_bresp;
+   wire         s2_bvalid;
+   wire         s2_bready;
 
    //ram
    wire [`BUS_WIDTH -1:0]    ram_raddr;
@@ -334,10 +334,13 @@ module top(
       .rready       (cpu_rready        )
    );
 
+   assign cpu_rid[3] = 1'b0;
+   assign cpu_bid[3] = 1'b0;
+
 
    amba_axi_m2s3 #(
       .WIDTH_CID    (1                 ), // two masters need 1 bit to distinguish 
-      .WIDTH_ID     (4                 ),
+      .WIDTH_ID     (3                 ),
       .SLAVE_EN0    (1                 ),
       .ADDR_BASE0   ('h1c000000        ),
       .ADDR_LENGTH0 (16                ),
@@ -354,7 +357,7 @@ module top(
       .ACLK         (clk           ), 
 
       .M0_MID       (1'b0                ),
-      .M0_AWID      (cpu_awid           ),
+      .M0_AWID      (cpu_awid[2:0]           ), // uty: review
       .M0_AWADDR    (cpu_awaddr         ),
       .M0_AWLEN     (cpu_awlen          ),
       .M0_AWLOCK    (cpu_awlock         ),
@@ -375,7 +378,7 @@ module top(
       `ifdef AMBA_AXI_AWUSER
       .M0_AWUSER    (cpu_awuser         ),
       `endif
-      .M0_WID       (cpu_wid            ),
+      .M0_WID       (cpu_wid[2:0]            ), // uty: review
       .M0_WDATA     (cpu_wdata          ),
       .M0_WSTRB     (cpu_wstrb          ),
       .M0_WLAST     (cpu_wlast          ),
@@ -384,14 +387,14 @@ module top(
       `ifdef AMBA_AXI_WUSER
       .M0_WUSER     (cpu_wuser          ),
       `endif
-      .M0_BID       (cpu_bid            ),
+      .M0_BID       (cpu_bid[2:0]            ), // uty: review
       .M0_BRESP     (cpu_bresp          ),
       .M0_BVALID    (cpu_bvalid         ),
       .M0_BREADY    (cpu_bready         ),
       `ifdef AMBA_AXI_BUSER
       .M0_BUSER     (cpu_buser          ),
       `endif
-      .M0_ARID      (cpu_arid           ),
+      .M0_ARID      (cpu_arid[2:0]           ), // uty: review
       .M0_ARADDR    (cpu_araddr         ),
       .M0_ARLEN     (cpu_arlen          ),
       .M0_ARLOCK    (cpu_arlock         ),
@@ -412,7 +415,7 @@ module top(
       `ifdef AMBA_AXI_ARUSER
       .M0_ARUSER    (cpu_aruser         ),
       `endif
-      .M0_RID       (cpu_rid            ),
+      .M0_RID       (cpu_rid[2:0]            ), // uty: review
       .M0_RDATA     (cpu_rdata          ),
       .M0_RRESP     (cpu_rresp          ),
       .M0_RLAST     (cpu_rlast          ),
@@ -424,7 +427,7 @@ module top(
 
 
       .M1_MID       (1'b1               ),
-      .M1_AWID      (dma_awid           ),
+      .M1_AWID      (dma_awid[2:0]           ), // uty: review
       .M1_AWADDR    (dma_awaddr         ),
       .M1_AWLEN     (dma_awlen          ),
       .M1_AWLOCK    (dma_awlock         ),
@@ -445,7 +448,7 @@ module top(
       `ifdef AMBA_AXI_AWUSER
       .M1_AWUSER    (dma_awuser         ),
       `endif
-      .M1_WID       (dma_wid            ),
+      .M1_WID       (dma_wid[2:0]            ), // uty: review
       .M1_WDATA     (dma_wdata          ),
       .M1_WSTRB     (dma_wstrb          ),
       .M1_WLAST     (dma_wlast          ),
@@ -454,14 +457,14 @@ module top(
       `ifdef AMBA_AXI_WUSER
       .M1_WUSER     (dma_wuser          ),
       `endif
-      .M1_BID       (dma_bid            ),
+      .M1_BID       (dma_bid[2:0]            ), // uty: review
       .M1_BRESP     (dma_bresp          ),
       .M1_BVALID    (dma_bvalid         ),
       .M1_BREADY    (dma_bready         ),
       `ifdef AMBA_AXI_BUSER
       .M1_BUSER     (dma_buser          ),
       `endif
-      .M1_ARID      (dma_arid           ),
+      .M1_ARID      (dma_arid[2:0]           ), // uty: review
       .M1_ARADDR    (dma_araddr         ),
       .M1_ARLEN     (dma_arlen          ),
       .M1_ARLOCK    (dma_arlock         ),
@@ -482,7 +485,7 @@ module top(
       `ifdef AMBA_AXI_ARUSER
       .M1_ARUSER    (dma_aruser         ),
       `endif
-      .M1_RID       (dma_rid            ),
+      .M1_RID       (dma_rid[2:0]            ), // uty: review
       .M1_RDATA     (dma_rdata          ),
       .M1_RRESP     (dma_rresp          ),
       .M1_RLAST     (dma_rlast          ),
@@ -859,10 +862,10 @@ module top(
 
    sram ram(
       .clock        (clk         ),
-      .rdaddress    (ram_raddr[14:2] ),
+      .rdaddress    (ram_raddr[15:3] ),
       .q            (ram_rdata       ),
       .rden         (ram_ren         ),
-      .wraddress    (ram_waddr[14:2] ),
+      .wraddress    (ram_waddr[15:3] ),
       .data         (ram_wdata       ),
       .byteena_a    (ram_wen         ),
       .wren         (|ram_wen        )

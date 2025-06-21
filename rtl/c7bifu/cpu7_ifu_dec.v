@@ -340,9 +340,10 @@ module cpu7_ifu_dec(
    
    assign lsu_valid_d = lsu_dispatch_d; // & ifu_exu_valid_d; 
    
-   dff_s #(1) lsu_valid_d2e_reg (
+   dffrl_s #(1) lsu_valid_d2e_reg (
       .din (lsu_valid_d),
       .clk (clk),
+      .rst_l (resetn),
       .q   (lsu_valid_e),
       .se(), .si(), .so());
    
@@ -428,9 +429,11 @@ module cpu7_ifu_dec(
 
    assign bru_valid_d = bru_dispatch_d; // & ifu_exu_valid_d;
 
-   dff_s #(1) bru_valid_d2e_reg (
+   // control signal, need reset
+   dffrl_s #(1) bru_valid_d2e_reg (
       .din (bru_valid_d),
       .clk (clk),
+      .rst_l (resetn),
       .q   (bru_valid_e),
       .se(), .si(), .so());
 

@@ -6,17 +6,23 @@ module cpu7_ifu_fdp(
    input  [31 :0]         pc_init        ,
 
    // group inst
-   output [31 :0]         inst_addr      ,
-   input                  inst_addr_ok   ,
-   output                 inst_cancel    ,
-   input  [1  :0]         inst_count     ,
-   input                  inst_ex        ,
-   input  [5  :0]         inst_exccode   ,
-   input  [`GRLEN-1:0]    inst_rdata_f   ,
-   output                 inst_req       ,
-   input                  inst_ack       ,
-   input                  inst_uncache   ,
-   input                  inst_valid_f   ,
+//   output [31 :0]         inst_addr      ,
+//   input                  inst_addr_ok   ,
+//   output                 inst_cancel    ,
+//   input  [1  :0]         inst_count     ,
+//   input                  inst_ex        ,
+//   input  [5  :0]         inst_exccode   ,
+//   input  [63:0]          inst_rdata_f   ,
+//   output                 inst_req       ,
+//   input                  inst_ack       ,
+//   input                  inst_uncache   ,
+//   input                  inst_valid_f   ,
+   output                 ifu_icu_req_ic1,
+   output [31:0]          ifu_icu_addr_ic1,
+   input                  icu_ifu_ack_ic1,
+   output                 ifu_icu_cancel,
+   input  [63:0]          icu_ifu_data_ic2,
+   input                  icu_ifu_data_valid_ic2,   
 
    input                  br_taken       ,
    input  [31 :0]         br_target      ,
@@ -42,8 +48,15 @@ module cpu7_ifu_fdp(
    );
 
 
+   wire [31:0] inst_f;
+   wire inst_valid_f;
+   wire iq_not_empty;
+   wire fetch_ahead;
+
+   //wire ifu_icu_cancel;
+
    wire ifu_fdp_valid_f;
-   assign ifu_fdp_valid_f = inst_valid_f;
+   //assign ifu_fdp_valid_f = inst_valid_f;
 
    wire ifu_exu_valid_d;
 
@@ -70,7 +83,12 @@ module cpu7_ifu_fdp(
    assign inst_kill_vld_f = ifu_fdp_valid_f & (~kill_f); // pc_f shoudl not be passed to pc_d if a branch is taken at _e.
    // should not if exception happen
 
-   assign kill_d = br_taken | exu_ifu_except; // if branch is taken, kill the instruction at the pipeline _d stage.
+   //assign kill_d = br_taken | exu_ifu_except; // if branch is taken, kill the instruction at the pipeline _d stage.
+   //
+   //// if stall happens, should kill_d, at least for now, two sequent ld instructions is the case.
+   //before, it is just because two instructions are not in sequent cycle,
+   //this issue is uncovered
+   assign kill_d = br_taken | exu_ifu_except | exu_ifu_stall_req; // if branch is taken, kill the instruction at the pipeline _d stage.
    assign inst_kill_vld_d = ifu_exu_valid_d & (~kill_d);
    assign fdp_dec_inst_kill_vld_d = inst_kill_vld_d;
 
@@ -108,6 +126,7 @@ module cpu7_ifu_fdp(
    dff_s #(32) pc_bf2f_reg (
       .din (pc_bf),
       .clk (clk),
+      //.rst_l (~reset),
       .q   (pc_f),
       .se(), .si(), .so());
 
@@ -177,9 +196,12 @@ module cpu7_ifu_fdp(
    
 
    assign ifu_pcbf_sel_init_bf_l = ~reset;
-   assign ifu_pcbf_sel_old_bf_l = ((ifu_fdp_valid_f || reset || br_taken || exu_ifu_ertn_e) & (~exu_ifu_stall_req)) | exu_ifu_except; // exception need ifu to fetch instruction from eentry
-   
-   assign ifu_pcbf_sel_pcinc_bf_l = ~(ifu_fdp_valid_f && ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e) | exu_ifu_stall_req;  
+   // uty: test
+   //assign ifu_pcbf_sel_old_bf_l = ((ifu_fdp_valid_f || reset || br_taken || exu_ifu_ertn_e) & (~exu_ifu_stall_req)) | exu_ifu_except; // exception need ifu to fetch instruction from eentry
+   assign ifu_pcbf_sel_old_bf_l = ((iq_not_empty || reset || br_taken || exu_ifu_ertn_e) & (~exu_ifu_stall_req)) | exu_ifu_except; // exception need ifu to fetch instruction from eentry
+   // uty: test 
+   //assign ifu_pcbf_sel_pcinc_bf_l = ~(ifu_fdp_valid_f && ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e) | exu_ifu_stall_req;  
+   assign ifu_pcbf_sel_pcinc_bf_l = ~(iq_not_empty && ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e) | exu_ifu_stall_req;  
    assign ifu_pcbf_sel_brpc_bf_l = ~br_taken; 
 
 
@@ -233,9 +255,21 @@ module cpu7_ifu_fdp(
    // Fetched Instruction Datapath
    //===================================================
    
-   wire [31:0] inst_f;
-   assign inst_f = inst_rdata_f[31:0];
-
+//   wire [31:0] inst_f;
+//
+//   wire [63:0] inst_rdata_q;
+//
+//   dffe_s #(64) inst_rdata_reg (
+//      .din   (inst_rdata_f),
+//      .en    (~exu_ifu_stall_req), // uty: review  inst_kill_vld_f ?
+//      .clk   (clk),
+//      .q     (inst_rdata_q),
+//      .se(), .si(), .so());
+//
+//   // pc_f[2] decides which half of inst_rdata_f[63:0] to use
+//   //assign inst_f = inst_rdata_f[31:0];
+//   assign inst_f = (pc_f[2] == 1'b1) ? inst_rdata_q[63:32] : inst_rdata_f[31:0];
+//
 
    dffe_s #(32) inst_f2d_reg (
       .din (inst_f),
@@ -267,9 +301,14 @@ module cpu7_ifu_fdp(
 
    // if inst_cancel, inst_valid_f will not coming, so let if_in_prog_in finish
    wire if_fin;
-   assign if_fin = inst_valid_f | inst_cancel;
+   // uty: test
+   //assign if_fin = inst_valid_f | inst_cancel;
+   //assign if_fin = inst_valid_f;
+   //assign if_fin = icu_ifu_data_valid_ic2;
+   assign if_fin = icu_ifu_data_valid_ic2 | ifu_icu_cancel;
 
-   assign if_in_prog_in = (if_in_prog_q & ~if_fin) | inst_ack;                
+   //assign if_in_prog_in = (if_in_prog_q & ~if_fin) | inst_ack;                
+   assign if_in_prog_in = (if_in_prog_q & ~if_fin) | icu_ifu_ack_ic1;                
 
    dffrl_s #(1) lf_in_prog_reg (
       .din   (if_in_prog_in),
@@ -279,19 +318,80 @@ module cpu7_ifu_fdp(
       .se(), .si(), .so());
 
 
+   // uty: test
+//   assign inst_req = ~reset & 
+//                     ~exu_ifu_stall_req &
+//                     ~biu_busy &
+//		     iq_not_empty
+//		     ;
 
-   assign inst_req = ~reset & 
-                     ~exu_ifu_stall_req &
-                     ~biu_busy;
+//  iq_not_empty     fetch_ahead      req
+//       0                0            1
+//       0                1         should not exist
+//       1                1            1
+//       1                0            0
+
+   assign ifu_icu_req_ic1 = (~reset & 
+                            ~exu_ifu_stall_req &
+			    ~biu_busy &
+			    //~iq_not_empty
+			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]))   // fetch only at 64-bit aligment
+                           | ~iq_not_empty
+                           | ifu_icu_cancel // refetch immediately
+
+			    ;
 
 
-   assign inst_addr = pc_bf;
+//   wire pcinc_fetch = ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e; 
+//
+//   wire inst_valid_nxtcyc_q;
+//
+//   dffrle_s #(1) inst_valid_nxtcyc_reg (
+//      .din   (inst_valid_f),
+//      .en    (~exu_ifu_stall_req), // uty: review 
+//      .clk   (clk),
+//      .rst_l (~reset),
+//      .q     (inst_valid_nxtcyc_q),
+//      .se(), .si(), .so());
+//
+//   wire second_instr_from_buf = inst_valid_nxtcyc_q & pcinc_fetch;
+
+   // fetch next 64-bit
+   //assign inst_addr = pc_bf;
+   //assign inst_addr = (second_instr_from_buf)? pc_bf + 'h4 : pc_bf;
+   assign ifu_icu_addr_ic1 = pc_bf;
+
+   // execute the 2nd half of 64-bit inst, at the next cycle
+   assign ifu_fdp_valid_f = inst_valid_f;
+   //assign ifu_fdp_valid_f = inst_valid_f | (second_instr_from_buf & ~exu_ifu_stall_req); 
 
 
    // when branch taken, inst_cancel need to be signal
    // so that the new target instruction can be fetched instead of the one previously requested
-   assign inst_cancel = br_taken | exu_ifu_except | exu_ifu_ertn_e;
+   //
+   // uty: test
+   //assign inst_cancel = br_taken | exu_ifu_except | exu_ifu_ertn_e;
+   assign ifu_icu_cancel = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & biu_busy; // icu_busy
 
+
+
+   cpu7_ifu_iq u_iq (
+      .clk                    (clk                     ),
+      .resetn                 (~reset                  ),
+      
+      .pc_f                   (pc_f                   ),
+      .exu_ifu_stall_req      (exu_ifu_stall_req      ),
+//      .ifu_icu_cancel         (ifu_icu_cancel         ),
+
+      .icu_ifu_data_ic2       (icu_ifu_data_ic2       ),
+      //.icu_ifu_data_valid_ic2 (icu_ifu_data_valid_ic2 & ~ifu_cancel_q ),
+      .icu_ifu_data_valid_ic2 (icu_ifu_data_valid_ic2 ),
+
+      .iq_not_empty           (iq_not_empty           ),
+      .fetch_ahead            (fetch_ahead            ),
+      .inst_f                 (inst_f                 ),
+      .inst_valid_f           (inst_valid_f           )
+      );
 
 endmodule // cpu7_ifu_fdp
 

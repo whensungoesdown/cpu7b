@@ -31,7 +31,7 @@ module c7bbiu_axi_interface(
       output           biu_ext_r_ready,
       input            ext_biu_r_valid,
       input  [3:0]     ext_biu_r_id,
-      input  [31:0]    ext_biu_r_data,
+      input  [63:0]    ext_biu_r_data,
       input            ext_biu_r_last,
       input  [1:0]     ext_biu_r_resp,
 
@@ -50,8 +50,8 @@ module c7bbiu_axi_interface(
 
       input            arb_wr_w_val,
       input  [3:0]     arb_wr_w_id,
-      input  [31:0]    arb_wr_w_data,
-      input  [3:0]     arb_wr_w_strb,
+      input  [63:0]    arb_wr_w_data,
+      input  [7:0]     arb_wr_w_strb,
       input            arb_wr_w_last,
 
       output           axi_w_ready,
@@ -73,8 +73,8 @@ module c7bbiu_axi_interface(
       input            ext_biu_w_ready,
       output           biu_ext_w_valid,
       output [3:0]     biu_ext_w_id,
-      output [31:0]    biu_ext_w_data,
-      output [3:0]     biu_ext_w_strb,
+      output [63:0]    biu_ext_w_data,
+      output [7:0]     biu_ext_w_strb,
       output           biu_ext_w_last,
 
       // AXI Write response channel
@@ -85,9 +85,11 @@ module c7bbiu_axi_interface(
 
 
       // Read data from the AXI interface
-      output [31:0]    axi_rdata,
+      output [63:0]    axi_rdata,
       output           axi_rdata_ifu_val,
       output           axi_rdata_lsu_val, 
+      output           axi_rdata_icu_val, 
+      output           axi_rdata_last,
 
       // Write data to the AXI interface
       output           axi_write_lsu_val
@@ -247,15 +249,20 @@ module c7bbiu_axi_interface(
 
    wire rdata_val;
 
-   assign rdata_val = r_fin & ext_biu_r_last
+   //assign rdata_val = r_fin & ext_biu_r_last
+   //                   & ~(|ext_biu_r_resp) // rresp should be 0 to indicate no error
+   //                   ;
+   assign rdata_val = r_fin 
                       & ~(|ext_biu_r_resp) // rresp should be 0 to indicate no error
                       ;
 
-   assign axi_rdata_ifu_val = rdata_val & (ext_biu_r_id == AXI_RID_IFU);
-   assign axi_rdata_lsu_val = rdata_val & (ext_biu_r_id == AXI_RID_LSU);
+   assign axi_rdata_ifu_val = rdata_val & axi_rdata_last & (ext_biu_r_id == AXI_RID_IFU);
+   assign axi_rdata_lsu_val = rdata_val & axi_rdata_last & (ext_biu_r_id == AXI_RID_LSU);
+   assign axi_rdata_icu_val = rdata_val & (ext_biu_r_id == AXI_RID_ICU);
 
    assign axi_rdata = ext_biu_r_data;
 
+   assign axi_rdata_last = ext_biu_r_last;
 
 
 
@@ -382,12 +389,12 @@ module c7bbiu_axi_interface(
    wire w_enable = axi_w_ready & arb_wr_w_val;
 
    wire [3:0]  arb_wr_w_id_q;
-   wire [31:0] arb_wr_w_data_q;
-   wire [3:0]  arb_wr_w_strb_q;
+   wire [63:0] arb_wr_w_data_q;
+   wire [7:0]  arb_wr_w_strb_q;
    wire        arb_wr_w_last_q;
 
-   wire [40:0] arb_wr_w_in;
-   wire [40:0] arb_wr_w_q;
+   wire [76:0] arb_wr_w_in;
+   wire [76:0] arb_wr_w_q;
 
 
    assign arb_wr_w_in = {arb_wr_w_id,
@@ -396,7 +403,7 @@ module c7bbiu_axi_interface(
 		         arb_wr_w_last
 			 };
 
-   dffrle_s #(41) arb_wr_w_reg (
+   dffrle_s #(77) arb_wr_w_reg (
       .din   (arb_wr_w_in),
       .rst_l (resetn),
       .en    (w_enable),  

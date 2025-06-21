@@ -1,6 +1,7 @@
 
    localparam AXI_RID_IFU = 4'b0000;
    localparam AXI_RID_LSU = 4'b0001;
+   localparam AXI_RID_ICU = 4'b0010;
 
    localparam AXI_WID_IFU = 4'b0000;
    localparam AXI_WID_LSU = 4'b0001;

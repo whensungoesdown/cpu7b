@@ -9,7 +9,7 @@ module c7bbiu(
    
    output              biu_ifu_rd_ack,
    output              biu_ifu_data_valid,
-   output [31:0]       biu_ifu_data,
+   output [63:0]       biu_ifu_data,
    //output              biu_ifu_fault,
 
 
@@ -19,13 +19,13 @@ module c7bbiu(
 
    output              biu_lsu_rd_ack, 
    output              biu_lsu_data_valid,
-   output [31:0]       biu_lsu_data,
+   output [63:0]       biu_lsu_data,
 
    input               lsu_biu_wr_aw_req,
    input  [31:0]       lsu_biu_wr_addr,
    input               lsu_biu_wr_w_req,
-   input  [31:0]       lsu_biu_wr_data,
-   input  [ 3:0]       lsu_biu_wr_strb,
+   input  [63:0]       lsu_biu_wr_data,
+   input  [ 7:0]       lsu_biu_wr_strb,
    input               lsu_biu_wr_last,
   
    output              biu_lsu_wr_aw_ack, 
@@ -33,6 +33,18 @@ module c7bbiu(
    output              biu_lsu_write_done,  
 
    //output              biu_lsu_fault,
+
+   // ICU Interface
+   input               icu_biu_req,
+   input  [31:3]       icu_biu_addr,
+   input               icu_biu_single,
+
+   output              biu_icu_ack,
+   output              biu_icu_data_valid,
+   output              biu_icu_data_last,
+   output [63:0]       biu_icu_data,
+   output              biu_icu_fault,
+
 
    // AXI Read Address Channel
    input            ext_biu_ar_ready,
@@ -50,7 +62,7 @@ module c7bbiu(
    output           biu_ext_r_ready,
    input            ext_biu_r_valid,
    input  [3:0]     ext_biu_r_id,
-   input  [31:0]    ext_biu_r_data,
+   input  [63:0]    ext_biu_r_data,
    input            ext_biu_r_last,
    input  [1:0]     ext_biu_r_resp,
 
@@ -70,8 +82,8 @@ module c7bbiu(
    input            ext_biu_w_ready,
    output           biu_ext_w_valid,
    output [3:0]     biu_ext_w_id,
-   output [31:0]    biu_ext_w_data,
-   output [3:0]     biu_ext_w_strb,
+   output [63:0]    biu_ext_w_data,
+   output [7:0]     biu_ext_w_strb,
    output           biu_ext_w_last,
 
    // AXI Write response channel
@@ -112,15 +124,17 @@ module c7bbiu(
 
    wire                arb_wr_w_val; 
    wire [3:0]          arb_wr_w_id;
-   wire [31:0]         arb_wr_w_data;
-   wire [3:0]          arb_wr_w_strb;
+   wire [63:0]         arb_wr_w_data;
+   wire [7:0]          arb_wr_w_strb;
    wire                arb_wr_w_last;
 
    // Read data from the AXI interface
-   wire [31:0]         axi_rdata;
+   wire [63:0]         axi_rdata;
    wire                axi_rdata_ifu_val;
    wire                axi_rdata_ifu_val_qual;
    wire                axi_rdata_lsu_val; 
+   wire                axi_rdata_icu_val;
+   wire                axi_rdata_last;
 
    // Write data to the AXI interface
    wire                axi_write_lsu_val;
@@ -140,8 +154,13 @@ module c7bbiu(
       .biu_lsu_rd_ack  (biu_lsu_rd_ack  ),
       .lsu_biu_rd_addr (lsu_biu_rd_addr ),
 
-      .axi_rdata_ifu_val    (axi_rdata_ifu_val ),
-      .axi_rdata_lsu_val    (axi_rdata_lsu_val ),
+      .icu_biu_req     (icu_biu_req     ),
+      .biu_icu_ack     (biu_icu_ack     ),
+      .icu_biu_addr    (icu_biu_addr    ),
+      .icu_biu_single  (icu_biu_single  ),
+
+      //.axi_rdata_ifu_val    (axi_rdata_ifu_val ),
+      //.axi_rdata_lsu_val    (axi_rdata_lsu_val ),
 
       .arb_rd_val      (arb_rd_val      ), 
       .arb_rd_id       (arb_rd_id       ),
@@ -151,7 +170,8 @@ module c7bbiu(
       .arb_rd_burst    (arb_rd_burst    ),
       .arb_rd_lock     (arb_rd_lock     ),
       .arb_rd_cache    (arb_rd_cache    ),
-      .arb_rd_prot     (arb_rd_prot     )
+      .arb_rd_prot     (arb_rd_prot     ),
+      .ext_biu_r_last  (ext_biu_r_last  )
    );
 
 
@@ -282,12 +302,15 @@ module c7bbiu(
       .axi_rdata            (axi_rdata         ), 
       .axi_rdata_ifu_val    (axi_rdata_ifu_val ),
       .axi_rdata_lsu_val    (axi_rdata_lsu_val ),
+      .axi_rdata_icu_val    (axi_rdata_icu_val ),
+      .axi_rdata_last       (axi_rdata_last    ), 
 
       // Write data to the AXI interface
       .axi_write_lsu_val    (axi_write_lsu_val )
    );
 
 
+   // should remove uty: review
    //
    // ifu cancel(ignore) next coming data
    //
@@ -313,4 +336,8 @@ module c7bbiu(
 
    assign biu_lsu_write_done = axi_write_lsu_val;
 
+   assign biu_icu_data_valid = axi_rdata_icu_val;
+   assign biu_icu_data = axi_rdata;
+   assign biu_icu_data_last = axi_rdata_last;
+   assign biu_icu_fault = 1'b0;
 endmodule

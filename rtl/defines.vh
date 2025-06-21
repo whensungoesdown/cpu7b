@@ -1,4 +1,4 @@
-//`define AXI64
+`define AXI64
 
 `define BUS_WIDTH      32
 

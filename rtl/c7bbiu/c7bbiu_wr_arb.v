@@ -12,8 +12,8 @@ module c7bbiu_wr_arb(
    output               biu_lsu_wr_w_ack,
    
    input [31:0]         lsu_biu_wr_addr,
-   input [31:0]         lsu_biu_wr_data,
-   input [3:0]          lsu_biu_wr_strb,
+   input [63:0]         lsu_biu_wr_data,
+   input [7:0]          lsu_biu_wr_strb,
    input                lsu_biu_wr_last,
 
    output               arb_wr_aw_val, 
@@ -28,8 +28,8 @@ module c7bbiu_wr_arb(
 
    output               arb_wr_w_val, 
    output [3:0]         arb_wr_w_id,
-   output [31:0]        arb_wr_w_data,
-   output [3:0]         arb_wr_w_strb,
+   output [63:0]        arb_wr_w_data,
+   output [7:0]         arb_wr_w_strb,
    output               arb_wr_w_last
    );
 
@@ -55,7 +55,7 @@ module c7bbiu_wr_arb(
    assign {arb_wr_w_data,
            arb_wr_w_strb,
            arb_wr_w_last
-           } = {37{lsu_select}} & {lsu_biu_wr_data, lsu_biu_wr_strb, lsu_biu_wr_last};
+           } = {73{lsu_select}} & {lsu_biu_wr_data, lsu_biu_wr_strb, lsu_biu_wr_last};
 
    assign biu_lsu_wr_aw_ack = axi_aw_ready & lsu_select;
    assign biu_lsu_wr_w_ack = axi_w_ready & lsu_select;
