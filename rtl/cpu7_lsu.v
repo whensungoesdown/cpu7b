@@ -19,7 +19,7 @@ module cpu7_lsu(
 
    input                              biu_lsu_rd_ack,
    input                              biu_lsu_data_valid,
-   input  [31:0]                      biu_lsu_data,
+   input  [63:0]                      biu_lsu_data,
 
    output                             lsu_biu_wr_req,
    output [`GRLEN-1:0]                lsu_biu_wr_addr,
@@ -257,6 +257,8 @@ module cpu7_lsu(
    
    wire [`GRLEN-1:0]    addr_m       = base_m + offset_m;
    wire [ 2:0]          shift_m      = addr_m[2:0];
+
+   wire                 high32_m     = addr_m[2];
    
    dffe_s #(`GRLEN) base_e2m_reg (
       .din (base),
@@ -284,7 +286,7 @@ module cpu7_lsu(
 
 
    //result process
-   wire [`GRLEN-1:0] data_rdata_input = biu_lsu_data;
+   wire [`GRLEN-1:0] data_rdata_input = high32_m ? biu_lsu_data[63:32] : biu_lsu_data[31:0];
 
    
    wire [4:0] align_mode_m;

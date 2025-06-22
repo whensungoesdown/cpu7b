@@ -16,7 +16,7 @@ module cpu7_exu(
 
    input                                biu_lsu_rd_ack,
    input                                biu_lsu_data_valid,
-   input  [31:0]                        biu_lsu_data,
+   input  [63:0]                        biu_lsu_data,
 
    output                               lsu_biu_wr_req,
    output [`GRLEN-1:0]                  lsu_biu_wr_addr,

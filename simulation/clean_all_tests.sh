@@ -16,7 +16,11 @@ echo ""
 cd ..
 
 
-
+cd test1_1_ld.w
+echo "test1_1_ld.w"
+./clean.sh
+echo ""
+cd ..
 
 
 

@@ -179,7 +179,7 @@ module cpu(
 
       .biu_lsu_rd_ack           (biu_lsu_rd_ack        ),
       .biu_lsu_data_valid       (biu_lsu_data_valid    ),
-      .biu_lsu_data             (biu_lsu_data[31:0]    ), // uty: BUG!
+      .biu_lsu_data             (biu_lsu_data          ), 
 
       .lsu_biu_wr_req           (lsu_biu_wr_req        ),
       .lsu_biu_wr_addr          (lsu_biu_wr_addr       ),

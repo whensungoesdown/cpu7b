@@ -26,6 +26,16 @@ echo ""
 cd ..
 
 
+cd test1_1_ld.w
+echo "test1_1_ld.w"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
 
 
 
