@@ -373,6 +373,8 @@ module cpu7_ifu_fdp(
    //assign inst_cancel = br_taken | exu_ifu_except | exu_ifu_ertn_e;
    assign ifu_icu_cancel = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & biu_busy; // icu_busy
 
+   wire flush_iq;
+   assign flush_iq = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & ~biu_busy;
 
 
    cpu7_ifu_iq u_iq (
@@ -382,6 +384,7 @@ module cpu7_ifu_fdp(
       .pc_f                   (pc_f                   ),
       .exu_ifu_stall_req      (exu_ifu_stall_req      ),
 //      .ifu_icu_cancel         (ifu_icu_cancel         ),
+      .flush_iq               (flush_iq               ),
 
       .icu_ifu_data_ic2       (icu_ifu_data_ic2       ),
       //.icu_ifu_data_valid_ic2 (icu_ifu_data_valid_ic2 & ~ifu_cancel_q ),
