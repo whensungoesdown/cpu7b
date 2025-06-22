@@ -12,8 +12,8 @@ add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_w
 
 add wave -divider
 
-add wave -position 10  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_f
-add wave -position 11  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_f
+add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
 
 add wave -divider
 

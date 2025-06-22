@@ -177,7 +177,7 @@ module axi_sram_bridge(
    //assign ram_raddr = m_araddr;
    assign ram_raddr = araddr_in;
    //assign m_arready = 1'b1;  // single cycle ram, always ready
-   assign ram_ren = busy | ar_enter;
+   assign ram_ren = busy | ar_enter; // uty: BUG   read one more cycle, need to rewrite busy's logic
 
    //
    //  AW W B

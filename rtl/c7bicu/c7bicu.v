@@ -314,7 +314,7 @@ module c7bicu
       .se(), .si(), .so());
 
 
-   assign ic_lfb_hit_data_valid = biu_icu_data_last;
+   assign ic_lfb_hit_data_valid = biu_icu_data_last & biu_icu_data_valid;
    assign ic_lfb_hit_data = ic_lu_addr_ic2[4:3] == 2'b00 ? lfb0_q :
                             ic_lu_addr_ic2[4:3] == 2'b01 ? lfb1_q :
                             ic_lu_addr_ic2[4:3] == 2'b10 ? lfb2_q :
