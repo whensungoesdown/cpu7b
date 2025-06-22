@@ -27,9 +27,12 @@ int main(void)
     fprintf(out, "\n");
     fprintf(out, "CONTENT BEGIN\n");
 
-    while(!feof(in)) {
-        if((j = fread(mem,1,8,in))!=8) {
-            if (0 != j && 4 != j )
+    while(!feof(in))
+    {
+        if((j = fread(mem,1,8,in))!=8) 
+        {
+            if (0 == j) break;
+            if (4 != j )
             {
                 fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
                 break;
@@ -39,10 +42,15 @@ int main(void)
         i++;
         memset(mem, 0, sizeof(mem));
     }
+
     fprintf(out, "--    data:\n");
-    while(!feof(in2)) {
-        if(fread(mem,1,8,in2)!=8) {
-            if (0 != j && 4 != j ) 
+
+    while(!feof(in2))
+    {
+        if((j = fread(mem,1,8,in2)) !=8) 
+        {
+            if (0 == j) break;
+            if (4 != j )
             {
                 fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
                 break;
