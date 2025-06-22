@@ -3,16 +3,17 @@ add wave -position end  result:/top_tb/resetn
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
-
-add wave -divider
-
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_bf
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_f
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_d
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_e
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_m
 add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_w
+
+add wave -divider
+
+add wave -position 10  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_f
+add wave -position 11  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
 
 add wave -divider
 
@@ -32,9 +33,6 @@ add wave -position end  result:/top_tb/u_top/ram_wen
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/inst_req
-
-add wave -divider
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/biu_ifu_data_valid
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/axi_rdata_ifu_val
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/axi_rdata_lsu_val

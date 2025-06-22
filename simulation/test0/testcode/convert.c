@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 void binary_out(FILE* out,unsigned char* mem)
 {
     char tmp;
@@ -36,48 +38,49 @@ int main(void)
 	int i,j,k;
 	unsigned char mem[32];
 
-    in = fopen("main.bin", "rb");
-    out = fopen("inst_ram.coe","w");
+//    in = fopen("main.bin", "rb");
+//    out = fopen("inst_ram.coe","w");
+//
+//	fprintf(out, "memory_initialization_radix = 16;\n");
+//	fprintf(out, "memory_initialization_vector =\n");
+//	while(!feof(in)) {
+//	    if(fread(mem,1,4,in)!=4) {
+//	        fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2],	mem[1], mem[0]);
+//		break;
+//	     }
+//	    fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2], mem[1],mem[0]);
+//        }
+//	fclose(in);
+//	fclose(out);
+//
 
-	fprintf(out, "memory_initialization_radix = 16;\n");
-	fprintf(out, "memory_initialization_vector =\n");
-	while(!feof(in)) {
-	    if(fread(mem,1,4,in)!=4) {
-	        fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2],	mem[1], mem[0]);
-		break;
-	     }
-	    fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2], mem[1],mem[0]);
-        }
-	fclose(in);
-	fclose(out);
+//    in = fopen("main.data", "rb");
+//    out = fopen("data_ram.coe","w");
+//
+//	fprintf(out, "memory_initialization_radix = 16;\n");
+//	fprintf(out, "memory_initialization_vector =\n");
+//	while(!feof(in)) {
+//	    if(fread(mem,1,4,in)!=4) {
+//	        fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2],	mem[1], mem[0]);
+//		break;
+//	     }
+//	    fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2], mem[1],mem[0]);
+//        }
+//	fclose(in);
+//	fclose(out);
 
-    in = fopen("main.data", "rb");
-    out = fopen("data_ram.coe","w");
-
-	fprintf(out, "memory_initialization_radix = 16;\n");
-	fprintf(out, "memory_initialization_vector =\n");
-	while(!feof(in)) {
-	    if(fread(mem,1,4,in)!=4) {
-	        fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2],	mem[1], mem[0]);
-		break;
-	     }
-	    fprintf(out, "%02x%02x%02x%02x\n", mem[3], mem[2], mem[1],mem[0]);
-        }
-	fclose(in);
-	fclose(out);
-
-    in = fopen("main.data", "rb");
-    out = fopen("data_ram.mif","w");
-
-	while(!feof(in)) {
-	    if(fread(mem,1,4,in)!=4) {
-            binary_out(out,mem);
-		break;
-	     }
-            binary_out(out,mem);
-        }
-	fclose(in);
-	fclose(out);
+//    in = fopen("main.data", "rb");
+//    out = fopen("data_ram.mif","w");
+//
+//	while(!feof(in)) {
+//	    if(fread(mem,1,4,in)!=4) {
+//            binary_out(out,mem);
+//		break;
+//	     }
+//            binary_out(out,mem);
+//        }
+//	fclose(in);
+//	fclose(out);
 
     in = fopen("main.bin", "rb");
     in2  = fopen("main.data","rb");
@@ -93,7 +96,7 @@ int main(void)
 	
         i = 0;
 
-	fprintf(out, "WIDTH=32;\n");
+	fprintf(out, "WIDTH=64;\n");
 	fprintf(out, "DEPTH=8192;\n");
 	fprintf(out, "\n");
 	fprintf(out, "ADDRESS_RADIX=HEX;\n");
@@ -102,24 +105,32 @@ int main(void)
 	fprintf(out, "CONTENT BEGIN\n");
 
 	while(!feof(in)) {
-	    if((j = fread(mem,1,4,in))!=4) {
-		if (0 != j) fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
-		break;
+	    if((j = fread(mem,1,8,in))!=8) {
+		if (0 != j && 4 != j )
+		{
+			fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
+			break;
+		}
+           }
+           fprintf(out, "        %04x:              %016llx; \n", i, *(long long int*)mem);
+           i++;
+	   memset(mem, 0, sizeof(mem));
+      }
+      fprintf(out, "--    data:\n");
+      while(!feof(in2)) {
+          if(fread(mem,1,8,in2)!=8) {
+		if (0 != j && 4 != j ) 
+		{
+			fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
+			break;
+		}
 	     }
-	     fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
+	     fprintf(out, "        %04x:              %016llx; \n", i, *(long long int*)mem);
 	     i++;
-        }
-	fprintf(out, "--    data:\n");
-	while(!feof(in2)) {
-	    if(fread(mem,1,4,in2)!=4) {
-		if (0 != j) fprintf(out, "ERROR: read len %d, not 4-byte aligned.\n", j);
-		break;
-	     }
-	     fprintf(out, "        %04x:              %08x; \n", i, *(int*)mem);
-	     i++;
+	     memset(mem, 0, sizeof(mem));
         }
 
-	fprintf(out, "        [%04x..1FFF]  :    AABBCCDD; \n", i);
+	fprintf(out, "        [%04x..1FFF]  :    AABBCCDDAAAABBBB; \n", i);
 	fprintf(out, "\n");
 	fprintf(out, "END;\n");
 
@@ -127,31 +138,31 @@ int main(void)
 	fclose(in2);
 	fclose(out);
 
-    in  = fopen("main.bin","rb");
-    in2  = fopen("main.data","rb");
-    out = fopen("rom.vlog","w");
-    fprintf(out,"@1c000000\n");
-    while(!feof(in)) {
-        if (fread(mem,1,1,in) != 1) {
-            //fprintf(out,"%02x\n", mem[0]);
-            //printf("%02x\n", mem[0]);
-            break;
-        }
-        fprintf(out,"%02x\n", mem[0]);
-        printf("%02x\n", mem[0]);
-    }
-    while(!feof(in2)) {
-        if (fread(mem,1,1,in2) != 1) {
-            //fprintf(out,"%02x\n", mem[0]);
-            //printf("%02x\n", mem[0]);
-            break;
-        }
-        fprintf(out,"%02x\n", mem[0]);
-        printf("%02x\n", mem[0]);
-    }
-    fclose(in);
-    fclose(in2);
-    fclose(out);
+//    in  = fopen("main.bin","rb");
+//    in2  = fopen("main.data","rb");
+//    out = fopen("rom.vlog","w");
+//    fprintf(out,"@1c000000\n");
+//    while(!feof(in)) {
+//        if (fread(mem,1,1,in) != 1) {
+//            //fprintf(out,"%02x\n", mem[0]);
+//            //printf("%02x\n", mem[0]);
+//            break;
+//        }
+//        fprintf(out,"%02x\n", mem[0]);
+//        printf("%02x\n", mem[0]);
+//    }
+//    while(!feof(in2)) {
+//        if (fread(mem,1,1,in2) != 1) {
+//            //fprintf(out,"%02x\n", mem[0]);
+//            //printf("%02x\n", mem[0]);
+//            break;
+//        }
+//        fprintf(out,"%02x\n", mem[0]);
+//        printf("%02x\n", mem[0]);
+//    }
+//    fclose(in);
+//    fclose(in2);
+//    fclose(out);
 
 
     return 0;
