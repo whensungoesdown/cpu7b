@@ -23,8 +23,8 @@ module cpu7_lsu(
 
    output                             lsu_biu_wr_req,
    output [`GRLEN-1:0]                lsu_biu_wr_addr,
-   output [31:0]                      lsu_biu_wr_data,
-   output [3:0]                       lsu_biu_wr_strb,
+   output [63:0]                      lsu_biu_wr_data,
+   output [7:0]                       lsu_biu_wr_strb,
 
    input                              biu_lsu_wr_ack,
    input                              biu_lsu_write_done,
@@ -425,9 +425,14 @@ module cpu7_lsu(
    assign lsu_biu_wr_req = (valid_val_e & lsu_wr) &
                            ~biu_wr_busy;
    
+   wire wr_high32;
+   assign wr_high32 = addr[2];
+
    assign lsu_biu_wr_addr = addr;
-   assign lsu_biu_wr_data = lsu_wdata; //
-   assign lsu_biu_wr_strb = lsu_wstrb; //
+   //assign lsu_biu_wr_data = lsu_wdata; //
+   //assign lsu_biu_wr_strb = lsu_wstrb; //
+   assign lsu_biu_wr_data = wr_high32 ? {lsu_wdata, 32'b0} : {32'b0, lsu_wdata}; 
+   assign lsu_biu_wr_strb = wr_high32 ? {lsu_wstrb, 4'b0} : {4'b0, lsu_wstrb};
 
 
 

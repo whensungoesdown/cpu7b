@@ -20,8 +20,8 @@ module cpu7_exu(
 
    output                               lsu_biu_wr_req,
    output [`GRLEN-1:0]                  lsu_biu_wr_addr,
-   output [31:0]                        lsu_biu_wr_data,
-   output [3:0]                         lsu_biu_wr_strb,
+   output [63:0]                        lsu_biu_wr_data,
+   output [7:0]                         lsu_biu_wr_strb,
 
    input                                biu_lsu_wr_ack,
    input                                biu_lsu_write_done,

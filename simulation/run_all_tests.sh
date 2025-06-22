@@ -51,6 +51,20 @@ echo ""
 cd ..
 
 
+
+cd test3_1_st.w
+echo "test3_1_st.w"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+
 cd test4_beq
 echo "test4_beq"
 if ./simulate.sh | grep PASS; then

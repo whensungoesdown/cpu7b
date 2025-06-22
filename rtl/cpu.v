@@ -183,8 +183,8 @@ module cpu(
 
       .lsu_biu_wr_req           (lsu_biu_wr_req        ),
       .lsu_biu_wr_addr          (lsu_biu_wr_addr       ),
-      .lsu_biu_wr_data          (lsu_biu_wr_data[31:0] ), // uty: BUG!
-      .lsu_biu_wr_strb          (lsu_biu_wr_strb[3:0]  ), // uty: BUG!
+      .lsu_biu_wr_data          (lsu_biu_wr_data       ),
+      .lsu_biu_wr_strb          (lsu_biu_wr_strb       ),
 
       .biu_lsu_wr_ack           (biu_lsu_wr_aw_ack & biu_lsu_wr_aw_ack),
       .biu_lsu_write_done       (biu_lsu_write_done    )
