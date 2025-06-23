@@ -424,6 +424,7 @@ module cpu7_exu_ecl(
 
    // csr wen
    wire csr_wen_m;
+   wire csr_wen_w;
 
    dff_s #(1) csr_wen_e2m_reg (
       //.din (csr_wen_e),
@@ -434,6 +435,12 @@ module cpu7_exu_ecl(
 
    assign ecl_csr_wen_m = csr_wen_m;
    
+   dff_s #(1) csr_wen_m2w_reg (
+      .din (csr_wen_m),
+      .clk (clk),
+      .q   (csr_wen_w),
+      .se(), .si(), .so());
+
    
    // waddr is the same as raddr
    wire [`LSOC1K_CSR_BIT-1:0]    csr_waddr_m;
@@ -454,8 +461,10 @@ module cpu7_exu_ecl(
    
    wire csr_stall_req;
    wire csr_stall_req_next;
+   //wire csr_stall_req_ful;
 
-   assign csr_stall_req_next = (ifu_exu_csr_wen_e) | (csr_stall_req & ~csr_wen_m);
+   //assign csr_stall_req_next = (ifu_exu_csr_wen_e) | (csr_stall_req & ~csr_wen_m);
+   assign csr_stall_req_next = (ifu_exu_csr_wen_e) | (csr_stall_req & ~csr_wen_w);
    
    dffr_s #(1) csr_stall_req_reg (
       .din (csr_stall_req_next),
@@ -463,7 +472,8 @@ module cpu7_exu_ecl(
       .q   (csr_stall_req),
       .se(), .si(), .so(), .rst (~resetn));
 
-   
+   //assign csr_stall_req_ful = ifu_exu_csr_rdwen_e | csr_stall_req;
+
    
    ///////////////////////
    // ALU
@@ -711,6 +721,7 @@ module cpu7_exu_ecl(
    //
    // uty: review  csr_stall_req_next probably should do the csr_stall_req_ful too
    assign exu_ifu_stall_req = lsu_stall_req_ful | csr_stall_req_next;
+   //assign exu_ifu_stall_req = lsu_stall_req_ful | csr_stall_req_ful;
    
 
 

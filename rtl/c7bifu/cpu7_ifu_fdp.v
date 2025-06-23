@@ -88,7 +88,11 @@ module cpu7_ifu_fdp(
    //// if stall happens, should kill_d, at least for now, two sequent ld instructions is the case.
    //before, it is just because two instructions are not in sequent cycle,
    //this issue is uncovered
+
+   // uty: review  exu_ifu_stall_req kill_d, it should just delay the
+   // instruction at _d
    assign kill_d = br_taken | exu_ifu_except | exu_ifu_stall_req; // if branch is taken, kill the instruction at the pipeline _d stage.
+   //assign kill_d = br_taken | exu_ifu_except; // if branch is taken, kill the instruction at the pipeline _d stage.
    assign inst_kill_vld_d = ifu_exu_valid_d & (~kill_d);
    assign fdp_dec_inst_kill_vld_d = inst_kill_vld_d;
 
