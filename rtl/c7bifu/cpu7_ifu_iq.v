@@ -52,26 +52,26 @@ module cpu7_ifu_iq (
       .se(), .si(), .so());
 
 
-   wire stalled_q;
-
-   //
-   // switch
-   //
-   // on  exu_ifu_stall_req
-   // off icu_ifu_data_valid_ic2
-   //
-   //  exu_ifu_stall_req          icu_ifu_data_valid_ic2    stalled
-   //          0                             0                 0
-   //          0                             1                 0
-   //          1                             0                 1
-   //          1                             1                 1
-   dffrle_s #(1) stalled_reg (
-      .din   (exu_ifu_stall_req),
-      .en    (exu_ifu_stall_req | icu_ifu_data_valid_ic2), 
-      .clk   (clk),
-      .rst_l (resetn),
-      .q     (stalled_q),
-      .se(), .si(), .so());
+//   wire stalled_q;
+//
+//   //
+//   // switch
+//   //
+//   // on  exu_ifu_stall_req
+//   // off icu_ifu_data_valid_ic2
+//   //
+//   //  exu_ifu_stall_req          icu_ifu_data_valid_ic2    stalled
+//   //          0                             0                 0
+//   //          0                             1                 0
+//   //          1                             0                 1
+//   //          1                             1                 1
+//   dffrle_s #(1) stalled_reg (
+//      .din   (exu_ifu_stall_req),
+//      .en    (exu_ifu_stall_req | icu_ifu_data_valid_ic2), 
+//      .clk   (clk),
+//      .rst_l (resetn),
+//      .q     (stalled_q),
+//      .se(), .si(), .so());
 
 
    wire [63:0] inst_rdata_q;
