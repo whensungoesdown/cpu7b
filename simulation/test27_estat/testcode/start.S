@@ -42,7 +42,7 @@ start:
 	nop
 
 	lu12i.w  $r6, 0x1c000
-	addi.w   $r6, $r6, 0xbc          # <--- timer interrupt here, at the bubble that addi.w created 
+	addi.w   $r6, $r6, 0xc0          # <--- timer interrupt here, at the bubble that addi.w created 
 	nop
 	ld.w     $r7, $r6, 0x0            
 
@@ -89,6 +89,7 @@ skip2:
 
 	ertn
 
+	nop
 	nop
 	nop
 	nop

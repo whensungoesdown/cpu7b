@@ -42,7 +42,7 @@ start:
 	nop
 
 	lu12i.w  $r6, 0x1c000
-	addi.w   $r6, $r6, 0xa4          # <--- timer interrupt here 
+	addi.w   $r6, $r6, 0xa8          # <--- timer interrupt here 
 	ld.w     $r7, $r6, 0x0            
 
 	nop                              
@@ -76,6 +76,7 @@ fault_handler:
 	addi.w   $r5, $r5, 0x30
 	ertn
 
+	nop
 	nop
 	nop
 	nop
