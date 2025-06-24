@@ -38,6 +38,14 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/c7bbiu/c7bbiu_rd_arb.v \
                 ../../rtl/c7bbiu/c7bbiu_wr_arb.v \
                 ../../rtl/c7bbiu/c7bbiu_axi_interface.v \
+                ../../rtl/amba_axi_m2s3.v \
+                ../../rtl/c7bicu/c7bicu.v \
+                ../../rtl/c7bicu/c7b_cache_rams.v \
+                ../../rtl/models/ram22.v \
+                ../../rtl/models/ram22_way1.v \
+                ../../rtl/models/ram64.v \
+                ../../rtl/models/ram64_way1.v \
+                ../../rtl/c7bifu/cpu7_ifu_iq.v \
 		../../rtl/top.v
 
 
