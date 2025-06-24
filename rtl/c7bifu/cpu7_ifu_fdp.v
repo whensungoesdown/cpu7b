@@ -1,22 +1,10 @@
 `include "../common.vh"
  
 module cpu7_ifu_fdp(
-   input                  clk            ,
-   input                  reset          ,
-   input  [31 :0]         pc_init        ,
+   input                  clk,
+   input                  reset,
+   input  [31 :0]         pc_init,
 
-   // group inst
-//   output [31 :0]         inst_addr      ,
-//   input                  inst_addr_ok   ,
-//   output                 inst_cancel    ,
-//   input  [1  :0]         inst_count     ,
-//   input                  inst_ex        ,
-//   input  [5  :0]         inst_exccode   ,
-//   input  [63:0]          inst_rdata_f   ,
-//   output                 inst_req       ,
-//   input                  inst_ack       ,
-//   input                  inst_uncache   ,
-//   input                  inst_valid_f   ,
    output                 ifu_icu_req_ic1,
    output [31:0]          ifu_icu_addr_ic1,
    input                  icu_ifu_ack_ic1,
@@ -24,15 +12,15 @@ module cpu7_ifu_fdp(
    input  [63:0]          icu_ifu_data_ic2,
    input                  icu_ifu_data_valid_ic2,   
 
-   input                  br_taken       ,
-   input  [31 :0]         br_target      ,
+   input                  br_taken,
+   input  [31 :0]         br_target,
 
    // exception
-   input  [`GRLEN-1:0]    exu_ifu_eentry ,
-   input                  exu_ifu_except ,
+   input  [`GRLEN-1:0]    exu_ifu_eentry,
+   input                  exu_ifu_except,
    // ertn
-   input  [`GRLEN-1:0]    exu_ifu_era    ,
-   input                  exu_ifu_ertn_e ,
+   input  [`GRLEN-1:0]    exu_ifu_era,
+   input                  exu_ifu_ertn_e,
 
    output [`GRLEN-1:0]    fdp_dec_pc_d,
    output [`GRLEN-1:0]    fdp_dec_inst_d,
@@ -41,8 +29,8 @@ module cpu7_ifu_fdp(
 
    output                 ifu_exu_valid_e, //
    
-   output [`GRLEN-1:0]    ifu_exu_pc_w   ,
-   output [`GRLEN-1:0]    ifu_exu_pc_e   ,
+   output [`GRLEN-1:0]    ifu_exu_pc_w,
+   output [`GRLEN-1:0]    ifu_exu_pc_e,
 
    input                  exu_ifu_stall_req
    );
@@ -299,8 +287,8 @@ module cpu7_ifu_fdp(
    wire if_in_prog_in; 
    wire if_in_prog_q; 
 
-   wire biu_busy;
-   assign biu_busy = if_in_prog_q; // | others
+   wire icu_busy;
+   assign icu_busy = if_in_prog_q; // | others
 
 
    // if inst_cancel, inst_valid_f will not coming, so let if_in_prog_in finish
@@ -325,7 +313,7 @@ module cpu7_ifu_fdp(
    // uty: test
 //   assign inst_req = ~reset & 
 //                     ~exu_ifu_stall_req &
-//                     ~biu_busy &
+//                     ~icu_busy &
 //		     iq_not_empty
 //		     ;
 
@@ -337,7 +325,7 @@ module cpu7_ifu_fdp(
 
    assign ifu_icu_req_ic1 = (~reset & 
                             ~exu_ifu_stall_req &
-			    ~biu_busy &
+			    ~icu_busy &
 			    //~iq_not_empty
 			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]))   // fetch only at 64-bit aligment
                            | ~iq_not_empty
@@ -375,10 +363,10 @@ module cpu7_ifu_fdp(
    //
    // uty: test
    //assign inst_cancel = br_taken | exu_ifu_except | exu_ifu_ertn_e;
-   assign ifu_icu_cancel = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & biu_busy; // icu_busy
+   assign ifu_icu_cancel = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & icu_busy; // icu_busy
 
    wire flush_iq;
-   assign flush_iq = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & ~biu_busy;
+   assign flush_iq = (br_taken | exu_ifu_except | exu_ifu_ertn_e) & ~icu_busy;
 
 
    cpu7_ifu_iq u_iq (

@@ -237,3 +237,10 @@ echo "test32_ext_intr_during_ld"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test33_icache_smoke
+echo "test33_icache_smoke"
+./clean.sh
+echo ""
+cd ..

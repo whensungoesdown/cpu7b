@@ -3,22 +3,10 @@
 
 module cpu7_core(
    input                 clk,
-   input                 resetn,            //low active
+   input                 resetn,            // active low
    
    input                 ext_intr,
    
-//   output                inst_req       ,
-//   input                 inst_ack       ,
-//   output  [ 31:0]       inst_addr      ,
-//   output                inst_cancel    ,
-//   input                 inst_addr_ok   ,
-//   input   [63:0]  inst_rdata_f   ,
-//   input                 inst_valid_f   ,
-//   input   [  1:0]       inst_count     ,
-//   input                 inst_uncache   ,
-//   input   [  5:0]       inst_exccode   ,
-//   input                 inst_exception ,
-
    output                ifu_icu_req_ic1,
    output [31:0]         ifu_icu_addr_ic1,
    input                 icu_ifu_ack_ic1,
@@ -123,18 +111,6 @@ module cpu7_core(
 
       .pc_init                 (`GRLEN'h1c000000   ),
 
-      //.inst_addr               (inst_addr          ),
-      //.inst_addr_ok            (inst_addr_ok       ),
-      //.inst_cancel             (inst_cancel        ),
-      //.inst_count              (inst_count         ),
-      //.inst_ex                 (inst_exception     ),
-      //.inst_exccode            (inst_exccode       ),
-      //.inst_rdata_f            (inst_rdata_f       ),
-      //.inst_req                (inst_req           ),
-      //.inst_ack                (inst_ack           ),
-      //.inst_uncache            (inst_uncache       ),
-      //.inst_valid_f            (inst_valid_f       ),
-      
       .ifu_icu_req_ic1         (ifu_icu_req_ic1      ),
       .ifu_icu_addr_ic1        (ifu_icu_addr_ic1     ),
       .icu_ifu_ack_ic1         (icu_ifu_ack_ic1      ),      

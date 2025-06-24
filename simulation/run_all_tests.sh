@@ -403,3 +403,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test33_icache_smoke
+echo "test33_icache_smoke"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

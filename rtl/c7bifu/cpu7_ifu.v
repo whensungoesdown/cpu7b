@@ -6,19 +6,6 @@ module cpu7_ifu(
    input                               resetn,
    input  [31:0]                       pc_init,
 
-   // group inst
-//   output [31:0]                       inst_addr,
-//   input                               inst_addr_ok,
-//   output                              inst_cancel,
-//   input  [1:0]                        inst_count,
-//   input                               inst_ex,
-//   input  [5:0]                        inst_exccode,
-//   input  [63:0]                 inst_rdata_f,
-//   output                              inst_req, // inst_req_bf
-//   input                               inst_ack,
-//   input                               inst_uncache,
-//   input                               inst_valid_f,
-
    output                              ifu_icu_req_ic1,
    output [31:0]                       ifu_icu_addr_ic1,
    input                               icu_ifu_ack_ic1,
@@ -101,65 +88,55 @@ module cpu7_ifu(
 
 
    wire [31:0] fdp_dec_inst_d;
-   wire [`GRLEN-1:0] fdp_dec_pc_d;
+   wire [31:0] fdp_dec_pc_d;
    wire fdp_dec_inst_kill_vld_d;
 
+
    cpu7_ifu_fdp fdp(
-      .clk              (clock             ),
-      .reset            (~resetn           ),
+      .clk                      (clock                ),
+      .reset                    (~resetn              ),
 
-      .pc_init          (pc_init           ),
+      .pc_init                  (pc_init              ),
 
-      .br_taken         (exu_ifu_br_taken  ),
-      .br_target        (exu_ifu_br_target ),
+      .br_taken                 (exu_ifu_br_taken     ),
+      .br_target                (exu_ifu_br_target    ),
 
       // exception
-      .exu_ifu_eentry   (exu_ifu_eentry    ),
-      .exu_ifu_except   (exu_ifu_except    ),
+      .exu_ifu_eentry           (exu_ifu_eentry       ),
+      .exu_ifu_except           (exu_ifu_except       ),
       // ertn
-      .exu_ifu_era      (exu_ifu_era       ),
-      .exu_ifu_ertn_e   (exu_ifu_ertn_e    ),
-
-      //.inst_req         (inst_req          ),
-      //.inst_ack         (inst_ack          ),
-      //.inst_addr        (inst_addr         ),
-      //.inst_cancel      (inst_cancel       ),
-      //.inst_addr_ok     (inst_addr_ok      ),
-      //.inst_valid_f     (inst_valid_f      ),
-      //.inst_count       (inst_count        ),
-      //.inst_rdata_f     (inst_rdata_f      ),
-      //.inst_uncache     (inst_uncache      ),
-      //.inst_ex          (inst_ex           ),
-      //.inst_exccode     (inst_exccode      ),
-
-      .ifu_icu_req_ic1  (ifu_icu_req_ic1      ),
-      .ifu_icu_addr_ic1 (ifu_icu_addr_ic1     ),
-      .icu_ifu_ack_ic1  (icu_ifu_ack_ic1      ),      
-      .ifu_icu_cancel   (ifu_icu_cancel       ),
-
-      .icu_ifu_data_ic2            (icu_ifu_data_ic2     ),
-      .icu_ifu_data_valid_ic2      (icu_ifu_data_valid_ic2),
+      .exu_ifu_era              (exu_ifu_era          ),
+      .exu_ifu_ertn_e           (exu_ifu_ertn_e       ),
 
 
-      .fdp_dec_pc_d     (fdp_dec_pc_d      ),
-      .fdp_dec_inst_d   (fdp_dec_inst_d    ),
+      .ifu_icu_req_ic1          (ifu_icu_req_ic1      ),
+      .ifu_icu_addr_ic1         (ifu_icu_addr_ic1     ),
+      .icu_ifu_ack_ic1          (icu_ifu_ack_ic1      ),      
+      .ifu_icu_cancel           (ifu_icu_cancel       ),
 
-      .fdp_dec_inst_kill_vld_d  (fdp_dec_inst_kill_vld_d  ),
+      .icu_ifu_data_ic2         (icu_ifu_data_ic2     ),
+      .icu_ifu_data_valid_ic2   (icu_ifu_data_valid_ic2),
 
-      .ifu_exu_valid_e          (ifu_exu_valid_e          ),
 
-      .ifu_exu_pc_w     (ifu_exu_pc_w      ),
-      .ifu_exu_pc_e     (ifu_exu_pc_e      ),
+      .fdp_dec_pc_d             (fdp_dec_pc_d         ),
+      .fdp_dec_inst_d           (fdp_dec_inst_d       ),
 
-      .exu_ifu_stall_req(exu_ifu_stall_req )
+      .fdp_dec_inst_kill_vld_d  (fdp_dec_inst_kill_vld_d),
+
+      .ifu_exu_valid_e          (ifu_exu_valid_e      ),
+
+      .ifu_exu_pc_w             (ifu_exu_pc_w         ),
+      .ifu_exu_pc_e             (ifu_exu_pc_e         ),
+
+      .exu_ifu_stall_req        (exu_ifu_stall_req    )
       );
 
 
    cpu7_ifu_dec dec(
-      .clk                   (clock             ),
-      .resetn                (resetn            ),
+      .clk                      (clock                    ),
+      .resetn                   (resetn                   ),
 
-      .fdp_dec_inst_d       (fdp_dec_inst_d      ),
+      .fdp_dec_inst_d           (fdp_dec_inst_d           ),
 
       .fdp_dec_pc_d             (fdp_dec_pc_d             ),
       .fdp_dec_inst_kill_vld_d  (fdp_dec_inst_kill_vld_d  ),
