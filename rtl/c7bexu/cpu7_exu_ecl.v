@@ -301,9 +301,10 @@ module cpu7_exu_ecl(
 
    wire mul_wen_m;
 
-   dff_s #(1) mul_wen_e2m_reg (
+   dffrl_s #(1) mul_wen_e2m_reg (
       .din (ifu_exu_mul_wen_e),
       .clk (clk),
+      .rst_l (resetn),
       .q   (mul_wen_m),
       .se(), .si(), .so());
    
@@ -315,9 +316,10 @@ module cpu7_exu_ecl(
 
    assign ecl_mul_valid_e = ifu_exu_mul_valid_e & (~kill_e);
    
-   dff_s #(1) mul_valid_e2m_reg (
+   dffrl_s #(1) mul_valid_e2m_reg (
       .din (ecl_mul_valid_e),
       .clk (clk),
+      .rst_l (resetn),
       .q   (mul_valid_m),
       .se(), .si(), .so());
    
@@ -426,18 +428,20 @@ module cpu7_exu_ecl(
    wire csr_wen_m;
    wire csr_wen_w;
 
-   dff_s #(1) csr_wen_e2m_reg (
+   dffrl_s #(1) csr_wen_e2m_reg (
       //.din (csr_wen_e),
       .din (ifu_exu_csr_wen_e),
       .clk (clk),
+      .rst_l (resetn),
       .q   (csr_wen_m),
       .se(), .si(), .so());
 
    assign ecl_csr_wen_m = csr_wen_m;
    
-   dff_s #(1) csr_wen_m2w_reg (
+   dffrl_s #(1) csr_wen_m2w_reg (
       .din (csr_wen_m),
       .clk (clk),
+      .rst_l (resetn),
       .q   (csr_wen_w),
       .se(), .si(), .so());
 
@@ -466,11 +470,12 @@ module cpu7_exu_ecl(
    //assign csr_stall_req_next = (ifu_exu_csr_wen_e) | (csr_stall_req & ~csr_wen_m);
    assign csr_stall_req_next = (ifu_exu_csr_wen_e) | (csr_stall_req & ~csr_wen_w);
    
-   dffr_s #(1) csr_stall_req_reg (
+   dffrl_s #(1) csr_stall_req_reg (
       .din (csr_stall_req_next),
       .clk (clk),
+      .rst_l (resetn),
       .q   (csr_stall_req),
-      .se(), .si(), .so(), .rst (~resetn));
+      .se(), .si(), .so());
 
    //assign csr_stall_req_ful = ifu_exu_csr_rdwen_e | csr_stall_req;
 

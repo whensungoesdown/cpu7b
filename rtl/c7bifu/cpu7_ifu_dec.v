@@ -135,9 +135,10 @@ module cpu7_ifu_dec(
 
    assign exception_d2e_in = exception_d & fdp_dec_inst_kill_vld_d;
 
-   dff_s #(1) exception_d2e_reg (
+   dffrl_s #(1) exception_d2e_reg (
       .din (exception_d2e_in),
       .clk (clk),
+      .rst_l (resetn),
       .q   (exception_e),
       .se(), .si(), .so());
 
@@ -494,9 +495,10 @@ module cpu7_ifu_dec(
 
    assign mul_valid_d = mul_dispatch_d;
  
-   dff_s #(1) mul_valid_d2e_reg (
+   dffrl_s #(1) mul_valid_d2e_reg (
       .din (mul_valid_d),
       .clk (clk),
+      .rst_l (resetn),
       .q   (mul_valid_e),
       .se(), .si(), .so());
 
@@ -632,9 +634,10 @@ module cpu7_ifu_dec(
 
    assign csr_wen_d = (op_d[`LSOC1K_CSR_XCHG] | op_d[`LSOC1K_CSR_WRITE]) & csr_valid_d;
  
-   dff_s #(1) csr_wen_d2e_reg (
+   dffrl_s #(1) csr_wen_d2e_reg (
       .din (csr_wen_d),
       .clk (clk),
+      .rst_l (resetn),
       .q   (csr_wen_e),
       .se(), .si(), .so());
 
@@ -694,9 +697,10 @@ module cpu7_ifu_dec(
 
    assign ertn_valid_d = ertn_dispatch_d;
  
-   dff_s #(1) ertn_valid_d2e_reg (
+   dffrl_s #(1) ertn_valid_d2e_reg (
       .din (ertn_valid_d),
       .clk (clk),
+      .rst_l(resetn),
       .q   (ertn_valid_e),
       .se(), .si(), .so());
 

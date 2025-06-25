@@ -114,7 +114,8 @@ module cpu7_ifu_fdp(
    wire [`GRLEN-1:0] pc_w;
    
    
-   
+   // pc_f must retain its initial value (0x1c000000) and not reset to 0,
+   // as it serves as the oldpc value until icu_ifu_data_valid_ic2 arrives.
    dff_s #(32) pc_bf2f_reg (
       .din (pc_bf),
       .clk (clk),
@@ -247,22 +248,6 @@ module cpu7_ifu_fdp(
    // Fetched Instruction Datapath
    //===================================================
    
-//   wire [31:0] inst_f;
-//
-//   wire [63:0] inst_rdata_q;
-//
-//   dffe_s #(64) inst_rdata_reg (
-//      .din   (inst_rdata_f),
-//      .en    (~exu_ifu_stall_req), // uty: review  inst_kill_vld_f ?
-//      .clk   (clk),
-//      .q     (inst_rdata_q),
-//      .se(), .si(), .so());
-//
-//   // pc_f[2] decides which half of inst_rdata_f[63:0] to use
-//   //assign inst_f = inst_rdata_f[31:0];
-//   assign inst_f = (pc_f[2] == 1'b1) ? inst_rdata_q[63:32] : inst_rdata_f[31:0];
-//
-
    dffe_s #(32) inst_f2d_reg (
       .din (inst_f),
       .en  (inst_kill_vld_f & ~exu_ifu_stall_req), // same as pc_f2d_reg.en
@@ -330,32 +315,12 @@ module cpu7_ifu_fdp(
 			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]))   // fetch only at 64-bit aligment
                            | ~iq_not_empty
                            | ifu_icu_cancel // refetch immediately
-
 			    ;
 
 
-//   wire pcinc_fetch = ~br_taken && ~exu_ifu_except && ~exu_ifu_ertn_e; 
-//
-//   wire inst_valid_nxtcyc_q;
-//
-//   dffrle_s #(1) inst_valid_nxtcyc_reg (
-//      .din   (inst_valid_f),
-//      .en    (~exu_ifu_stall_req), // uty: review 
-//      .clk   (clk),
-//      .rst_l (~reset),
-//      .q     (inst_valid_nxtcyc_q),
-//      .se(), .si(), .so());
-//
-//   wire second_instr_from_buf = inst_valid_nxtcyc_q & pcinc_fetch;
-
-   // fetch next 64-bit
-   //assign inst_addr = pc_bf;
-   //assign inst_addr = (second_instr_from_buf)? pc_bf + 'h4 : pc_bf;
    assign ifu_icu_addr_ic1 = pc_bf;
 
-   // execute the 2nd half of 64-bit inst, at the next cycle
    assign ifu_fdp_valid_f = inst_valid_f;
-   //assign ifu_fdp_valid_f = inst_valid_f | (second_instr_from_buf & ~exu_ifu_stall_req); 
 
 
    // when branch taken, inst_cancel need to be signal
