@@ -1,4 +1,4 @@
-`include "../common.vh"
+`include "../defines.vh"
 `include "../decoded.vh"
 
 module cpu7_exu_ecl(

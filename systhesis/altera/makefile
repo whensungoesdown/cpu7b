@@ -8,7 +8,7 @@
 PROJECT = top
 SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/branch.v \
-                ../../rtl/common.vh \
+                ../../rtl/defines.vh \
                 ../../rtl/c7bcsr/cpu7_csr_byplog.v \
                 ../../rtl/c7bcsr/cpu7_csr.v \
                 ../../rtl/c7bcsr/cpu7_csr_timer.v \
@@ -31,7 +31,6 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/models/swrvr_clib.v \
                 ../../rtl/models/swrvr_dlib.v \
                 ../../rtl/models/sram.v \
-                ../../rtl/defines.vh \
                 ../../rtl/axi_sram_bridge.v \
                 ../../rtl/cpu.v \
                 ../../rtl/c7bbiu/c7bbiu.v \

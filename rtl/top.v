@@ -210,27 +210,27 @@ module top(
    wire         s2_bready;
 
    //ram
-   wire [`BUS_WIDTH -1:0]    ram_raddr;
+   wire [`ADDR_WIDTH-1:0]    ram_raddr;
    wire [`DATA_WIDTH-1:0]    ram_rdata;
    wire                      ram_ren  ;
-   wire [`BUS_WIDTH -1:0]    ram_waddr;
+   wire [`ADDR_WIDTH-1:0]    ram_waddr;
    wire [`DATA_WIDTH-1:0]    ram_wdata;
    wire [`DATA_WIDTH/8-1:0]  ram_wen;
 
 
    //vga ram
-   wire [`BUS_WIDTH -1:0]    vga_raddr;
+   wire [`ADDR_WIDTH-1:0]    vga_raddr;
    wire [`DATA_WIDTH-1:0]    vga_rdata;
    wire                      vga_ren  ;
-   wire [`BUS_WIDTH -1:0]    vga_waddr;
+   wire [`ADDR_WIDTH-1:0]    vga_waddr;
    wire [`DATA_WIDTH-1:0]    vga_wdata;
    wire [`DATA_WIDTH/8-1:0]  vga_wen;
   
    // peripherals 
-   wire [`BUS_WIDTH -1:0]    peri_raddr;
+   wire [`ADDR_WIDTH-1:0]    peri_raddr;
    wire [`DATA_WIDTH-1:0]    peri_rdata;
    wire                      peri_ren  ;
-   wire [`BUS_WIDTH -1:0]    peri_waddr;
+   wire [`ADDR_WIDTH-1:0]    peri_waddr;
    wire [`DATA_WIDTH-1:0]    peri_wdata;
    wire [`DATA_WIDTH/8-1:0]  peri_wen;
 

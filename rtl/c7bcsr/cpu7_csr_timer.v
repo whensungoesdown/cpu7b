@@ -1,4 +1,4 @@
-`include "../common.vh"
+`include "../defines.vh"
 
 module cpu7_csr_timer (
    input                          clk,
