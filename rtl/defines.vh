@@ -2,7 +2,7 @@
 
 `define AXI64
 
-`define ADDR_WIDTH      64
+`define ADDR_WIDTH     32
 
 `ifdef AXI128
 `define DATA_WIDTH     128
