@@ -61,7 +61,7 @@ int main(void)
         memset(mem, 0, sizeof(mem));
     }
 
-    fprintf(out, "        [%04x..1FFF]  :    AABBCCDDAAAABBBB; \n", i);
+    fprintf(out, "        [%04x..0FFF]  :    AABBCCDDAAAABBBB; \n", i);
     fprintf(out, "\n");
     fprintf(out, "END;\n");
 

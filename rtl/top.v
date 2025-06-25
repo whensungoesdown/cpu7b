@@ -862,10 +862,10 @@ module top(
 
    sram ram(
       .clock        (clk         ),
-      .rdaddress    (ram_raddr[15:3] ),
+      .rdaddress    (ram_raddr[14:3] ),
       .q            (ram_rdata       ),
       .rden         (ram_ren         ),
-      .wraddress    (ram_waddr[15:3] ),
+      .wraddress    (ram_waddr[14:3] ),
       .data         (ram_wdata       ),
       .byteena_a    (ram_wen         ),
       .wren         (|ram_wen        )
