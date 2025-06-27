@@ -313,7 +313,7 @@ module cpu7_ifu_fdp(
 			    ~icu_busy &
 			    //~iq_not_empty
 			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]))   // fetch only at 64-bit aligment
-                           | ~iq_not_empty
+                           | (~icu_busy & ~iq_not_empty)
                            | ifu_icu_cancel // refetch immediately
 			    ;
 
