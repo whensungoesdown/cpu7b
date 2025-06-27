@@ -58,7 +58,7 @@ module axi_sram_bridge(
    wire w_enter;
    wire b_retire;
    
-   wire busy;
+   wire rd_busy;
 
    wire rdata_valid_tmp;
    wire rdata_valid;
@@ -67,31 +67,31 @@ module axi_sram_bridge(
    assign ar_enter = m_arvalid & m_arready;
    assign r_retire = m_rvalid & m_rready & m_rlast;
    //
-   // busy means that rready haven't come yet, so the sram
+   // rd_busy means that rready haven't come yet, so the sram
    // cannot accept new read, hence ar_ready should stay 0.
    //
-   //  ar_enter      r_retire       busy
+   //  ar_enter      r_retire       rd_busy
    //     0              0           0
    //     1              0           1
    //     0              1           0
    //     1              1           0   (should not happen)
 
 
-   wire busy_din;
-   wire busy_en;
+   wire rd_busy_din;
+   wire rd_busy_en;
 
-   assign busy_din = (ar_enter & (~r_retire)) | ((aw_enter | w_enter) & (~b_retire));
-   assign busy_en = ar_enter | r_retire | aw_enter | w_enter | b_retire;
+   assign rd_busy_din = ar_enter & (~r_retire);
+   assign rd_busy_en = ar_enter | r_retire;
    
-   dffrle_s #(1) busy_reg (
-      .din   (busy_din),
+   dffrle_s #(1) rd_busy_reg (
+      .din   (rd_busy_din),
       .clk   (aclk),
       .rst_l (aresetn),
-      .en    (busy_en),
-      .q     (busy), 
+      .en    (rd_busy_en),
+      .q     (rd_busy), 
       .se(), .si(), .so());
 
-   assign m_arready = ~busy;
+   assign m_arready = ~rd_busy;
 
    //
    // If the ar_enter (address send in) in previous cycle,
@@ -169,7 +169,7 @@ module axi_sram_bridge(
       .se(), .si(), .so());
 
    assign m_rid = m_arid_q;
-   assign m_rlast = busy & (m_arburst_q == 2'b00 ? 1'b1 : rd_burst_cnt_q == 1'b0);
+   assign m_rlast = rd_busy & (m_arburst_q == 2'b00 ? 1'b1 : rd_burst_cnt_q == 1'b0);
    assign m_rresp = 2'b00; // optional
    assign m_rdata = ram_rdata;
    assign m_rvalid = rdata_valid; 
@@ -177,7 +177,7 @@ module axi_sram_bridge(
    //assign ram_raddr = m_araddr;
    assign ram_raddr = araddr_in;
    //assign m_arready = 1'b1;  // single cycle ram, always ready
-   assign ram_ren = busy | ar_enter; // uty: BUG   read one more cycle, need to rewrite busy's logic
+   assign ram_ren = rd_busy | ar_enter; // uty: BUG   read one more cycle, need to rewrite rd_busy's logic
 
    //
    //  AW W B
