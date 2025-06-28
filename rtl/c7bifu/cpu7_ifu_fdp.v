@@ -308,14 +308,20 @@ module cpu7_ifu_fdp(
 //       1                1            1
 //       1                0            0
 
+
+   // The logic works but could be improved.
    assign ifu_icu_req_ic1 = (~reset & 
                             ~exu_ifu_stall_req &
 			    ~icu_busy &
-			    //~iq_not_empty
-			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]))   // fetch only at 64-bit aligment
-                           | (~icu_busy & ~iq_not_empty)
-                           | ifu_icu_cancel // refetch immediately
-			    ;
+			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]) // fetch only at 64-bit aligment
+                            )   
+
+                            // Fetch if iq is empty while icu not busy
+                          | (~icu_busy & ~iq_not_empty)
+
+                            // Immediate refetch on cancel request
+                          | ifu_icu_cancel
+			  ;
 
 
    assign ifu_icu_addr_ic1 = pc_bf;
@@ -340,11 +346,9 @@ module cpu7_ifu_fdp(
       
       .pc_f                   (pc_f                   ),
       .exu_ifu_stall_req      (exu_ifu_stall_req      ),
-//      .ifu_icu_cancel         (ifu_icu_cancel         ),
       .flush_iq               (flush_iq               ),
 
       .icu_ifu_data_ic2       (icu_ifu_data_ic2       ),
-      //.icu_ifu_data_valid_ic2 (icu_ifu_data_valid_ic2 & ~ifu_cancel_q ),
       .icu_ifu_data_valid_ic2 (icu_ifu_data_valid_ic2 ),
 
       .iq_not_empty           (iq_not_empty           ),
