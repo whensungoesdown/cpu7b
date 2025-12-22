@@ -1,0 +1,3 @@
+[submodule "rtl/c7blsu"]
+	path = rtl/c7blsu
+	url = https://github.com/whensungoesdown/c7blsu.git
