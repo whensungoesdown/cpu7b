@@ -73,14 +73,17 @@ module cpu7_exu_ecl(
    output [`GRLEN-1:0]                  ecl_lsu_base_e,
    output [`GRLEN-1:0]                  ecl_lsu_offset_e,
    output [`GRLEN-1:0]                  ecl_lsu_wdata_e,
-   output [4:0]                         ecl_lsu_rd_e,
-   output                               ecl_lsu_wen_e,
+//   output [4:0]                         ecl_lsu_rd_e,
+//   output                               ecl_lsu_wen_e,
    input  [`GRLEN-1:0]                  lsu_ecl_rdata_m, // _m inputs are for writting to regfile
-   input                                lsu_ecl_finish_m,
-   input  [4:0]                         lsu_ecl_rd_m,
-   input                                lsu_ecl_wen_m,
+   //input                                lsu_ecl_finish_m,
+   input                                  lsu_ecl_data_valid_ls3,
+   input                                  lsu_ecl_wr_fin_ls3,
+//   input  [4:0]                         lsu_ecl_rd_m,
+//   input                                lsu_ecl_wen_m,
    input                                lsu_ecl_addr_ok_e, // not used
    input                                lsu_ecl_ale_e, 
+   input  [31:0]                        lsu_ecl_except_badv_ls1,
 
    // bru
    output                               ecl_bru_valid_e,
@@ -113,6 +116,7 @@ module cpu7_exu_ecl(
    output [`GRLEN-1:0]                  byp_csr_wdata_m,
    output                               ecl_csr_wen_m,
    output [`GRLEN-1:0]                  ecl_csr_mask_m,
+   output [31:0]                        ecl_csr_badv_e,
 
    // exception
    output                               exu_ifu_except,
@@ -248,9 +252,12 @@ module cpu7_exu_ecl(
    assign lsu_offset_e = ifu_exu_double_read_e ? byp_rs2_data_e : ifu_exu_imm_shifted_e; 
    assign ecl_lsu_offset_e = lsu_offset_e;
    assign ecl_lsu_wdata_e = byp_rs2_data_e;
-   assign ecl_lsu_rd_e = ifu_exu_lsu_rd_e;
-   assign ecl_lsu_wen_e = ifu_exu_lsu_wen_e;
-
+   //assign ecl_lsu_rd_e = ifu_exu_lsu_rd_e;
+   //assign ecl_lsu_wen_e = ifu_exu_lsu_wen_e;
+   wire [4:0] lsu_rd_e = ifu_exu_lsu_rd_e;
+   wire lsu_wen_e = ifu_exu_lsu_wen_e;
+   wire [4:0] lsu_rd_m;
+   wire lsu_wen_m;
    
 
    //////////////////////
@@ -544,8 +551,10 @@ module cpu7_exu_ecl(
    dp_mux2es #(5) rd_mux(
       .dout (rd_m),
       .in0  (rf_target_m),
-      .in1  (lsu_ecl_rd_m),
-      .sel  (lsu_ecl_finish_m));
+      //.in1  (lsu_ecl_rd_m),
+      .in1  (lsu_rd_m),
+      //.sel  (lsu_ecl_finish_m));
+      .sel  (lsu_ecl_data_valid_ls3));
    
    dff_s #(5) rd_m2w_reg (
       .din (rd_m),
@@ -561,7 +570,8 @@ module cpu7_exu_ecl(
    //
    
    // set the wen if any module claims it
-   assign wen_m = alu_wen_m | (lsu_ecl_wen_m & lsu_ecl_finish_m) | bru_wen_m | mul_wen_m | csr_rdwen_m;
+   //assign wen_m = alu_wen_m | (lsu_wen_m & lsu_ecl_finish_m) | bru_wen_m | mul_wen_m | csr_rdwen_m;
+   assign wen_m = alu_wen_m | (lsu_wen_m & lsu_ecl_data_valid_ls3) | bru_wen_m | mul_wen_m | csr_rdwen_m;
    
    dff_s #(1) wen_m2w_reg (
       .din (wen_m),
@@ -585,8 +595,10 @@ module cpu7_exu_ecl(
 
    // uty: todo
    // alu better has a valid signal
-   assign rddata_sel_alu_res_m_l = (lsu_ecl_finish_m | bru_wen_m | mul_valid_m | csr_valid_m); // default is alu resulst if no other module claims it
-   assign rddata_sel_lsu_res_m_l = ~lsu_ecl_finish_m;
+   //assign rddata_sel_alu_res_m_l = (lsu_ecl_finish_m | bru_wen_m | mul_valid_m | csr_valid_m); // default is alu resulst if no other module claims it
+   assign rddata_sel_alu_res_m_l = (lsu_ecl_data_valid_ls3 | bru_wen_m | mul_valid_m | csr_valid_m); // default is alu resulst if no other module claims it
+   //assign rddata_sel_lsu_res_m_l = ~lsu_ecl_finish_m;
+   assign rddata_sel_lsu_res_m_l = ~lsu_ecl_data_valid_ls3;
    assign rddata_sel_bru_res_m_l = ~bru_wen_m;   // bru's rd go with ALU's
    assign rddata_sel_mul_res_m_l = ~mul_valid_m; // mul's rd go with ALU's
    assign rddata_sel_csr_res_m_l = ~csr_valid_m; // csr's rd go with ALU's
@@ -646,8 +658,18 @@ module cpu7_exu_ecl(
    //
    // ecl_lsu_valid_e is the staring signal
    // lsu_ecl_finish_m ends it
+   // lsu_fin_ls3
    //
-   assign lsu_stall_req_next =  (ecl_lsu_valid_e) | (lsu_stall_req & ~lsu_ecl_finish_m); 
+   
+   // lsu_fin_ls3 determins when to end the IFU stall (lsu_stall_req). If
+   // an Alignment Exception (ALE) occurs at LS1, the corresponding BIU
+   // request (which would execute at LS2) is aborted. As a result, no
+   // completion signals (lsu_ecl_data_valid_ls3 or lsu_ecl_wr_fin_ls3) are
+   // generated. In such case, lsu_ecl_ale_e should complete the aborted LSU
+   // request.
+   wire lsu_fin_ls3 = lsu_ecl_data_valid_ls3 | lsu_ecl_wr_fin_ls3 | lsu_ecl_ale_e ;
+   //assign lsu_stall_req_next =  (ecl_lsu_valid_e) | (lsu_stall_req & ~lsu_ecl_finish_m); 
+   assign lsu_stall_req_next =  (ecl_lsu_valid_e) | (lsu_stall_req & ~lsu_fin_ls3); 
    
    dffr_s #(1) lsu_stall_req_reg (
       .din (lsu_stall_req_next),
@@ -737,4 +759,34 @@ module cpu7_exu_ecl(
    assign exu_ifu_ertn_e = ifu_exu_ertn_valid_e; // code review: exu_ifu_ertn_e is unnecessary
    assign ecl_csr_ertn_e = ifu_exu_ertn_valid_e;
    
+
+   //
+   // Passthrough
+   //
+   assign ecl_csr_badv_e = lsu_ecl_except_badv_ls1;
+
+
+   //
+   // Registers
+   //
+
+   // The load/store instruction's rd and wen are managed within the ECL
+   // instead of the LSU before. Here uses a DFFE to preserve lsu_rd_m and
+   // lsu_wen_m from being flushed. This works for now, future revisions
+   // should consider a more comprehensive solution for the overall
+   // instruction issue mechanism and pipeline.
+   dffe_s #(5) lsu_rd_m_reg (
+      .din (lsu_rd_e),
+      .clk (clk),
+      .en  (ecl_lsu_valid_e),
+      .q   (lsu_rd_m),
+      .se(), .si(), .so());
+
+   dffe_s #(1) lsu_wen_m_reg (
+      .din (lsu_wen_e),
+      .clk (clk),
+      .en  (ecl_lsu_valid_e),
+      .q   (lsu_wen_m),
+      .se(), .si(), .so());
+
 endmodule // cpu7_exu_ecl

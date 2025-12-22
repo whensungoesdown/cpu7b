@@ -2,6 +2,7 @@
 #/mnt/c/intelFPGA_lite/19.1/quartus/eda/sim_lib/altera_mf.v
 
 +incdir+../../rtl/c7bbiu
++incdir+../../rtl/c7blsu/rtl
 
 ../altera_mf.v
 
@@ -23,7 +24,6 @@
 ../../rtl/c7bifu/cpu7_ifu.v 
 ../../rtl/c7bifu/decoder.v 
 ../../rtl/decoded.vh 
-../../rtl/cpu7_lsu.v 
 ../../rtl/cpu7_core.v 
 ../../rtl/mul32x32.v 
 ../../rtl/mul64x64.v 
@@ -45,3 +45,5 @@
 ../../rtl/models/ram64_way1.v 
 ../../rtl/c7bifu/cpu7_ifu_iq.v 
 ../../rtl/top.v
+
+-f ../../rtl/c7blsu/flist/c7blsu.flist
