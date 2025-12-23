@@ -207,22 +207,10 @@ module cpu7_exu(
 //        .rdata2_1   (rdata2_1   ) // O, 32
       );
 
-   // uty: remove these two
-   //wire [4:0]                   ecl_lsu_rd_e;
-   //wire                         ecl_lsu_wen_e;
-   
-   wire                         lsu_ecl_addr_ok_e;
-   //wire [`GRLEN-1:0]            lsu_ecl_rdata_m;
    wire [31:0]                  lsu_ecl_data_ls3;
-   //wire                         lsu_ecl_finish_m;
-   //wire [4:0]                   lsu_ecl_rd_m;
-   //wire                         lsu_ecl_wen_m;
-
    wire                         lsu_ecl_data_valid_ls3;
    wire                         lsu_ecl_wr_fin_ls3; 
-   //wire                         lsu_ecl_ale_e;
    wire                         lsu_ecl_except_ale_ls1;
-   //wire [`GRLEN-1:0]            lsu_csr_badv_e;
    wire [31:0]                  ecl_csr_badv_e;
    wire [31:0]                  lsu_ecl_except_badv_ls1;
 
@@ -256,7 +244,7 @@ module cpu7_exu(
 
 
       // bru
-      .ifu_exu_pc_e      (ifu_exu_pc_e      ),
+      .ifu_exu_pc_e             (ifu_exu_pc_e             ),
 
       .ifu_exu_bru_valid_e      (ifu_exu_bru_valid_e      ),
       .ifu_exu_bru_op_e         (ifu_exu_bru_op_e         ),
@@ -304,18 +292,9 @@ module cpu7_exu(
       .ecl_lsu_base_e           (ecl_lsu_base_e      ),
       .ecl_lsu_offset_e         (ecl_lsu_offset_e    ),
       .ecl_lsu_wdata_e          (ecl_lsu_wdata_e     ),
-      //.ecl_lsu_rd_e             (ecl_lsu_rd_e        ),
-      //.ecl_lsu_wen_e            (ecl_lsu_wen_e       ),
-      //.lsu_ecl_rdata_m          (lsu_ecl_rdata_m     ),
       .lsu_ecl_rdata_m          (lsu_ecl_data_ls3    ),
-      //.lsu_ecl_finish_m         (lsu_ecl_finish_m    ),
-      //.lsu_ecl_finish_m         (lsu_ecl_data_valid_ls3 | lsu_ecl_wr_fin_ls3),
-      .lsu_ecl_data_valid_ls3   (lsu_ecl_data_valid_ls3),
-      .lsu_ecl_wr_fin_ls3       (lsu_ecl_wr_fin_ls3    ),
-      //.lsu_ecl_rd_m             (lsu_ecl_rd_m        ),
-      //.lsu_ecl_wen_m            (lsu_ecl_wen_m       ),
-      .lsu_ecl_addr_ok_e        (lsu_ecl_addr_ok_e   ),
-      //.lsu_ecl_ale_e            (lsu_ecl_ale_e       ),
+      .lsu_ecl_data_valid_ls3   (lsu_ecl_data_valid_ls3 ),
+      .lsu_ecl_wr_fin_ls3       (lsu_ecl_wr_fin_ls3     ),
       .lsu_ecl_ale_e            (lsu_ecl_except_ale_ls1 ),
       .lsu_ecl_except_badv_ls1  (lsu_ecl_except_badv_ls1),
 
@@ -387,47 +366,6 @@ module cpu7_exu(
       .Result                   (alu_ecl_res_e        )
       );
 
-
-
-//   cpu7_lsu lsu(
-//      .clk                      (clk                   ),
-//      .resetn                   (resetn                ),
-//
-//      .valid_e                  (ecl_lsu_valid_e       ),
-//      .lsu_op                   (ecl_lsu_op_e          ),
-//      .base                     (ecl_lsu_base_e        ),
-//      .offset                   (ecl_lsu_offset_e      ),
-//      .wdata                    (ecl_lsu_wdata_e       ),
-//      .ecl_lsu_rd_e             (ecl_lsu_rd_e          ),
-//      .ecl_lsu_wen_e            (ecl_lsu_wen_e         ),
-//
-//      // memory interface
-//      .lsu_biu_rd_req           (lsu_biu_rd_req        ),
-//      .lsu_biu_rd_addr          (lsu_biu_rd_addr       ),
-//
-//      .biu_lsu_rd_ack           (biu_lsu_rd_ack        ),
-//      .biu_lsu_data_valid       (biu_lsu_data_valid    ),
-//      .biu_lsu_data             (biu_lsu_data          ),
-//
-//      .lsu_biu_wr_req           (lsu_biu_wr_req        ),
-//      .lsu_biu_wr_addr          (lsu_biu_wr_addr       ),
-//      .lsu_biu_wr_data          (lsu_biu_wr_data       ),
-//      .lsu_biu_wr_strb          (lsu_biu_wr_strb       ),
-//
-//      .biu_lsu_wr_ack           (biu_lsu_wr_ack        ),
-//      .biu_lsu_write_done       (biu_lsu_write_done    ),
-//
-//
-//      // lsu output
-//      .lsu_addr_finish          (lsu_ecl_addr_ok_e     ),
-//      .read_result_m            (lsu_ecl_rdata_m       ), //lsu_byp_rdata_m
-//      .lsu_finish_m             (lsu_ecl_finish_m      ),
-//      .lsu_ecl_rd_m             (lsu_ecl_rd_m          ),
-//      .lsu_ecl_wen_m            (lsu_ecl_wen_m         ),
-//      // currently, no signal represets for store success
-//      .lsu_ecl_ale_e            (lsu_ecl_ale_e         ), // align exception
-//      .lsu_csr_badv_e           (lsu_csr_badv_e        )
-//      );
 
    c7blsu u_lsu (
       .clk                      (clk                   ),
@@ -529,8 +467,7 @@ module cpu7_exu(
       .csr_eentry        (exu_ifu_eentry    ),
       .csr_era           (exu_ifu_era       ),
 
-      //.lsu_csr_badv_e    (lsu_csr_badv_e    ),
-      .lsu_csr_badv_e    (ecl_csr_badv_e    ), // uty: name need to change
+      .ecl_csr_badv_e    (ecl_csr_badv_e    ),
       .exu_ifu_except    (exu_ifu_except    ),
       .ecl_csr_exccode_e (ecl_csr_exccode_e ),
       .ifu_exu_pc_e      (ifu_exu_pc_e      ),

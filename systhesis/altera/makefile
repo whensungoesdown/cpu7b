@@ -23,7 +23,6 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/c7bifu/cpu7_ifu_incr30.v \
                 ../../rtl/c7bifu/cpu7_ifu.v \
                 ../../rtl/c7bifu/decoder.v \
-                ../../rtl/cpu7_lsu.v \
                 ../../rtl/cpu7_core.v \
                 ../../rtl/decoded.vh \
                 ../../rtl/mul32x32.v \
@@ -45,6 +44,8 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/models/ram64.v \
                 ../../rtl/models/ram64_way1.v \
                 ../../rtl/c7bifu/cpu7_ifu_iq.v \
+		../../rtl/c7blsu/rtl/c7blsu.v \
+		../../rtl/c7blsu/rtl/decode.vh \
 		../../rtl/top.v
 
 

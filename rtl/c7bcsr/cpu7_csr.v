@@ -21,7 +21,7 @@ module cpu7_csr(
 
    output [`GRLEN-1:0]                  csr_eentry,
    output [`GRLEN-1:0]                  csr_era,
-   input  [`GRLEN-1:0]                  lsu_csr_badv_e,
+   input  [`GRLEN-1:0]                  ecl_csr_badv_e,
    input                                exu_ifu_except,
    input  [5:0]                         ecl_csr_exccode_e,
    input  [`GRLEN-1:0]                  ifu_exu_pc_e,
@@ -258,7 +258,7 @@ module cpu7_csr(
    dp_mux2es #(`GRLEN) badv_mux(
       .dout (badv_nxt),
       .in0  (badv_wdata),
-      .in1  (lsu_csr_badv_e),
+      .in1  (ecl_csr_badv_e),
       .sel  (exception));  // illinst does not set BADV, later consider this. code review 
 
    dffrle_s #(`GRLEN) badv_reg (

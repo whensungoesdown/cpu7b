@@ -73,15 +73,9 @@ module cpu7_exu_ecl(
    output [`GRLEN-1:0]                  ecl_lsu_base_e,
    output [`GRLEN-1:0]                  ecl_lsu_offset_e,
    output [`GRLEN-1:0]                  ecl_lsu_wdata_e,
-//   output [4:0]                         ecl_lsu_rd_e,
-//   output                               ecl_lsu_wen_e,
    input  [`GRLEN-1:0]                  lsu_ecl_rdata_m, // _m inputs are for writting to regfile
-   //input                                lsu_ecl_finish_m,
-   input                                  lsu_ecl_data_valid_ls3,
-   input                                  lsu_ecl_wr_fin_ls3,
-//   input  [4:0]                         lsu_ecl_rd_m,
-//   input                                lsu_ecl_wen_m,
-   input                                lsu_ecl_addr_ok_e, // not used
+   input                                lsu_ecl_data_valid_ls3,
+   input                                lsu_ecl_wr_fin_ls3,
    input                                lsu_ecl_ale_e, 
    input  [31:0]                        lsu_ecl_except_badv_ls1,
 
@@ -252,8 +246,7 @@ module cpu7_exu_ecl(
    assign lsu_offset_e = ifu_exu_double_read_e ? byp_rs2_data_e : ifu_exu_imm_shifted_e; 
    assign ecl_lsu_offset_e = lsu_offset_e;
    assign ecl_lsu_wdata_e = byp_rs2_data_e;
-   //assign ecl_lsu_rd_e = ifu_exu_lsu_rd_e;
-   //assign ecl_lsu_wen_e = ifu_exu_lsu_wen_e;
+
    wire [4:0] lsu_rd_e = ifu_exu_lsu_rd_e;
    wire lsu_wen_e = ifu_exu_lsu_wen_e;
    wire [4:0] lsu_rd_m;
@@ -551,9 +544,7 @@ module cpu7_exu_ecl(
    dp_mux2es #(5) rd_mux(
       .dout (rd_m),
       .in0  (rf_target_m),
-      //.in1  (lsu_ecl_rd_m),
       .in1  (lsu_rd_m),
-      //.sel  (lsu_ecl_finish_m));
       .sel  (lsu_ecl_data_valid_ls3));
    
    dff_s #(5) rd_m2w_reg (
@@ -657,8 +648,7 @@ module cpu7_exu_ecl(
 
    //
    // ecl_lsu_valid_e is the staring signal
-   // lsu_ecl_finish_m ends it
-   // lsu_fin_ls3
+   // lsu_fin_ls3 ends it
    //
    
    // lsu_fin_ls3 determins when to end the IFU stall (lsu_stall_req). If
@@ -668,7 +658,6 @@ module cpu7_exu_ecl(
    // generated. In such case, lsu_ecl_ale_e should complete the aborted LSU
    // request.
    wire lsu_fin_ls3 = lsu_ecl_data_valid_ls3 | lsu_ecl_wr_fin_ls3 | lsu_ecl_ale_e ;
-   //assign lsu_stall_req_next =  (ecl_lsu_valid_e) | (lsu_stall_req & ~lsu_ecl_finish_m); 
    assign lsu_stall_req_next =  (ecl_lsu_valid_e) | (lsu_stall_req & ~lsu_fin_ls3); 
    
    dffr_s #(1) lsu_stall_req_reg (
