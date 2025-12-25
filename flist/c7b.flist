@@ -1,10 +1,10 @@
 #/home/u/altera/13.1/quartus/eda/sim_lib/altera_mf.v
 #/mnt/c/intelFPGA_lite/19.1/quartus/eda/sim_lib/altera_mf.v
 
-+incdir+${PROJECT_ROOT}/rtl/c7bbiu
-+incdir+${PROJECT_ROOT}/rtl/c7blsu/rtl
-
-${PROJECT_ROOT}/simulation/altera_mf.v
+#+incdir+${PROJECT_ROOT}/rtl/c7bbiu
+#+incdir+${PROJECT_ROOT}/rtl/c7blsu/rtl
+#
+#${PROJECT_ROOT}/simulation/altera_mf.v
 
 ${PROJECT_ROOT}/rtl/alu.v 
 ${PROJECT_ROOT}/rtl/branch.v 
@@ -44,6 +44,5 @@ ${PROJECT_ROOT}/rtl/models/ram22_way1.v
 ${PROJECT_ROOT}/rtl/models/ram64.v 
 ${PROJECT_ROOT}/rtl/models/ram64_way1.v 
 ${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_iq.v 
-${PROJECT_ROOT}/rtl/top.v
 
 -f ${PROJECT_ROOT}/rtl/c7blsu/flist/c7blsu.flist
