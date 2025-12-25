@@ -1,4 +1,5 @@
 `include "../decoded.vh"
+`include "../c7blsu/rtl/c7blsu_defs.v"
 
 
 module decoder (
@@ -547,59 +548,59 @@ wire rd_write = op_clo_w || op_clz_w || op_cto_w || op_ctz_w  || op_clo_d  || op
                 op_amand_db_d || op_amor_db_w || op_amor_db_d || op_amxor_db_w || op_amxor_db_d || op_ammax_db_w || op_ammax_db_d || 
                 op_ammin_db_w || op_ammin_db_d || op_ammax_db_wu || op_ammax_db_du || op_ammin_db_wu || op_ammin_db_du;
  
-  wire [`LSOC1K_LSU_CODE_BIT-1:0] lsu_code = op_ld_b                 ? `LSOC1K_LSU_LD_B      :
-                                             op_ld_h                 ? `LSOC1K_LSU_LD_H      :
-                                             (op_ld_w || op_ldptr_w) ? `LSOC1K_LSU_LD_W      :
-                                             (op_ld_d || op_ldptr_d) ? `LSOC1K_LSU_LD_D      :
-                                             op_st_b                 ? `LSOC1K_LSU_ST_B      :
-                                             op_st_h                 ? `LSOC1K_LSU_ST_H      :
-                                             (op_st_w || op_stptr_w) ? `LSOC1K_LSU_ST_W      :
-                                             (op_st_d || op_stptr_d) ? `LSOC1K_LSU_ST_D      :
-                                             op_stx_b                ? `LSOC1K_LSU_STX_B     :
-                                             op_stx_h                ? `LSOC1K_LSU_STX_H     :
-                                             op_stx_w                ? `LSOC1K_LSU_STX_W     :
-                                             op_stx_d                ? `LSOC1K_LSU_STX_D     :
-                                             op_ld_bu                ? `LSOC1K_LSU_LD_BU     :
-                                             op_ld_hu                ? `LSOC1K_LSU_LD_HU     :
-                                             op_ld_wu                ? `LSOC1K_LSU_LD_WU     :
-                                             op_ldx_bu               ? `LSOC1K_LSU_LDX_BU    :
-                                             op_ldx_hu               ? `LSOC1K_LSU_LDX_HU    :
-                                             op_ldx_wu               ? `LSOC1K_LSU_LDX_WU    :
-                                             op_ldx_b                ? `LSOC1K_LSU_LDX_B     :
-                                             op_ldx_h                ? `LSOC1K_LSU_LDX_H     :
-                                             op_ldx_w                ? `LSOC1K_LSU_LDX_W     :
-                                             op_ldx_d                ? `LSOC1K_LSU_LDX_D     :
-                                             op_ldgt_b               ? `LSOC1K_LSU_LDGT_B    :
-                                             op_ldgt_h               ? `LSOC1K_LSU_LDGT_H    :
-                                             op_ldgt_w               ? `LSOC1K_LSU_LDGT_W    :
-                                             op_ldgt_d               ? `LSOC1K_LSU_LDGT_D    :
-                                             op_ldle_b               ? `LSOC1K_LSU_LDLE_B    :
-                                             op_ldle_h               ? `LSOC1K_LSU_LDLE_H    :
-                                             op_ldle_w               ? `LSOC1K_LSU_LDLE_W    :
-                                             op_ldle_d               ? `LSOC1K_LSU_LDLE_D    :
-                                             op_stgt_b               ? `LSOC1K_LSU_STGT_B    :
-                                             op_stgt_h               ? `LSOC1K_LSU_STGT_H    :
-                                             op_stgt_w               ? `LSOC1K_LSU_STGT_W    :
-                                             op_stgt_d               ? `LSOC1K_LSU_STGT_D    :
-                                             op_stle_b               ? `LSOC1K_LSU_STLE_B    :
-                                             op_stle_h               ? `LSOC1K_LSU_STLE_H    :
-                                             op_stle_w               ? `LSOC1K_LSU_STLE_W    :
-                                             op_stle_d               ? `LSOC1K_LSU_STLE_D    :
-                                             op_preld                ? `LSOC1K_LSU_PRELD     :
-                                             op_preldx               ? `LSOC1K_LSU_PRELDX    :
-                                             op_iocsrrd_b            ? `LSOC1K_LSU_IOCSRRD_B :
-                                             op_iocsrrd_h            ? `LSOC1K_LSU_IOCSRRD_H :
-                                             op_iocsrrd_w            ? `LSOC1K_LSU_IOCSRRD_W :
-                                             op_iocsrrd_w            ? `LSOC1K_LSU_IOCSRRD_D :
-                                             op_iocsrwr_b            ? `LSOC1K_LSU_IOCSRWR_B :
-                                             op_iocsrwr_h            ? `LSOC1K_LSU_IOCSRWR_H :
-                                             op_iocsrwr_w            ? `LSOC1K_LSU_IOCSRWR_W :
-                                             op_iocsrwr_d            ? `LSOC1K_LSU_IOCSRWR_D :
-                                             op_ll_w                 ? `LSOC1K_LSU_LL_W      :
-                                             op_ll_d                 ? `LSOC1K_LSU_LL_D      :
-                                             op_sc_w                 ? `LSOC1K_LSU_SC_W      :
-                                             op_sc_d                 ? `LSOC1K_LSU_SC_D      :
-                                                                       `LSOC1K_LSU_IDLE      ;
+  wire [`LLSU_CODE_BIT-1:0] lsu_code = op_ld_b                 ? `LLSU_LD_B      :
+                                       op_ld_h                 ? `LLSU_LD_H      :
+                                       (op_ld_w || op_ldptr_w) ? `LLSU_LD_W      :
+                                       (op_ld_d || op_ldptr_d) ? `LLSU_LD_D      :
+                                       op_st_b                 ? `LLSU_ST_B      :
+                                       op_st_h                 ? `LLSU_ST_H      :
+                                       (op_st_w || op_stptr_w) ? `LLSU_ST_W      :
+                                       (op_st_d || op_stptr_d) ? `LLSU_ST_D      :
+                                       op_stx_b                ? `LLSU_STX_B     :
+                                       op_stx_h                ? `LLSU_STX_H     :
+                                       op_stx_w                ? `LLSU_STX_W     :
+                                       op_stx_d                ? `LLSU_STX_D     :
+                                       op_ld_bu                ? `LLSU_LD_BU     :
+                                       op_ld_hu                ? `LLSU_LD_HU     :
+                                       op_ld_wu                ? `LLSU_LD_WU     :
+                                       op_ldx_bu               ? `LLSU_LDX_BU    :
+                                       op_ldx_hu               ? `LLSU_LDX_HU    :
+                                       op_ldx_wu               ? `LLSU_LDX_WU    :
+                                       op_ldx_b                ? `LLSU_LDX_B     :
+                                       op_ldx_h                ? `LLSU_LDX_H     :
+                                       op_ldx_w                ? `LLSU_LDX_W     :
+                                       op_ldx_d                ? `LLSU_LDX_D     :
+                                       op_ldgt_b               ? `LLSU_LDGT_B    :
+                                       op_ldgt_h               ? `LLSU_LDGT_H    :
+                                       op_ldgt_w               ? `LLSU_LDGT_W    :
+                                       op_ldgt_d               ? `LLSU_LDGT_D    :
+                                       op_ldle_b               ? `LLSU_LDLE_B    :
+                                       op_ldle_h               ? `LLSU_LDLE_H    :
+                                       op_ldle_w               ? `LLSU_LDLE_W    :
+                                       op_ldle_d               ? `LLSU_LDLE_D    :
+                                       op_stgt_b               ? `LLSU_STGT_B    :
+                                       op_stgt_h               ? `LLSU_STGT_H    :
+                                       op_stgt_w               ? `LLSU_STGT_W    :
+                                       op_stgt_d               ? `LLSU_STGT_D    :
+                                       op_stle_b               ? `LLSU_STLE_B    :
+                                       op_stle_h               ? `LLSU_STLE_H    :
+                                       op_stle_w               ? `LLSU_STLE_W    :
+                                       op_stle_d               ? `LLSU_STLE_D    :
+                                       op_preld                ? `LLSU_PRELD     :
+                                       op_preldx               ? `LLSU_PRELDX    :
+                                       op_iocsrrd_b            ? `LLSU_IOCSRRD_B :
+                                       op_iocsrrd_h            ? `LLSU_IOCSRRD_H :
+                                       op_iocsrrd_w            ? `LLSU_IOCSRRD_W :
+                                       op_iocsrrd_w            ? `LLSU_IOCSRRD_D :
+                                       op_iocsrwr_b            ? `LLSU_IOCSRWR_B :
+                                       op_iocsrwr_h            ? `LLSU_IOCSRWR_H :
+                                       op_iocsrwr_w            ? `LLSU_IOCSRWR_W :
+                                       op_iocsrwr_d            ? `LLSU_IOCSRWR_D :
+                                       op_ll_w                 ? `LLSU_LL_W      :
+                                       op_ll_d                 ? `LLSU_LL_D      :
+                                       op_sc_w                 ? `LLSU_SC_W      :
+                                       op_sc_d                 ? `LLSU_SC_D      :
+                                                                 `LLSU_IDLE      ;
 
 
   wire [`LSOC1K_MDU_CODE_BIT-1:0] mdu_code = op_mul_w     ? `LSOC1K_MDU_MUL_W     :
@@ -820,7 +821,7 @@ assign res[`LSOC1K_I14           ] = i14;
 assign res[`LSOC1K_I16           ] = i16;
 assign res[`LSOC1K_I20           ] = i20;
 assign res[`LSOC1K_UNSIGN        ] = unsign;
-assign res[`LSOC1K_LSU_RELATED   ] = lsu_related;
+assign res[`LLSU_RELATED   ] = lsu_related;
 assign res[`LSOC1K_BRU_RELATED   ] = bru_related;
 assign res[`LSOC1K_CSR_RELATED   ] = csr_related;
 assign res[`LSOC1K_CSR_WRITE     ] = csr_write;
@@ -828,7 +829,7 @@ assign res[`LSOC1K_CACHE_RELATED ] = cache_related;
 assign res[`LSOC1K_TLB_RELATED   ] = tlb_related;
 assign res[`LSOC1K_PC_RELATED    ] = pc_related;
 assign res[`LSOC1K_RD_READ       ] = rd_read;
-assign res[`LSOC1K_LSU_ST        ] = lsu_st;
+assign res[`LLSU_ST        ] = lsu_st;
 assign res[`LSOC1K_SA            ] = sa;
 assign res[`LSOC1K_MSBW          ] = msbd;
 assign res[`LSOC1K_BREAK         ] = op_break;

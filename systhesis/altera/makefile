@@ -6,6 +6,10 @@
 ###################################################################
 
 PROJECT = top
+
+#INCLUDE_DIRS := \
+#	        ../../rtl/c7blsu/rtl
+
 SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/branch.v \
                 ../../rtl/defines.vh \
@@ -45,7 +49,7 @@ SOURCE_FILES =  ../../rtl/alu.v \
                 ../../rtl/models/ram64_way1.v \
                 ../../rtl/c7bifu/cpu7_ifu_iq.v \
 		../../rtl/c7blsu/rtl/c7blsu.v \
-		../../rtl/c7blsu/rtl/decode.vh \
+		../../rtl/c7blsu/rtl/c7blsu_defs.v \
 		../../rtl/top.v
 
 

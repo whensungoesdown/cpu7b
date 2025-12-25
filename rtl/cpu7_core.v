@@ -1,5 +1,6 @@
 `include "defines.vh"
 `include "decoded.vh"
+`include "c7blsu/rtl/c7blsu_defs.v"
 
 module cpu7_core(
    input                 clk,
@@ -67,7 +68,7 @@ module cpu7_core(
 
    // lsu
    wire                              ifu_exu_lsu_valid_e;
-   wire [`LSOC1K_LSU_CODE_BIT-1:0]   ifu_exu_lsu_op_e;
+   wire [`LLSU_CODE_BIT-1:0]   ifu_exu_lsu_op_e;
    wire                              ifu_exu_double_read_e;
    wire [`GRLEN-1:0]                 ifu_exu_imm_shifted_e;
    wire [4:0]                        ifu_exu_lsu_rd_e;

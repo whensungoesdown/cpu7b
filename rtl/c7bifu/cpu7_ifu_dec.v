@@ -1,5 +1,6 @@
 `include "../defines.vh"
 `include "../decoded.vh"
+`include "../c7blsu/rtl/c7blsu_defs.v"
 
 module cpu7_ifu_dec(
    input                                clk,
@@ -26,7 +27,7 @@ module cpu7_ifu_dec(
 
    // lsu
    output                               ifu_exu_lsu_valid_e,
-   output [`LSOC1K_LSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
+   output [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
    output                               ifu_exu_double_read_e,
    output [`GRLEN-1:0]                  ifu_exu_imm_shifted_e,
    output [4:0]                         ifu_exu_lsu_rd_e,
@@ -179,8 +180,8 @@ module cpu7_ifu_dec(
 
    // do not dispatch if this instruction is killed at _d or it causes
    // exception
-   assign alu_dispatch_d  = !op_d[`LSOC1K_LSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d; // alu0 is binded to port0
-   assign lsu_dispatch_d  = op_d[`LSOC1K_LSU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign alu_dispatch_d  = !op_d[`LLSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d; // alu0 is binded to port0
+   assign lsu_dispatch_d  = op_d[`LLSU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
    assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
    assign mul_dispatch_d  = op_d[`LSOC1K_MUL_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
    assign div_dispatch_d  = op_d[`LSOC1K_DIV_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
@@ -352,12 +353,12 @@ module cpu7_ifu_dec(
 
 
 
-   wire [`LSOC1K_LSU_CODE_BIT-1:0] lsu_op_d;
-   wire [`LSOC1K_LSU_CODE_BIT-1:0] lsu_op_e;
+   wire [`LLSU_CODE_BIT-1:0] lsu_op_d;
+   wire [`LLSU_CODE_BIT-1:0] lsu_op_e;
 
    assign lsu_op_d = op_d[`LSOC1K_OP_CODE];
    
-   dff_s #(`LSOC1K_LSU_CODE_BIT) lsu_op_d2e_reg (
+   dff_s #(`LLSU_CODE_BIT) lsu_op_d2e_reg (
       .din (lsu_op_d),
       .clk (clk),
       .q   (lsu_op_e),

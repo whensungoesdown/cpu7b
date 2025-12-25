@@ -1,5 +1,6 @@
 `include "../defines.vh"
 `include "../decoded.vh"
+`include "../c7blsu/rtl/c7blsu_defs.v"
 
 module cpu7_ifu(
    input                               clock,
@@ -42,7 +43,7 @@ module cpu7_ifu(
 
    // lsu
    output                              ifu_exu_lsu_valid_e,
-   output [`LSOC1K_LSU_CODE_BIT-1:0]   ifu_exu_lsu_op_e,
+   output [`LLSU_CODE_BIT-1:0]   ifu_exu_lsu_op_e,
    output                              ifu_exu_double_read_e,
    output [`GRLEN-1:0]                 ifu_exu_imm_shifted_e,
    output [4:0]                        ifu_exu_lsu_rd_e,

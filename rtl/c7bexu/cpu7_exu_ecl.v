@@ -1,5 +1,6 @@
 `include "../defines.vh"
 `include "../decoded.vh"
+`include "../c7blsu/rtl/c7blsu_defs.v"
 
 module cpu7_exu_ecl(
    input                                clk,
@@ -18,7 +19,7 @@ module cpu7_exu_ecl(
 
    // lsu
    input                                ifu_exu_lsu_valid_e,
-   input  [`LSOC1K_LSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
+   input  [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
    input                                ifu_exu_double_read_e,
    input  [`GRLEN-1:0]                  ifu_exu_imm_shifted_e,
    input  [4:0]                         ifu_exu_lsu_rd_e,
@@ -69,7 +70,7 @@ module cpu7_exu_ecl(
 
    // lsu
    output                               ecl_lsu_valid_e,
-   output [`LSOC1K_LSU_CODE_BIT-1:0]    ecl_lsu_op_e,
+   output [`LLSU_CODE_BIT-1:0]    ecl_lsu_op_e,
    output [`GRLEN-1:0]                  ecl_lsu_base_e,
    output [`GRLEN-1:0]                  ecl_lsu_offset_e,
    output [`GRLEN-1:0]                  ecl_lsu_wdata_e,
