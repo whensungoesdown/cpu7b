@@ -5,12 +5,12 @@
 
 // ALU module
 module alu(
-  input [`GRLEN-1:0] a,
-  input [`GRLEN-1:0] b,
+  input [31:0] a,
+  input [31:0] b,
   input double_word,
   input [`LALU_CODE_BIT-1:0] alu_op,
-  input [`GRLEN-1:0] c,
-  output [`GRLEN-1:0] Result
+  input [31:0] c,
+  output [31:0] Result
 );
 
   // alu_op decoder
@@ -432,12 +432,12 @@ endmodule
 `elsif LA32
 // ALU module
 module alu(
-  input [`GRLEN-1:0] a,
-  input [`GRLEN-1:0] b,
+  input [31:0] a,
+  input [31:0] b,
   input double_word,
   input [`LALU_CODE_BIT-1:0] alu_op,
-  input [`GRLEN-1:0] c,
-  output [`GRLEN-1:0] Result
+  input [31:0] c,
+  output [31:0] Result
 );
 
   // alu_op decoder

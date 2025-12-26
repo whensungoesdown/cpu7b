@@ -91,12 +91,12 @@
 // TCFG 0x0_4_1
 `define LTCFG_EN       0
 `define LTCFG_PERIODIC 1
-//`define LSOC1K_TCFG_INITVAL  `GRLEN-1:2
+//`define LSOC1K_TCFG_INITVAL  31:2
 
 `define TIMER_BIT            30		
 
 // TVAL 0x0_4_2
-`define LTVAL_TIMEVAL `GRLEN-1:0
+`define LTVAL_TIMEVAL 31:0
 
 // CNTC 0x0_4_3
 `define LCNTC_COMPENSATION 63:0
@@ -177,13 +177,13 @@
 `define LSOC1K_ASID_ASID            9: 0
 
 // PGDL 0x0_1_9
-`define LSOC1K_PGDL_BASE `GRLEN-1:12
+`define LSOC1K_PGDL_BASE 31:12
 
 // PGDH 0x0_1_A
-`define LSOC1K_PGDH_BASE `GRLEN-1:12
+`define LSOC1K_PGDH_BASE 31:12
 
 // PGD 0x0_1_B
-`define LSOC1K_PGD_BASE  `GRLEN-1:12
+`define LSOC1K_PGD_BASE  31:12
 
 // PWCL 0x0_1_C 
 `define LSOC1K_PWCL_PTBASE      4: 0
@@ -235,7 +235,7 @@
 `ifdef GS264C_64BIT
   `define LSOC1K_TLBREBASE_EBASE `PABITS-1:12
 `else
-  `define LSOC1K_TLBREBASE_EBASE `GRLEN-1:6
+  `define LSOC1K_TLBREBASE_EBASE 31:6
 `endif
 
 // TLBREPC 0x0_8_A

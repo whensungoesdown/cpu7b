@@ -8,26 +8,26 @@ module cpu7_exu_rf(
 	input 	[ 4:0] 			raddr0_0,
 	input 	[ 4:0] 			raddr0_1,
 	input 					wen1,
-	input 	[`GRLEN-1:0] 	wdata1,
-	output 	[`GRLEN-1:0] 	rdata0_0,
-	output 	[`GRLEN-1:0] 	rdata0_1,
+	input 	[31:0] 	wdata1,
+	output 	[31:0] 	rdata0_0,
+	output 	[31:0] 	rdata0_1,
 
 	input 	[ 4:0] 			waddr2,
 	input 	[ 4:0] 			raddr1_0,
 	input 	[ 4:0] 			raddr1_1,
 	input 					wen2,
-	input 	[`GRLEN-1:0] 	wdata2,
-	output 	[`GRLEN-1:0] 	rdata1_0,
-	output 	[`GRLEN-1:0] 	rdata1_1,
+	input 	[31:0] 	wdata2,
+	output 	[31:0] 	rdata1_0,
+	output 	[31:0] 	rdata1_1,
 
 	input 	[ 4:0] 			raddr2_0,
 	input 	[ 4:0] 			raddr2_1,
-	output 	[`GRLEN-1:0] 	rdata2_0,
-	output 	[`GRLEN-1:0] 	rdata2_1
+	output 	[31:0] 	rdata2_0,
+	output 	[31:0] 	rdata2_1
 );
 
   // registers (r0 excluded)
-	reg [`GRLEN-1:0] regs [31:0];
+	reg [31:0] regs [31:0];
 
   // read after write (RAW)
   	wire r1_1_w1_raw =	wen1 && (raddr0_0 == waddr1);	
@@ -52,12 +52,12 @@ module cpu7_exu_rf(
 	wire r3_1_raw = r3_1_w1_raw || r3_1_w2_raw;
 	wire r3_2_raw = r3_2_w1_raw || r3_2_w2_raw;
 
-	wire [`GRLEN-1:0]	r1_1_raw_data = r1_1_w2_raw ? wdata2 : wdata1;	// forwarding data
-	wire [`GRLEN-1:0]	r1_2_raw_data = r1_2_w2_raw ? wdata2 : wdata1;
-	wire [`GRLEN-1:0]	r2_1_raw_data = r2_1_w2_raw ? wdata2 : wdata1;
-	wire [`GRLEN-1:0]	r2_2_raw_data = r2_2_w2_raw ? wdata2 : wdata1;
-	wire [`GRLEN-1:0]	r3_1_raw_data = r3_1_w2_raw ? wdata2 : wdata1;
-	wire [`GRLEN-1:0]	r3_2_raw_data = r3_2_w2_raw ? wdata2 : wdata1;
+	wire [31:0]	r1_1_raw_data = r1_1_w2_raw ? wdata2 : wdata1;	// forwarding data
+	wire [31:0]	r1_2_raw_data = r1_2_w2_raw ? wdata2 : wdata1;
+	wire [31:0]	r2_1_raw_data = r2_1_w2_raw ? wdata2 : wdata1;
+	wire [31:0]	r2_2_raw_data = r2_2_w2_raw ? wdata2 : wdata1;
+	wire [31:0]	r3_1_raw_data = r3_1_w2_raw ? wdata2 : wdata1;
+	wire [31:0]	r3_2_raw_data = r3_2_w2_raw ? wdata2 : wdata1;
 
   // write crash
 	wire write_crash = (waddr1 == waddr2);

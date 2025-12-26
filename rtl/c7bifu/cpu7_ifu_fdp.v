@@ -16,21 +16,21 @@ module cpu7_ifu_fdp(
    input  [31 :0]         br_target,
 
    // exception
-   input  [`GRLEN-1:0]    exu_ifu_eentry,
+   input  [31:0]    exu_ifu_eentry,
    input                  exu_ifu_except,
    // ertn
-   input  [`GRLEN-1:0]    exu_ifu_era,
+   input  [31:0]    exu_ifu_era,
    input                  exu_ifu_ertn_e,
 
-   output [`GRLEN-1:0]    fdp_dec_pc_d,
-   output [`GRLEN-1:0]    fdp_dec_inst_d,
+   output [31:0]    fdp_dec_pc_d,
+   output [31:0]    fdp_dec_inst_d,
 
    output                 fdp_dec_inst_kill_vld_d,
 
    output                 ifu_exu_valid_e, //
    
-   output [`GRLEN-1:0]    ifu_exu_pc_w,
-   output [`GRLEN-1:0]    ifu_exu_pc_e,
+   output [31:0]    ifu_exu_pc_w,
+   output [31:0]    ifu_exu_pc_e,
 
    input                  exu_ifu_stall_req
    );
@@ -48,7 +48,7 @@ module cpu7_ifu_fdp(
 
    wire ifu_exu_valid_d;
 
-   wire [`GRLEN-1:0] pcbf_btwn_mux;
+   wire [31:0] pcbf_btwn_mux;
    
    wire ifu_pcbf_sel_init_bf_l;
    wire ifu_pcbf_sel_old_bf_l;
@@ -105,13 +105,13 @@ module cpu7_ifu_fdp(
    // PC Datapath
    //===================================================
 
-   wire [`GRLEN-1:0] pc_bf;
-   wire [`GRLEN-1:0] pc_f;
-   wire [`GRLEN-1:0] pcinc_f;
-   wire [`GRLEN-1:0] pc_d;
-   wire [`GRLEN-1:0] pc_e;
-   wire [`GRLEN-1:0] pc_m;
-   wire [`GRLEN-1:0] pc_w;
+   wire [31:0] pc_bf;
+   wire [31:0] pc_f;
+   wire [31:0] pcinc_f;
+   wire [31:0] pc_d;
+   wire [31:0] pc_e;
+   wire [31:0] pc_m;
+   wire [31:0] pc_w;
    
    
    // pc_f must retain its initial value (0x1c000000) and not reset to 0,
@@ -147,7 +147,7 @@ module cpu7_ifu_fdp(
    wire pc_f2d_en;
    assign pc_f2d_en = inst_kill_vld_f & ~exu_ifu_stall_req; 
    
-   dffe_s #(`GRLEN) pc_f2d_reg (
+   dffe_s #(32) pc_f2d_reg (
       .din (pc_f),
       .clk (clk),
       .q   (pc_d),
@@ -160,7 +160,7 @@ module cpu7_ifu_fdp(
    wire pc_d2e_en;
    assign pc_d2e_en = ifu_exu_valid_d & ~exu_ifu_stall_req;
 
-   dffe_s #(`GRLEN) pc_d2e_reg (
+   dffe_s #(32) pc_d2e_reg (
       .din (pc_d),
       .clk (clk),
       .q   (pc_e),
@@ -169,7 +169,7 @@ module cpu7_ifu_fdp(
 
 
 
-   dff_s #(`GRLEN) pc_e2m_reg (
+   dff_s #(32) pc_e2m_reg (
       .din (pc_e),
       .clk (clk),
       .q   (pc_m),
@@ -177,7 +177,7 @@ module cpu7_ifu_fdp(
 
    assign ifu_exu_pc_e = pc_e;
    
-   dff_s #(`GRLEN) pc_m2w_reg (
+   dff_s #(32) pc_m2w_reg (
       .din (pc_m),
       .clk (clk),
       .q   (pc_w),

@@ -10,10 +10,10 @@ module cpu7_exu_ecl(
 
    input                                ifu_exu_valid_e,
 
-   input  [`GRLEN-1:0]                  ifu_exu_alu_a_e,
-   input  [`GRLEN-1:0]                  ifu_exu_alu_b_e,
+   input  [31:0]                  ifu_exu_alu_a_e,
+   input  [31:0]                  ifu_exu_alu_b_e,
    input  [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
-   input  [`GRLEN-1:0]                  ifu_exu_alu_c_e,
+   input  [31:0]                  ifu_exu_alu_c_e,
    input                                ifu_exu_alu_double_word_e,
    input                                ifu_exu_alu_b_imm_e,
    input  [4:0]                         ifu_exu_rs1_e,
@@ -23,16 +23,16 @@ module cpu7_exu_ecl(
    input                                ifu_exu_lsu_valid_e,
    input  [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
    input                                ifu_exu_double_read_e,
-   input  [`GRLEN-1:0]                  ifu_exu_imm_shifted_e,
+   input  [31:0]                  ifu_exu_imm_shifted_e,
    input  [4:0]                         ifu_exu_lsu_rd_e,
    input                                ifu_exu_lsu_wen_e,
 
    // bru
-   input  [`GRLEN-1:0]	                ifu_exu_pc_e,
+   input  [31:0]	                ifu_exu_pc_e,
 
    input                                ifu_exu_bru_valid_e,
    input  [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
-   input  [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
+   input  [31:0]                  ifu_exu_bru_offset_e,
 
    // mul
    input                                ifu_exu_mul_valid_e,
@@ -63,20 +63,20 @@ module cpu7_exu_ecl(
 
 
    // alu
-   output [`GRLEN-1:0]                  ecl_alu_a_e,
-   output [`GRLEN-1:0]                  ecl_alu_b_e,
+   output [31:0]                  ecl_alu_a_e,
+   output [31:0]                  ecl_alu_b_e,
    output [`LALU_CODE_BIT-1:0]    ecl_alu_op_e,
-   output [`GRLEN-1:0]                  ecl_alu_c_e,
+   output [31:0]                  ecl_alu_c_e,
    output                               ecl_alu_double_word_e,
-   input  [`GRLEN-1:0]                  alu_ecl_res_e,  // alu result
+   input  [31:0]                  alu_ecl_res_e,  // alu result
 
    // lsu
    output                               ecl_lsu_valid_e,
    output [`LLSU_CODE_BIT-1:0]    ecl_lsu_op_e,
-   output [`GRLEN-1:0]                  ecl_lsu_base_e,
-   output [`GRLEN-1:0]                  ecl_lsu_offset_e,
-   output [`GRLEN-1:0]                  ecl_lsu_wdata_e,
-   input  [`GRLEN-1:0]                  lsu_ecl_rdata_m, // _m inputs are for writting to regfile
+   output [31:0]                  ecl_lsu_base_e,
+   output [31:0]                  ecl_lsu_offset_e,
+   output [31:0]                  ecl_lsu_wdata_e,
+   input  [31:0]                  lsu_ecl_rdata_m, // _m inputs are for writting to regfile
    input                                lsu_ecl_data_valid_ls3,
    input                                lsu_ecl_wr_fin_ls3,
    input                                lsu_ecl_ale_e, 
@@ -85,34 +85,34 @@ module cpu7_exu_ecl(
    // bru
    output                               ecl_bru_valid_e,
    output [`LBRU_CODE_BIT-1:0]    ecl_bru_op_e,
-   output [`GRLEN-1:0]                  ecl_bru_a_e,
-   output [`GRLEN-1:0]                  ecl_bru_b_e,
-   output [`GRLEN-1:0]                  ecl_bru_pc_e,
-   output [`GRLEN-1:0]                  ecl_bru_offset_e,
+   output [31:0]                  ecl_bru_a_e,
+   output [31:0]                  ecl_bru_b_e,
+   output [31:0]                  ecl_bru_pc_e,
+   output [31:0]                  ecl_bru_offset_e,
 
-   input  [`GRLEN-1:0]                  bru_ecl_brpc_e,
+   input  [31:0]                  bru_ecl_brpc_e,
    input                                bru_ecl_br_taken_e,
-   input  [`GRLEN-1:0]                  bru_byp_link_pc_e,
+   input  [31:0]                  bru_byp_link_pc_e,
    input                                bru_ecl_wen_e,
 
    // mul
    output                               ecl_mul_valid_e,
-   output [`GRLEN-1:0]                  byp_mul_a_e,
-   output [`GRLEN-1:0]                  byp_mul_b_e,
+   output [31:0]                  byp_mul_a_e,
+   output [31:0]                  byp_mul_b_e,
    output                               ecl_mul_signed_e,
    output                               ecl_mul_double_e,
    output                               ecl_mul_hi_e,
    output                               ecl_mul_short_e,
    input                                mul_ecl_ready_m, // mul returns result at _m, so this is signal is unused
-   input  [`GRLEN-1:0]                  mul_byp_res_m,
+   input  [31:0]                  mul_byp_res_m,
 
    // csr
-   input  [`GRLEN-1:0]                  csr_byp_rdata_d,
+   input  [31:0]                  csr_byp_rdata_d,
    output [`LCSR_BIT-1:0]         ecl_csr_raddr_d,
    output [`LCSR_BIT-1:0]         ecl_csr_waddr_m,
-   output [`GRLEN-1:0]                  byp_csr_wdata_m,
+   output [31:0]                  byp_csr_wdata_m,
    output                               ecl_csr_wen_m,
-   output [`GRLEN-1:0]                  ecl_csr_mask_m,
+   output [31:0]                  ecl_csr_mask_m,
    output [31:0]                        ecl_csr_badv_e,
 
    // exception
@@ -128,10 +128,10 @@ module cpu7_exu_ecl(
    // ifu stall req
    output                               exu_ifu_stall_req,
    
-   output [`GRLEN-1:0]                  exu_ifu_brpc_e,
+   output [31:0]                  exu_ifu_brpc_e,
    output                               exu_ifu_br_taken_e,
 
-   output [`GRLEN-1:0]                  ecl_irf_rd_data_w,
+   output [31:0]                  ecl_irf_rd_data_w,
    output                               ecl_irf_wen_w,
    output [4:0]                         ecl_irf_rd_w,
 
@@ -146,8 +146,8 @@ module cpu7_exu_ecl(
    wire wen_w;
 
 
-   wire [`GRLEN-1:0] rd_data_m;
-   wire [`GRLEN-1:0] rd_data_w;
+   wire [31:0] rd_data_m;
+   wire [31:0] rd_data_w;
 
    wire kill_e;
   
@@ -169,8 +169,8 @@ module cpu7_exu_ecl(
    //////////////////
 
 
-   wire [`GRLEN-1:0] byp_rs1_data_e;
-   wire [`GRLEN-1:0] byp_rs2_data_e;
+   wire [31:0] byp_rs1_data_e;
+   wire [31:0] byp_rs2_data_e;
 
    wire  ecl_byp_rs1_mux_sel_rf;
    wire  ecl_byp_rs1_mux_sel_m;   
@@ -210,7 +210,7 @@ module cpu7_exu_ecl(
       .rs_mux_sel_w   (ecl_byp_rs2_mux_sel_w  )
       );
    
-   mux3ds #(`GRLEN) mux_rs1_data (.dout(byp_rs1_data_e),
+   mux3ds #(32) mux_rs1_data (.dout(byp_rs1_data_e),
       .in0(ifu_exu_alu_a_e),
       .in1(rd_data_m),
       .in2(ecl_irf_rd_data_w),
@@ -221,7 +221,7 @@ module cpu7_exu_ecl(
 
    assign ecl_alu_a_e = byp_rs1_data_e;
 
-   mux3ds #(`GRLEN) mux_rs2_data (.dout(byp_rs2_data_e),
+   mux3ds #(32) mux_rs2_data (.dout(byp_rs2_data_e),
       .in0(ifu_exu_alu_b_e),
       .in1(rd_data_m),
       .in2(ecl_irf_rd_data_w),
@@ -244,7 +244,7 @@ module cpu7_exu_ecl(
    assign ecl_lsu_base_e = byp_rs1_data_e;
    
 
-   wire [`GRLEN-1:0]          lsu_offset_e;
+   wire [31:0]          lsu_offset_e;
  
    assign lsu_offset_e = ifu_exu_double_read_e ? byp_rs2_data_e : ifu_exu_imm_shifted_e; 
    assign ecl_lsu_offset_e = lsu_offset_e;
@@ -273,12 +273,12 @@ module cpu7_exu_ecl(
    
 
    
-   wire [`GRLEN-1:0] bru_link_pc_e;
-   wire [`GRLEN-1:0] bru_link_pc_m;
+   wire [31:0] bru_link_pc_e;
+   wire [31:0] bru_link_pc_m;
 
    assign bru_link_pc_e = bru_byp_link_pc_e;
    
-   dff_s #(`GRLEN) bru_link_pc_e2m_reg (
+   dff_s #(32) bru_link_pc_e2m_reg (
       .din (bru_link_pc_e),
       .clk (clk),
       .q   (bru_link_pc_m),
@@ -355,21 +355,21 @@ module cpu7_exu_ecl(
 
    
    
-   wire [`GRLEN-1:0]             csr_rdata_d;
-   wire [`GRLEN-1:0]             csr_rdata_e;
-   wire [`GRLEN-1:0]             csr_rdata_m;
+   wire [31:0]             csr_rdata_d;
+   wire [31:0]             csr_rdata_e;
+   wire [31:0]             csr_rdata_m;
    
    assign ecl_csr_raddr_d = ifu_exu_csr_raddr_d;
    assign csr_rdata_d = csr_byp_rdata_d;
 
    
-   dff_s #(`GRLEN) csr_rdata_d2e_reg (
+   dff_s #(32) csr_rdata_d2e_reg (
       .din (csr_rdata_d),
       .clk (clk),
       .q   (csr_rdata_e),
       .se(), .si(), .so());
    
-   dff_s #(`GRLEN) csr_rdata_e2m_reg (
+   dff_s #(32) csr_rdata_e2m_reg (
       .din (csr_rdata_e),
       .clk (clk),
       .q   (csr_rdata_m),
@@ -395,16 +395,16 @@ module cpu7_exu_ecl(
    // csrwr csrxchg
    //
    
-   wire [`GRLEN-1:0] csr_mask_e;
-   wire [`GRLEN-1:0] csr_mask_m;
+   wire [31:0] csr_mask_e;
+   wire [31:0] csr_mask_m;
    
 
    // according to the handbook
    // csrwr is a special csrxchg, that has a full mask.
 
-   assign csr_mask_e = ifu_exu_csr_xchg_e ? byp_rs1_data_e : `GRLEN'hFFFFFFFF;
+   assign csr_mask_e = ifu_exu_csr_xchg_e ? byp_rs1_data_e : 32'hFFFFFFFF;
 
-   dff_s #(`GRLEN) csr_mask_e2m_reg (
+   dff_s #(32) csr_mask_e2m_reg (
       .din (csr_mask_e),
       .clk (clk),
       .q   (csr_mask_m),
@@ -413,12 +413,12 @@ module cpu7_exu_ecl(
    assign ecl_csr_mask_m = csr_mask_m;
 
 
-   wire [`GRLEN-1:0] csr_wdata_e;
-   wire [`GRLEN-1:0] csr_wdata_m;
+   wire [31:0] csr_wdata_e;
+   wire [31:0] csr_wdata_m;
    
    assign csr_wdata_e = byp_rs2_data_e;
 
-   dff_s #(`GRLEN) csr_wdata_e2m_reg (
+   dff_s #(32) csr_wdata_e2m_reg (
       .din (csr_wdata_e),
       .clk (clk),
       .q   (csr_wdata_m),
@@ -517,9 +517,9 @@ module cpu7_exu_ecl(
 
 
    // alu_res_m, only for ALU instructions
-   wire [`GRLEN-1:0] alu_res_m;
+   wire [31:0] alu_res_m;
 
-   dff_s #(`GRLEN) rd_data_e2m_reg (
+   dff_s #(32) rd_data_e2m_reg (
       .din (alu_ecl_res_e),
       .clk (clk),
       .q   (alu_res_m),
@@ -598,7 +598,7 @@ module cpu7_exu_ecl(
    assign rddata_sel_csr_res_m_l = ~csr_valid_m; // csr's rd go with ALU's
 
    // maybe too much fan out? make it 4ds+3ds when adding div 
-   dp_mux5ds #(`GRLEN) rd_data_mux(.dout  (rd_data_m),
+   dp_mux5ds #(32) rd_data_mux(.dout  (rd_data_m),
                           .in0   (alu_res_m),
                           .in1   (lsu_ecl_rdata_m),
                           .in2   (bru_link_pc_m),
@@ -611,7 +611,7 @@ module cpu7_exu_ecl(
                           .sel4_l (rddata_sel_csr_res_m_l));
    
    
-   dff_s #(`GRLEN) rd_data_w_reg (
+   dff_s #(32) rd_data_w_reg (
       .din (rd_data_m),
       .clk (clk),
       .q   (rd_data_w),

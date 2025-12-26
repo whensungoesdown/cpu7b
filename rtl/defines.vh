@@ -13,7 +13,8 @@
 `endif
 
 
-`define GRLEN          32
+// It is a 32-bit core project for sure
+//`define GRLEN          32
 
 
 

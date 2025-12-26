@@ -5,8 +5,8 @@ module cpu7_ifu_imd(
    input  [31:0]                        inst,
    input  [`LDECODE_RES_BIT-1:0]  op,
    output [31:0]                        imm_shifted,
-   output [`GRLEN-1:0]                  alu_c,
-   output [`GRLEN-1:0]                  br_offs
+   output [31:0]                  alu_c,
+   output [31:0]                  br_offs
    );
 
    //immediate operater prepare

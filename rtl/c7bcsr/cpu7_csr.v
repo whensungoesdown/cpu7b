@@ -13,19 +13,19 @@
 module cpu7_csr(
    input                                clk,
    input                                resetn,
-   output [`GRLEN-1:0]                  csr_rdata,
+   output [31:0]                  csr_rdata,
    input  [`LCSR_BIT-1:0]         csr_raddr,
-   input  [`GRLEN-1:0]                  csr_wdata,
+   input  [31:0]                  csr_wdata,
    input  [`LCSR_BIT-1:0]         csr_waddr,
-   input  [`GRLEN-1:0]                  csr_mask,
+   input  [31:0]                  csr_mask,
    input                                csr_wen,
 
-   output [`GRLEN-1:0]                  csr_eentry,
-   output [`GRLEN-1:0]                  csr_era,
-   input  [`GRLEN-1:0]                  ecl_csr_badv_e,
+   output [31:0]                  csr_eentry,
+   output [31:0]                  csr_era,
+   input  [31:0]                  ecl_csr_badv_e,
    input                                exu_ifu_except,
    input  [5:0]                         ecl_csr_exccode_e,
-   input  [`GRLEN-1:0]                  ifu_exu_pc_e,
+   input  [31:0]                  ifu_exu_pc_e,
    input                                ecl_csr_ertn_e,
 
    output                               csr_ecl_crmd_ie,
@@ -54,7 +54,7 @@ module cpu7_csr(
    //  CRMD 0x0
    //
    
-   wire [`GRLEN-1:0]       crmd;
+   wire [31:0]       crmd;
    wire                    crmd_wen;
    assign crmd_wen = (csr_waddr == `LCSR_CRMD) && csr_wen;
 
@@ -155,7 +155,7 @@ module cpu7_csr(
    //  PRMD 0x1
    //
 
-   wire [`GRLEN-1:0]      prmd;
+   wire [31:0]      prmd;
    wire                   prmd_wen;
    assign prmd_wen = (csr_waddr == `LCSR_PRMD) && csr_wen;
 
@@ -216,22 +216,22 @@ module cpu7_csr(
    //  ERA 0x6
    //
 
-   wire [`GRLEN-1:0]       era;
-   wire [`GRLEN-1:0]       era_wdata;
-   wire [`GRLEN-1:0]       era_nxt;
+   wire [31:0]       era;
+   wire [31:0]       era_wdata;
+   wire [31:0]       era_nxt;
    wire                    era_wen;
 
    assign era_wen = (csr_waddr == `LCSR_EPC) && csr_wen;  // EPC is ERA
 
    assign era_wdata = (era & (~csr_mask)) | (csr_wdata & csr_mask);
 
-   dp_mux2es #(`GRLEN) era_mux(
+   dp_mux2es #(32) era_mux(
       .dout (era_nxt),
       .in0  (era_wdata),
       .in1  (ifu_exu_pc_e),
       .sel  (exception));
 
-   dffrle_s #(`GRLEN) era_reg (
+   dffrle_s #(32) era_reg (
       .din   (era_nxt),
       .rst_l (resetn),
       .en    (era_wen | exception),
@@ -246,9 +246,9 @@ module cpu7_csr(
    // BADV 0x7
    //
 
-   wire [`GRLEN-1:0]       badv;
-   wire [`GRLEN-1:0]       badv_wdata;
-   wire [`GRLEN-1:0]       badv_nxt;
+   wire [31:0]       badv;
+   wire [31:0]       badv_wdata;
+   wire [31:0]       badv_nxt;
    wire                    badv_wen;
 
    assign badv_wen = (csr_waddr == `LCSR_BADV) && csr_wen;
@@ -256,13 +256,13 @@ module cpu7_csr(
    assign badv_wdata = (badv & (~csr_mask)) | (csr_wdata & csr_mask);
 
 
-   dp_mux2es #(`GRLEN) badv_mux(
+   dp_mux2es #(32) badv_mux(
       .dout (badv_nxt),
       .in0  (badv_wdata),
       .in1  (ecl_csr_badv_e),
       .sel  (exception));  // illinst does not set BADV, later consider this. code review 
 
-   dffrle_s #(`GRLEN) badv_reg (
+   dffrle_s #(32) badv_reg (
       .din   (badv_nxt),
       .rst_l (resetn),
       .en    (badv_wen | exception),
@@ -276,15 +276,15 @@ module cpu7_csr(
    //  EENTRY 0xc
    //
 
-   wire [`GRLEN-1:0]       eentry;
-   wire [`GRLEN-1:0]       eentry_nxt;
+   wire [31:0]       eentry;
+   wire [31:0]       eentry_nxt;
    wire                    eentry_wen;
 
    //assign eentry_nxt = csr_wdata;
    assign eentry_nxt = (eentry & (~csr_mask)) | (csr_wdata & csr_mask);
    assign eentry_wen = (csr_waddr == `LCSR_EBASE) && csr_wen; // EBASE is EENTRY
 
-   dffrle_s #(`GRLEN) eentry_reg (
+   dffrle_s #(32) eentry_reg (
       .din   (eentry_nxt),
       .rst_l (resetn),
       .en    (eentry_wen),
@@ -302,7 +302,7 @@ module cpu7_csr(
    // TCFG  0x41
    //
 
-   wire [`GRLEN-1:0]       tcfg;
+   wire [31:0]       tcfg;
    wire                    tcfg_wen;
    
    assign tcfg_wen = (csr_waddr == `LCSR_TCFG) && csr_wen;
@@ -366,7 +366,7 @@ module cpu7_csr(
 
 
    assign tcfg = {
-	         //`GRLEN-`TIMER_BIT-2'b0,
+	         //32-`TIMER_BIT-2'b0,
 	         tcfg_initval,
 		 tcfg_periodic,
 		 tcfg_en
@@ -393,10 +393,10 @@ module cpu7_csr(
    // TVAL  0x42
    //
 
-   wire [`GRLEN-1:0]           tval;
+   wire [31:0]           tval;
 
    assign tval = {
-                 //`GRLEN-`TIMER_BIT'b0,
+                 //32-`TIMER_BIT'b0,
 	         timeval
 	         };
 	         
@@ -405,10 +405,10 @@ module cpu7_csr(
    // TICLR  0x44
    //
 
-   wire [`GRLEN-1:0]       ticlr;
+   wire [31:0]       ticlr;
    wire                    ticlr_wen;
 
-   assign ticlr = `GRLEN'b0; // manual says ticlr always read out all 0
+   assign ticlr = 32'b0; // manual says ticlr always read out all 0
    assign ticlr_wen = (csr_waddr == `LCSR_TICLR) && csr_wen;   
 
    wire                    ticlr_clr;
@@ -440,7 +440,7 @@ module cpu7_csr(
    // ESTAT 0x5
    //
    
-   wire [`GRLEN-1:0] estat;
+   wire [31:0] estat;
    wire              estat_wen;
    assign estat_wen = (csr_waddr == `LCSR_ESTAT) && csr_wen;
 
@@ -515,8 +515,8 @@ module cpu7_csr(
    //  SELF DEFINED: BSEC (BOOT SECURITY) 0x100
    //
 
-   wire [`GRLEN-1:0]       bsec;
-   wire [`GRLEN-1:0]       bsec_nxt;
+   wire [31:0]       bsec;
+   wire [31:0]       bsec_nxt;
    wire                    bsec_wen;
 
    assign bsec_wen = (csr_waddr == `LCSR_BSEC) && csr_wen;
@@ -554,16 +554,16 @@ module cpu7_csr(
 
    
    
-   assign csr_rdata = {`GRLEN{csr_raddr == `LCSR_CRMD}}  & crmd   |
-		      {`GRLEN{csr_raddr == `LCSR_PRMD}}  & prmd   |
-		      {`GRLEN{csr_raddr == `LCSR_ESTAT}} & estat  |
-		      {`GRLEN{csr_raddr == `LCSR_EPC}}   & era    |
-		      {`GRLEN{csr_raddr == `LCSR_BADV}}  & badv   |
-		      {`GRLEN{csr_raddr == `LCSR_EBASE}} & eentry |
-		      {`GRLEN{csr_raddr == `LCSR_TCFG}}  & tcfg   |
-		      {`GRLEN{csr_raddr == `LCSR_TVAL}}  & tval   |
-		      {`GRLEN{csr_raddr == `LCSR_TICLR}} & ticlr  |
-		      {`GRLEN{csr_raddr == `LCSR_BSEC}}  & bsec   |
-		      `GRLEN'b0;
+   assign csr_rdata = {32{csr_raddr == `LCSR_CRMD}}  & crmd   |
+		      {32{csr_raddr == `LCSR_PRMD}}  & prmd   |
+		      {32{csr_raddr == `LCSR_ESTAT}} & estat  |
+		      {32{csr_raddr == `LCSR_EPC}}   & era    |
+		      {32{csr_raddr == `LCSR_BADV}}  & badv   |
+		      {32{csr_raddr == `LCSR_EBASE}} & eentry |
+		      {32{csr_raddr == `LCSR_TCFG}}  & tcfg   |
+		      {32{csr_raddr == `LCSR_TVAL}}  & tval   |
+		      {32{csr_raddr == `LCSR_TICLR}} & ticlr  |
+		      {32{csr_raddr == `LCSR_BSEC}}  & bsec   |
+		      32'b0;
 
 endmodule // cpu7_csr

@@ -3,23 +3,23 @@
 
 module branch(
    input                           branch_valid,
-   input [`GRLEN-1:0]              branch_a,
-   input [`GRLEN-1:0]              branch_b,
+   input [31:0]              branch_a,
+   input [31:0]              branch_b,
    input [`LBRU_CODE_BIT-1:0] branch_op,
-   input [`GRLEN-1:0]              branch_pc,
+   input [31:0]              branch_pc,
    //    input [31:0]                    branch_inst,
    //    input                           branch_taken,
-   //    input [`GRLEN-1:0]              branch_target,
-   input [`GRLEN-1:0]              branch_offset,
+   //    input [31:0]              branch_target,
+   input [31:0]              branch_offset,
    //    input                           cancel_allow,
    // pc interface
    //    output              bru_valid,
    //    output              bru_cancel,
-   output [`GRLEN-1:0] bru_target,
+   output [31:0] bru_target,
    output              bru_taken,
-   output [`GRLEN-1:0] bru_link_pc,
+   output [31:0] bru_link_pc,
    output              bru_wen
-   //    output [`GRLEN-1:0] bru_pc
+   //    output [31:0] bru_pc
    );
 
 //define
@@ -39,8 +39,8 @@ wire op_bgeu  = branch_op == `LBRU_GEU;
 wire op_jirl  = branch_op == `LBRU_JR;
 wire op_bl    = branch_op == `LBRU_BL;
 
-wire [`GRLEN-1:0] target_next;
-wire [`GRLEN-1:0] target_jr;
+wire [31:0] target_next;
+wire [31:0] target_jr;
 
 wire from_s;
 
@@ -120,20 +120,20 @@ assign take =
 
 // jump target calculate
 //`ifdef LA64
-//assign target_next = {branch_pc[`GRLEN-1:2]+62'd1,2'b00};
+//assign target_next = {branch_pc[31:2]+62'd1,2'b00};
 //`elsif LA32
-//assign target_next = {branch_pc[`GRLEN-1:2]+30'd1,2'b00};
+//assign target_next = {branch_pc[31:2]+30'd1,2'b00};
 //`endif
-   assign target_next = {branch_pc[`GRLEN-1:2]+30'd1,2'b00};
+   assign target_next = {branch_pc[31:2]+30'd1,2'b00};
 
-   wire [`GRLEN-1:0] target_true = {branch_pc[`GRLEN-1:2],2'b00} + branch_offset;
+   wire [31:0] target_true = {branch_pc[31:2],2'b00} + branch_offset;
    assign target_jr   = branch_a + branch_offset;
 
    assign bru_target = 
-		       ({`GRLEN{!op_jirl && take}} & target_true)
+		       ({32{!op_jirl && take}} & target_true)
                     // ({64{!op_jirl && take}} & branch_target)
-                      |({`GRLEN{!op_jirl &&!take}} & target_next)
-	              |({`GRLEN{op_jirl}} & target_jr );
+                      |({32{!op_jirl &&!take}} & target_next)
+	              |({32{op_jirl}} & target_jr );
    //assign bru_cancel = cancel && cancel_allow;
    //assign bru_valid = branch_valid;
    assign bru_taken = take & branch_valid;

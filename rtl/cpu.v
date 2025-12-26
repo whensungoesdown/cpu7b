@@ -53,14 +53,14 @@ module cpu(
    
 
    wire                   lsu_biu_rd_req;
-   wire [`GRLEN-1:0]      lsu_biu_rd_addr;
+   wire [31:0]      lsu_biu_rd_addr;
 
    wire                   biu_lsu_rd_ack;
    wire                   biu_lsu_data_valid;
    wire [63:0]            biu_lsu_data;
 
    wire                   lsu_biu_wr_req;
-   wire [`GRLEN-1:0]      lsu_biu_wr_addr;
+   wire [31:0]      lsu_biu_wr_addr;
    wire [63:0]            lsu_biu_wr_data;
    wire [7:0]             lsu_biu_wr_strb;
 

@@ -11,19 +11,19 @@ module cpu7_exu(
 
    input                                ifu_exu_valid_e,
 
-   input  [`GRLEN-1:0]                  ifu_exu_pc_w,
-   input  [`GRLEN-1:0]                  ifu_exu_pc_e,
+   input  [31:0]                  ifu_exu_pc_w,
+   input  [31:0]                  ifu_exu_pc_e,
 
    // memory interface  E M
    output                               lsu_biu_rd_req,
-   output [`GRLEN-1:0]                  lsu_biu_rd_addr,
+   output [31:0]                  lsu_biu_rd_addr,
 
    input                                biu_lsu_rd_ack,
    input                                biu_lsu_data_valid,
    input  [63:0]                        biu_lsu_data,
 
    output                               lsu_biu_wr_req,
-   output [`GRLEN-1:0]                  lsu_biu_wr_addr,
+   output [31:0]                  lsu_biu_wr_addr,
    output [63:0]                        lsu_biu_wr_data,
    output [7:0]                         lsu_biu_wr_strb,
 
@@ -32,21 +32,21 @@ module cpu7_exu(
 
 
    output                               exu_ifu_stall_req,
-   output [`GRLEN-1:0]                  exu_ifu_brpc_e,
+   output [31:0]                  exu_ifu_brpc_e,
    output                               exu_ifu_br_taken_e,
 
    // exception
-   output [`GRLEN-1:0]                  exu_ifu_eentry,
+   output [31:0]                  exu_ifu_eentry,
    output                               exu_ifu_except,
    // ertn
-   output [`GRLEN-1:0]                  exu_ifu_era,
+   output [31:0]                  exu_ifu_era,
    output                               exu_ifu_ertn_e,
    
 
-   input  [`GRLEN-1:0]                  ifu_exu_alu_a_e,
-   input  [`GRLEN-1:0]                  ifu_exu_alu_b_e,
+   input  [31:0]                  ifu_exu_alu_a_e,
+   input  [31:0]                  ifu_exu_alu_b_e,
    input  [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
-   input  [`GRLEN-1:0]                  ifu_exu_alu_c_e,
+   input  [31:0]                  ifu_exu_alu_c_e,
    input                                ifu_exu_alu_double_word_e,
    input                                ifu_exu_alu_b_imm_e,
 
@@ -55,21 +55,21 @@ module cpu7_exu(
    input  [4:0]                         ifu_exu_rs1_e,
    input  [4:0]                         ifu_exu_rs2_e,
    
-   output [`GRLEN-1:0]                  exu_ifu_rs1_data_d,
-   output [`GRLEN-1:0]                  exu_ifu_rs2_data_d,
+   output [31:0]                  exu_ifu_rs1_data_d,
+   output [31:0]                  exu_ifu_rs2_data_d,
 
    // lsu
    input                                ifu_exu_lsu_valid_e,
    input  [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
    input                                ifu_exu_double_read_e,
-   input  [`GRLEN-1:0]                  ifu_exu_imm_shifted_e,
+   input  [31:0]                  ifu_exu_imm_shifted_e,
    input  [4:0]                         ifu_exu_lsu_rd_e,
    input                                ifu_exu_lsu_wen_e,
 
    // bru
    input                                ifu_exu_bru_valid_e,
    input  [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
-   input  [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
+   input  [31:0]                  ifu_exu_bru_offset_e,
 
    // mul
    input                                ifu_exu_mul_valid_e,
@@ -105,23 +105,23 @@ module cpu7_exu(
 
    
    // alu
-   wire [`GRLEN-1:0]                    ecl_alu_a_e;
-   wire [`GRLEN-1:0]                    ecl_alu_b_e;
-   wire [`GRLEN-1:0]                    ecl_alu_c_e;
+   wire [31:0]                    ecl_alu_a_e;
+   wire [31:0]                    ecl_alu_b_e;
+   wire [31:0]                    ecl_alu_c_e;
    wire [`LALU_CODE_BIT-1:0]      ecl_alu_op_e;
    wire                                 ecl_alu_double_word_e;
-   wire [`GRLEN-1:0]                    alu_ecl_res_e;
+   wire [31:0]                    alu_ecl_res_e;
 
 
    // lsu
    wire                                 ecl_lsu_valid_e;
    wire [`LLSU_CODE_BIT-1:0]      ecl_lsu_op_e;
-   wire [`GRLEN-1:0]                    ecl_lsu_base_e;
-   wire [`GRLEN-1:0]                    ecl_lsu_offset_e;
-   wire [`GRLEN-1:0]                    ecl_lsu_wdata_e;
+   wire [31:0]                    ecl_lsu_base_e;
+   wire [31:0]                    ecl_lsu_offset_e;
+   wire [31:0]                    ecl_lsu_wdata_e;
 
    
-   wire [`GRLEN-1:0]                    ecl_irf_rd_data_w;
+   wire [31:0]                    ecl_irf_rd_data_w;
    wire [4:0]                           ecl_irf_rd_w; // derived from ifu_exu_rf_target_d
    wire                                 ecl_irf_wen_w;
 
@@ -129,20 +129,20 @@ module cpu7_exu(
    // bru
    wire                                 ecl_bru_valid_e;
    wire [`LBRU_CODE_BIT-1:0]      ecl_bru_op_e;
-   wire [`GRLEN-1:0]                    ecl_bru_a_e;       
-   wire [`GRLEN-1:0]                    ecl_bru_b_e;
-   wire [`GRLEN-1:0]                    ecl_bru_pc_e;
-   wire [`GRLEN-1:0]                    ecl_bru_offset_e;
+   wire [31:0]                    ecl_bru_a_e;       
+   wire [31:0]                    ecl_bru_b_e;
+   wire [31:0]                    ecl_bru_pc_e;
+   wire [31:0]                    ecl_bru_offset_e;
 
-   wire [`GRLEN-1:0]                    bru_ecl_brpc_e;    
+   wire [31:0]                    bru_ecl_brpc_e;    
    wire                                 bru_ecl_br_taken_e;  
-   wire [`GRLEN-1:0]                    bru_byp_link_pc_e;
+   wire [31:0]                    bru_byp_link_pc_e;
    wire                                 bru_ecl_wen_e;
 
 
    // mul
-   wire [`GRLEN-1:0] byp_mul_a_e;
-   wire [`GRLEN-1:0] byp_mul_b_e;
+   wire [31:0] byp_mul_a_e;
+   wire [31:0] byp_mul_b_e;
    wire              ecl_mul_signed_e;
    wire              ecl_mul_double_e;
    wire              ecl_mul_hi_e;
@@ -150,15 +150,15 @@ module cpu7_exu(
    wire              ecl_mul_valid_e;
    wire              mul_ecl_64ready;
    wire              mul_ecl_32ready;
-   wire [`GRLEN-1:0] mul_byp_res_m;
+   wire [31:0] mul_byp_res_m;
 
 
    // csr
-   wire [`GRLEN-1:0]            csr_byp_rdata_d;
+   wire [31:0]            csr_byp_rdata_d;
    wire [`LCSR_BIT-1:0]   ecl_csr_raddr_d;
    wire [`LCSR_BIT-1:0]   ecl_csr_waddr_m;
-   wire [`GRLEN-1:0]            byp_csr_wdata_m;
-   wire [`GRLEN-1:0]            ecl_csr_mask_m;
+   wire [31:0]            byp_csr_wdata_m;
+   wire [31:0]            ecl_csr_mask_m;
    wire                         ecl_csr_wen_m;
    wire                         ecl_csr_ertn_e;
    wire                         csr_ecl_crmd_ie;
@@ -166,10 +166,10 @@ module cpu7_exu(
    wire [5:0]                   ecl_csr_exccode_e;
 
 
-   wire [`GRLEN-1:0] dumb_rdata1_0;
-   wire [`GRLEN-1:0] dumb_rdata1_1;
-   wire [`GRLEN-1:0] dumb_rdata2_0;
-   wire [`GRLEN-1:0] dumb_rdata2_1;
+   wire [31:0] dumb_rdata1_0;
+   wire [31:0] dumb_rdata1_1;
+   wire [31:0] dumb_rdata2_0;
+   wire [31:0] dumb_rdata2_1;
    
    cpu7_exu_rf registers(
         .clk        (clk                  ),

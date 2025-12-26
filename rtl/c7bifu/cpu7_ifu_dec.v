@@ -10,13 +10,13 @@ module cpu7_ifu_dec(
    input                                resetn,
    input  [31:0]                        fdp_dec_inst_d,
 
-   input [`GRLEN-1:0]                   fdp_dec_pc_d,
+   input [31:0]                   fdp_dec_pc_d,
    input                                fdp_dec_inst_kill_vld_d,
 
-   output [`GRLEN-1:0]                  ifu_exu_alu_a_e,
-   output [`GRLEN-1:0]                  ifu_exu_alu_b_e,
+   output [31:0]                  ifu_exu_alu_a_e,
+   output [31:0]                  ifu_exu_alu_b_e,
    output [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
-   output [`GRLEN-1:0]                  ifu_exu_alu_c_e,
+   output [31:0]                  ifu_exu_alu_c_e,
    output                               ifu_exu_alu_double_word_e,
    output                               ifu_exu_alu_b_imm_e,
 
@@ -25,21 +25,21 @@ module cpu7_ifu_dec(
    output [4:0]                         ifu_exu_rs1_e,
    output [4:0]                         ifu_exu_rs2_e,
 
-   input  [`GRLEN-1:0]                  exu_ifu_rs1_data_d,
-   input  [`GRLEN-1:0]                  exu_ifu_rs2_data_d,
+   input  [31:0]                  exu_ifu_rs1_data_d,
+   input  [31:0]                  exu_ifu_rs2_data_d,
 
    // lsu
    output                               ifu_exu_lsu_valid_e,
    output [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
    output                               ifu_exu_double_read_e,
-   output [`GRLEN-1:0]                  ifu_exu_imm_shifted_e,
+   output [31:0]                  ifu_exu_imm_shifted_e,
    output [4:0]                         ifu_exu_lsu_rd_e,
    output                               ifu_exu_lsu_wen_e,
 
    // bru
    output                               ifu_exu_bru_valid_e,
    output [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
-   output [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
+   output [31:0]                  ifu_exu_bru_offset_e,
 
    // mul
    output                               ifu_exu_mul_valid_e,
@@ -157,9 +157,9 @@ module cpu7_ifu_dec(
 
 
 
-   wire [`GRLEN-1:0] alu_c_d;
-   wire [`GRLEN-1:0] imm_shifted_d;
-   wire [`GRLEN-1:0] br_offs_d;
+   wire [31:0] alu_c_d;
+   wire [31:0] imm_shifted_d;
+   wire [31:0] br_offs_d;
 
 
    // cpu7_ifu_imd, decode offset imm
@@ -234,15 +234,15 @@ module cpu7_ifu_dec(
 
 
 
-   wire [`GRLEN-1:0] alu_a_d = alu_a_pc? fdp_dec_pc_d : exu_ifu_rs1_data_d;
-   wire [`GRLEN-1:0] alu_b_d = alu_b_imm_d? imm_shifted_d : exu_ifu_rs2_data_d;
+   wire [31:0] alu_a_d = alu_a_pc? fdp_dec_pc_d : exu_ifu_rs1_data_d;
+   wire [31:0] alu_b_d = alu_b_imm_d? imm_shifted_d : exu_ifu_rs2_data_d;
 
 
    wire alu_double_word_d = op_d[`LDOUBLE_WORD];
    
-   wire [`GRLEN-1:0] alu_a_e;
+   wire [31:0] alu_a_e;
 
-   dff_s #(`GRLEN) alu_a_d2e_reg (
+   dff_s #(32) alu_a_d2e_reg (
       .din (alu_a_d),
       .clk (clk),
       .q   (alu_a_e),
@@ -251,9 +251,9 @@ module cpu7_ifu_dec(
    assign ifu_exu_alu_a_e = alu_a_e;
    
 
-   wire [`GRLEN-1:0] alu_b_e;
+   wire [31:0] alu_b_e;
 
-   dff_s #(`GRLEN) alu_b_d2e_reg (
+   dff_s #(32) alu_b_d2e_reg (
       .din (alu_b_d),
       .clk (clk),
       .q   (alu_b_e),
@@ -273,9 +273,9 @@ module cpu7_ifu_dec(
    assign ifu_exu_alu_op_e = alu_op_e;
 
 
-   wire [`GRLEN-1:0] alu_c_e;
+   wire [31:0] alu_c_e;
 
-   dff_s #(`GRLEN) alu_c_d2e_reg (
+   dff_s #(32) alu_c_d2e_reg (
       .din (alu_c_d),
       .clk (clk),
       .q   (alu_c_e),
@@ -384,9 +384,9 @@ module cpu7_ifu_dec(
    assign ifu_exu_double_read_e = double_read_e;
 
 
-   wire [`GRLEN-1:0] imm_shifted_e;
+   wire [31:0] imm_shifted_e;
 
-   dff_s #(`GRLEN) imm_shifted_d2e_reg (
+   dff_s #(32) imm_shifted_d2e_reg (
       .din (imm_shifted_d),
       .clk (clk),
       .q   (imm_shifted_e),
@@ -459,12 +459,12 @@ module cpu7_ifu_dec(
    assign ifu_exu_bru_op_e = bru_op_e;
 
 
-   wire [`GRLEN-1:0] bru_offset_d;
-   wire [`GRLEN-1:0] bru_offset_e;
+   wire [31:0] bru_offset_d;
+   wire [31:0] bru_offset_e;
 
    assign bru_offset_d = br_offs_d;
 
-   dff_s #(`GRLEN) bru_offset_d2e_reg (
+   dff_s #(32) bru_offset_d2e_reg (
       .din (bru_offset_d),
       .clk (clk),
       .q   (bru_offset_e),
