@@ -1,9 +1,9 @@
-`include "../defines.vh"
+`include "csr_defs.v"
 
 module cpu7_csr_byplog(
-   input  [`LSOC1K_CSR_BIT-1:0]        csr_raddr_d,
-   input  [`LSOC1K_CSR_BIT-1:0]        csr_waddr_e,
-   input  [`LSOC1K_CSR_BIT-1:0]        csr_waddr_m,
+   input  [`LCSR_BIT-1:0]        csr_raddr_d,
+   input  [`LCSR_BIT-1:0]        csr_waddr_e,
+   input  [`LCSR_BIT-1:0]        csr_waddr_m,
    input                               csr_wen_e,
    input                               csr_wen_m,
    output                              csr_mux_sel_csrrf,

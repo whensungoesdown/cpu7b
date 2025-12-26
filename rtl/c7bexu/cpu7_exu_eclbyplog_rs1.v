@@ -1,6 +1,3 @@
-`include "../defines.vh"
-`include "../decoded.vh"
-
 module cpu7_exu_eclbyplog_rs1(
    input  [4:0]         rs_e,
    input  [4:0]         rd_m,

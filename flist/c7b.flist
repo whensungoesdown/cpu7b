@@ -1,12 +1,17 @@
 +incdir+${PROJECT_ROOT}/rtl/c7bbiu
 +incdir+${PROJECT_ROOT}/rtl/c7blsu/rtl
++incdir+${PROJECT_ROOT}/rtl/c7bcsr
++incdir+${PROJECT_ROOT}/rtl/c7bifu
 
 ${PROJECT_ROOT}/rtl/alu.v 
+${PROJECT_ROOT}/rtl/alu_defs.v 
 ${PROJECT_ROOT}/rtl/branch.v 
+${PROJECT_ROOT}/rtl/bru_defs.v 
 ${PROJECT_ROOT}/rtl/defines.vh 
 ${PROJECT_ROOT}/rtl/c7bcsr/cpu7_csr_byplog.v 
 ${PROJECT_ROOT}/rtl/c7bcsr/cpu7_csr.v 
 ${PROJECT_ROOT}/rtl/c7bcsr/cpu7_csr_timer.v
+${PROJECT_ROOT}/rtl/c7bcsr/csr_defs.v
 ${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_eclbyplog_rs1.v 
 ${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_eclbyplog.v 
 ${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_ecl.v 
@@ -18,7 +23,7 @@ ${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_imd.v
 ${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_incr30.v 
 ${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu.v 
 ${PROJECT_ROOT}/rtl/c7bifu/decoder.v 
-${PROJECT_ROOT}/rtl/decoded.vh 
+${PROJECT_ROOT}/rtl/c7bifu/dec_defs.v 
 ${PROJECT_ROOT}/rtl/cpu7_core.v 
 ${PROJECT_ROOT}/rtl/mul32x32.v 
 ${PROJECT_ROOT}/rtl/mul64x64.v 

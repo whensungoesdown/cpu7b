@@ -1,6 +1,9 @@
 `include "../defines.vh"
-`include "../decoded.vh"
+`include "dec_defs.v"
 `include "../c7blsu/rtl/c7blsu_defs.v"
+`include "../c7bcsr/csr_defs.v"
+`include "../alu_defs.v"
+`include "../bru_defs.v"
 
 module cpu7_ifu_dec(
    input                                clk,
@@ -12,7 +15,7 @@ module cpu7_ifu_dec(
 
    output [`GRLEN-1:0]                  ifu_exu_alu_a_e,
    output [`GRLEN-1:0]                  ifu_exu_alu_b_e,
-   output [`LSOC1K_ALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
+   output [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
    output [`GRLEN-1:0]                  ifu_exu_alu_c_e,
    output                               ifu_exu_alu_double_word_e,
    output                               ifu_exu_alu_b_imm_e,
@@ -35,7 +38,7 @@ module cpu7_ifu_dec(
 
    // bru
    output                               ifu_exu_bru_valid_e,
-   output [`LSOC1K_BRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
+   output [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
    output [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
 
    // mul
@@ -48,11 +51,11 @@ module cpu7_ifu_dec(
 
    // csr
    output                               ifu_exu_csr_valid_e,
-   output [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_raddr_d,
+   output [`LCSR_BIT-1:0]         ifu_exu_csr_raddr_d,
    output                               ifu_exu_csr_rdwen_e,
    output                               ifu_exu_csr_xchg_e,
    output                               ifu_exu_csr_wen_e,
-   output [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_waddr_e,
+   output [`LCSR_BIT-1:0]         ifu_exu_csr_waddr_e,
 
    // alu
    output [4:0]                         ifu_exu_rf_target_e,
@@ -66,21 +69,21 @@ module cpu7_ifu_dec(
    );
 
 
-   wire [`LSOC1K_DECODE_RES_BIT-1:0] op_d;
+   wire [`LDECODE_RES_BIT-1:0] op_d;
 
    decoder u_decoder(.inst(fdp_dec_inst_d), .res(op_d)); //decode the inst
 
 
 ////// crash check
 //// exception
-////wire port0_fpd = !csr_output[`LSOC1K_CSR_OUTPUT_EUEN_FPE] && op_d[`LSOC1K_FLOAT];
+////wire port0_fpd = !csr_output[`LCSR_OUTPUT_EUEN_FPE] && op_d[`LFLOAT];
 ////
 ////`ifdef LA64
-////wire port0_ipe = ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd1) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL1] && op_d[`LSOC1K_RDTIME]) ||
-////                 ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd2) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL2] && op_d[`LSOC1K_RDTIME]) ||
-////                 ((csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] == 2'd3) && csr_output[`LSOC1K_CSR_OUTPUT_MISC_DRDTL3] && op_d[`LSOC1K_RDTIME]) ;
+////wire port0_ipe = ((csr_output[`LCSR_OUTPUT_CRMD_PLV] == 2'd1) && csr_output[`LCSR_OUTPUT_MISC_DRDTL1] && op_d[`LRDTIME]) ||
+////                 ((csr_output[`LCSR_OUTPUT_CRMD_PLV] == 2'd2) && csr_output[`LCSR_OUTPUT_MISC_DRDTL2] && op_d[`LRDTIME]) ||
+////                 ((csr_output[`LCSR_OUTPUT_CRMD_PLV] == 2'd3) && csr_output[`LCSR_OUTPUT_MISC_DRDTL3] && op_d[`LRDTIME]) ;
 ////`elsif LA32
-////wire port0_ipe = 1'B0;//(csr_output[`LSOC1K_CSR_OUTPUT_CRMD_PLV] != 2'd0) && (op_d[`LSOC1K_CSR_READ] || op_d[`LSOC1K_CACHE_RELATED] || op_d[`LSOC1K_TLB_RELATED] || op_d[`LSOC1K_WAIT] || op_d[`LSOC1K_ERET]);
+////wire port0_ipe = 1'B0;//(csr_output[`LCSR_OUTPUT_CRMD_PLV] != 2'd0) && (op_d[`LCSR_READ] || op_d[`LCACHE_RELATED] || op_d[`LTLB_RELATED] || op_d[`LWAIT] || op_d[`LERET]);
 ////
 ////`endif
 //
@@ -90,23 +93,23 @@ module cpu7_ifu_dec(
 //// it may actually need to use ifu_exu_exception_d instead
 //// wait until debugging exception code
 //   
-////wire port0_exception = fdp_dec_exception   || op_d[`LSOC1K_SYSCALL] || op_d[`LSOC1K_BREAK ] || op_d[`LSOC1K_INE] ||
+////wire port0_exception = fdp_dec_exception   || op_d[`LSYSCALL] || op_d[`LBREAK ] || op_d[`LINE] ||
 ////                       port0_fpd || port0_ipe || int_except;
-//wire port0_exception = fdp_dec_exception   || op_d[`LSOC1K_SYSCALL] || op_d[`LSOC1K_BREAK ] || op_d[`LSOC1K_INE] || int_except;
+//wire port0_exception = fdp_dec_exception   || op_d[`LSYSCALL] || op_d[`LBREAK ] || op_d[`LINE] || int_except;
 //   
 ////
 ////wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 ////                           fdp_dec_exception       ? fdp_dec_exccode : 
-////                           op_d[`LSOC1K_SYSCALL] ? `EXC_SYS          :
-////                           op_d[`LSOC1K_BREAK  ] ? `EXC_BRK          :
-////                           op_d[`LSOC1K_INE    ] ? `EXC_INE          :
+////                           op_d[`LSYSCALL] ? `EXC_SYS          :
+////                           op_d[`LBREAK  ] ? `EXC_BRK          :
+////                           op_d[`LINE    ] ? `EXC_INE          :
 ////                           port0_fpd                 ? `EXC_FPD          :
 ////                                                       6'd0              ;
 //wire [5:0] port0_exccode = int_except                ? `EXC_INT          :
 //                           fdp_dec_exception         ? fdp_dec_exccode   : 
-//                           op_d[`LSOC1K_SYSCALL] ? `EXC_SYS          :
-//                           op_d[`LSOC1K_BREAK  ] ? `EXC_BRK          :
-//                           op_d[`LSOC1K_INE    ] ? `EXC_INE          :
+//                           op_d[`LSYSCALL] ? `EXC_SYS          :
+//                           op_d[`LBREAK  ] ? `EXC_BRK          :
+//                           op_d[`LINE    ] ? `EXC_INE          :
 //                                                       6'd0              ;
 
 
@@ -122,12 +125,12 @@ module cpu7_ifu_dec(
    wire       exception_d;
    wire [5:0] exccode_d;
 
-   assign exception_d = fdp_dec_exception_f | op_d[`LSOC1K_SYSCALL] | op_d[`LSOC1K_BREAK ] | op_d[`LSOC1K_INE]; // || int_except;
+   assign exception_d = fdp_dec_exception_f | op_d[`LSYSCALL] | op_d[`LBREAK ] | op_d[`LINE]; // || int_except;
    assign exccode_d = //int_except                ? `EXC_INT          :  // interrupt send into EXU
                       fdp_dec_exception_f   ? fdp_dec_exccode_f : // exceptions that happens at _f, like cache related 
-                      op_d[`LSOC1K_SYSCALL] ? `EXC_SYS          :
-                      op_d[`LSOC1K_BREAK  ] ? `EXC_BRK          :
-                      op_d[`LSOC1K_INE    ] ? `EXC_INE          :
+                      op_d[`LSYSCALL] ? `EXC_SYS          :
+                      op_d[`LBREAK  ] ? `EXC_BRK          :
+                      op_d[`LINE    ] ? `EXC_INE          :
                                               6'd0              ;
 				      
    wire       exception_d2e_in;
@@ -180,26 +183,26 @@ module cpu7_ifu_dec(
 
    // do not dispatch if this instruction is killed at _d or it causes
    // exception
-   assign alu_dispatch_d  = !op_d[`LLSU_RELATED] && !op_d[`LSOC1K_BRU_RELATED] && !op_d[`LSOC1K_MUL_RELATED] && !op_d[`LSOC1K_DIV_RELATED] && !op_d[`LSOC1K_CSR_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d; // alu0 is binded to port0
+   assign alu_dispatch_d  = !op_d[`LLSU_RELATED] && !op_d[`LBRU_RELATED] && !op_d[`LMUL_RELATED] && !op_d[`LDIV_RELATED] && !op_d[`LCSR_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d; // alu0 is binded to port0
    assign lsu_dispatch_d  = op_d[`LLSU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
-   assign bru_dispatch_d  = op_d[`LSOC1K_BRU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
-   assign mul_dispatch_d  = op_d[`LSOC1K_MUL_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
-   assign div_dispatch_d  = op_d[`LSOC1K_DIV_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
-   assign none_dispatch_d = (op_d[`LSOC1K_CSR_RELATED] || op_d[`LSOC1K_TLB_RELATED] || op_d[`LSOC1K_CACHE_RELATED]) && fdp_dec_inst_kill_vld_d && !exception_d ;
-   assign ertn_dispatch_d = op_d[`LSOC1K_ERET] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign bru_dispatch_d  = op_d[`LBRU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign mul_dispatch_d  = op_d[`LMUL_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign div_dispatch_d  = op_d[`LDIV_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   assign none_dispatch_d = (op_d[`LCSR_RELATED] || op_d[`LTLB_RELATED] || op_d[`LCACHE_RELATED]) && fdp_dec_inst_kill_vld_d && !exception_d ;
+   assign ertn_dispatch_d = op_d[`LERET] && fdp_dec_inst_kill_vld_d && !exception_d;
 
 
 
 
-   wire       rf_wen_d = op_d[`LSOC1K_GR_WEN];
-   wire [4:0] rf_target_d = (op_d[`LSOC1K_BRU_RELATED] && (op_d[`LSOC1K_BRU_CODE] == `LSOC1K_BRU_BL)) ? 5'd1 : `GET_RD(fdp_dec_inst_d);
+   wire       rf_wen_d = op_d[`LGR_WEN];
+   wire [4:0] rf_target_d = (op_d[`LBRU_RELATED] && (op_d[`LBRU_CODE] == `LBRU_BL)) ? 5'd1 : `GET_RD(fdp_dec_inst_d);
 
 
    wire [4:0] rs1_d;
    wire [4:0] rs2_d;
 
-   assign rs1_d = op_d[`LSOC1K_RD2RJ  ] ? `GET_RD(fdp_dec_inst_d) : `GET_RJ(fdp_dec_inst_d);
-   assign rs2_d = op_d[`LSOC1K_RD_READ] ? `GET_RD(fdp_dec_inst_d) : `GET_RK(fdp_dec_inst_d);
+   assign rs1_d = op_d[`LRD2RJ  ] ? `GET_RD(fdp_dec_inst_d) : `GET_RJ(fdp_dec_inst_d);
+   assign rs2_d = op_d[`LRD_READ] ? `GET_RD(fdp_dec_inst_d) : `GET_RK(fdp_dec_inst_d);
 
    assign ifu_exu_rs1_d = rs1_d;
    assign ifu_exu_rs2_d = rs2_d;
@@ -212,7 +215,7 @@ module cpu7_ifu_dec(
    /////////////////////////
    
    
-   wire [`LSOC1K_ALU_CODE_BIT-1:0] alu_op_d = op_d[`LSOC1K_ALU_CODE];
+   wire [`LALU_CODE_BIT-1:0] alu_op_d = op_d[`LALU_CODE];
 
 
 
@@ -220,14 +223,14 @@ module cpu7_ifu_dec(
    
    ////ALU input
    //A:
-   wire alu_a_zero = op_d[`LSOC1K_LUI];// op_rdpgpr_1 || op_wrpgpr_1; //zero
-   wire alu_a_pc = op_d[`LSOC1K_PC_RELATED];
+   wire alu_a_zero = op_d[`LLUI];// op_rdpgpr_1 || op_wrpgpr_1; //zero
+   wire alu_a_pc = op_d[`LPC_RELATED];
 
    //B:
-   //wire alu_b_imm = op_d[`LSOC1K_I5] || op_d[`LSOC1K_I12] || op_d[`LSOC1K_I16] || op_d[`LSOC1K_I20];
-   wire alu_b_imm_d = (op_d[`LSOC1K_I5] || op_d[`LSOC1K_I12] || op_d[`LSOC1K_I16] || op_d[`LSOC1K_I20]) & alu_dispatch_d;
+   //wire alu_b_imm = op_d[`LI5] || op_d[`LI12] || op_d[`LI16] || op_d[`LI20];
+   wire alu_b_imm_d = (op_d[`LI5] || op_d[`LI12] || op_d[`LI16] || op_d[`LI20]) & alu_dispatch_d;
 
-   //wire ecl_alu_b_get_a = op_d[`LSOC1K_ALU_CODE] == `LSOC1K_ALU_EXT;
+   //wire ecl_alu_b_get_a = op_d[`LALU_CODE] == `LALU_EXT;
 
 
 
@@ -235,7 +238,7 @@ module cpu7_ifu_dec(
    wire [`GRLEN-1:0] alu_b_d = alu_b_imm_d? imm_shifted_d : exu_ifu_rs2_data_d;
 
 
-   wire alu_double_word_d = op_d[`LSOC1K_DOUBLE_WORD];
+   wire alu_double_word_d = op_d[`LDOUBLE_WORD];
    
    wire [`GRLEN-1:0] alu_a_e;
 
@@ -259,9 +262,9 @@ module cpu7_ifu_dec(
    assign ifu_exu_alu_b_e = alu_b_e;
    
 
-   wire [`LSOC1K_ALU_CODE_BIT-1:0] alu_op_e;
+   wire [`LALU_CODE_BIT-1:0] alu_op_e;
 
-   dff_s #(`LSOC1K_ALU_CODE_BIT) alu_op_d2e_reg (
+   dff_s #(`LALU_CODE_BIT) alu_op_d2e_reg (
       .din (alu_op_d),
       .clk (clk),
       .q   (alu_op_e),
@@ -356,7 +359,7 @@ module cpu7_ifu_dec(
    wire [`LLSU_CODE_BIT-1:0] lsu_op_d;
    wire [`LLSU_CODE_BIT-1:0] lsu_op_e;
 
-   assign lsu_op_d = op_d[`LSOC1K_OP_CODE];
+   assign lsu_op_d = op_d[`LOP_CODE];
    
    dff_s #(`LLSU_CODE_BIT) lsu_op_d2e_reg (
       .din (lsu_op_d),
@@ -370,7 +373,7 @@ module cpu7_ifu_dec(
    wire double_read_d;
    wire double_read_e;
 
-   assign double_read_d = op_d[`LSOC1K_DOUBLE_READ] & lsu_dispatch_d;
+   assign double_read_d = op_d[`LDOUBLE_READ] & lsu_dispatch_d;
 
    dff_s #(1) double_read_d2e_reg (
       .din (double_read_d),
@@ -442,12 +445,12 @@ module cpu7_ifu_dec(
    assign ifu_exu_bru_valid_e = bru_valid_e;
 
 
-   wire [`LSOC1K_BRU_CODE_BIT-1:0] bru_op_d;
-   wire [`LSOC1K_BRU_CODE_BIT-1:0] bru_op_e;
+   wire [`LBRU_CODE_BIT-1:0] bru_op_d;
+   wire [`LBRU_CODE_BIT-1:0] bru_op_e;
 
-   assign bru_op_d = op_d[`LSOC1K_BRU_CODE];
+   assign bru_op_d = op_d[`LBRU_CODE];
    
-   dff_s #(`LSOC1K_BRU_CODE_BIT) bru_op_d2e_reg (
+   dff_s #(`LBRU_CODE_BIT) bru_op_d2e_reg (
       .din (bru_op_d),
       .clk (clk),
       .q   (bru_op_e),
@@ -507,8 +510,8 @@ module cpu7_ifu_dec(
 
 
 
-   wire [`LSOC1K_MDU_CODE_BIT-1:0] mul_op_d;
-   assign mul_op_d = op_d[`LSOC1K_MDU_CODE];
+   wire [`LMDU_CODE_BIT-1:0] mul_op_d;
+   assign mul_op_d = op_d[`LMDU_CODE];
 
    wire mul_signed_d;
    wire mul_signed_e;
@@ -523,21 +526,21 @@ module cpu7_ifu_dec(
    wire mul_short_e;
    
 
-   assign mul_signed_d = mul_op_d == `LSOC1K_MDU_MUL_W     ||
-			 mul_op_d == `LSOC1K_MDU_MULH_W    ||
-			 mul_op_d == `LSOC1K_MDU_MUL_D     ||
-			 mul_op_d == `LSOC1K_MDU_MULH_D    ||
-			 mul_op_d == `LSOC1K_MDU_MULW_D_W  ;
-   assign mul_double_d = mul_op_d == `LSOC1K_MDU_MUL_D     ||
-			 mul_op_d == `LSOC1K_MDU_MULH_D    ||
-			 mul_op_d == `LSOC1K_MDU_MULH_DU   ;
-   assign mul_hi_d     = mul_op_d == `LSOC1K_MDU_MULH_W    ||
-			 mul_op_d == `LSOC1K_MDU_MULH_WU   ||
-			 mul_op_d == `LSOC1K_MDU_MULH_D    ||
-			 mul_op_d == `LSOC1K_MDU_MULH_DU   ;
-   assign mul_short_d  = mul_op_d == `LSOC1K_MDU_MUL_W     ||
-			 mul_op_d == `LSOC1K_MDU_MULH_W    ||
-			 mul_op_d == `LSOC1K_MDU_MULH_WU   ;
+   assign mul_signed_d = mul_op_d == `LMDU_MUL_W     ||
+			 mul_op_d == `LMDU_MULH_W    ||
+			 mul_op_d == `LMDU_MUL_D     ||
+			 mul_op_d == `LMDU_MULH_D    ||
+			 mul_op_d == `LMDU_MULW_D_W  ;
+   assign mul_double_d = mul_op_d == `LMDU_MUL_D     ||
+			 mul_op_d == `LMDU_MULH_D    ||
+			 mul_op_d == `LMDU_MULH_DU   ;
+   assign mul_hi_d     = mul_op_d == `LMDU_MULH_W    ||
+			 mul_op_d == `LMDU_MULH_WU   ||
+			 mul_op_d == `LMDU_MULH_D    ||
+			 mul_op_d == `LMDU_MULH_DU   ;
+   assign mul_short_d  = mul_op_d == `LMDU_MUL_W     ||
+			 mul_op_d == `LMDU_MULH_W    ||
+			 mul_op_d == `LMDU_MULH_WU   ;
 
 
    dff_s #(1) mul_signed_d2e_reg (
@@ -618,7 +621,7 @@ module cpu7_ifu_dec(
    wire csr_xchg_e;
  
  
-   assign csr_xchg_d = op_d[`LSOC1K_CSR_XCHG];
+   assign csr_xchg_d = op_d[`LCSR_XCHG];
    
    dff_s #(1) csr_xchg_d2e_reg (
       .din (csr_xchg_d),
@@ -633,7 +636,7 @@ module cpu7_ifu_dec(
    wire csr_wen_d;
    wire csr_wen_e;
 
-   assign csr_wen_d = (op_d[`LSOC1K_CSR_XCHG] | op_d[`LSOC1K_CSR_WRITE]) & csr_valid_d;
+   assign csr_wen_d = (op_d[`LCSR_XCHG] | op_d[`LCSR_WRITE]) & csr_valid_d;
  
    dffrl_s #(1) csr_wen_d2e_reg (
       .din (csr_wen_d),
@@ -645,12 +648,12 @@ module cpu7_ifu_dec(
    assign ifu_exu_csr_wen_e = csr_wen_e;
 
 
-   wire [`LSOC1K_CSR_BIT-1:0] csr_waddr_d;
-   wire [`LSOC1K_CSR_BIT-1:0] csr_waddr_e;
+   wire [`LCSR_BIT-1:0] csr_waddr_d;
+   wire [`LCSR_BIT-1:0] csr_waddr_e;
  
    assign csr_waddr_d = `GET_CSR(fdp_dec_inst_d);
 
-   dff_s #(`LSOC1K_CSR_BIT) csr_waddr_d2e_reg (
+   dff_s #(`LCSR_BIT) csr_waddr_d2e_reg (
       .din (csr_waddr_d),
       .clk (clk),
       .q   (csr_waddr_e),

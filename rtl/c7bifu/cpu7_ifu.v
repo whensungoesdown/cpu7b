@@ -1,6 +1,8 @@
 `include "../defines.vh"
-`include "../decoded.vh"
+`include "dec_defs.v"
 `include "../c7blsu/rtl/c7blsu_defs.v"
+`include "../alu_defs.v"
+`include "../bru_defs.v"
 
 module cpu7_ifu(
    input                               clock,
@@ -28,7 +30,7 @@ module cpu7_ifu(
 
    output [`GRLEN-1:0]                 ifu_exu_alu_a_e,
    output [`GRLEN-1:0]                 ifu_exu_alu_b_e,
-   output [`LSOC1K_ALU_CODE_BIT-1:0]   ifu_exu_alu_op_e,
+   output [`LALU_CODE_BIT-1:0]   ifu_exu_alu_op_e,
    output [`GRLEN-1:0]                 ifu_exu_alu_c_e,
    output                              ifu_exu_alu_double_word_e,
    output                              ifu_exu_alu_b_imm_e,
@@ -51,7 +53,7 @@ module cpu7_ifu(
 
    // bru
    output                               ifu_exu_bru_valid_e,
-   output [`LSOC1K_BRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
+   output [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
    output [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
 
    // mul
@@ -64,11 +66,11 @@ module cpu7_ifu(
 
    // csr
    output                               ifu_exu_csr_valid_e,
-   output [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_raddr_d,
+   output [`LCSR_BIT-1:0]         ifu_exu_csr_raddr_d,
    output                               ifu_exu_csr_rdwen_e,
    output                               ifu_exu_csr_xchg_e,
    output                               ifu_exu_csr_wen_e,
-   output [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_waddr_e,
+   output [`LCSR_BIT-1:0]         ifu_exu_csr_waddr_e,
 
    // alu
    output [4:0]                         ifu_exu_rf_target_e,

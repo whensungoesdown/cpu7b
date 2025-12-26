@@ -1,5 +1,5 @@
 `include "defines.vh"
-`include "decoded.vh"
+`include "alu_defs.v"
 
 `ifdef LA64
 
@@ -8,46 +8,46 @@ module alu(
   input [`GRLEN-1:0] a,
   input [`GRLEN-1:0] b,
   input double_word,
-  input [`LSOC1K_ALU_CODE_BIT-1:0] alu_op,
+  input [`LALU_CODE_BIT-1:0] alu_op,
   input [`GRLEN-1:0] c,
   output [`GRLEN-1:0] Result
 );
 
   // alu_op decoder
-  wire alu_lu32i      = alu_op == `LSOC1K_ALU_LU32I;
-  wire alu_lu12i      = alu_op == `LSOC1K_ALU_LU12I;
-  wire alu_lu52i      = alu_op == `LSOC1K_ALU_LU52I;
-  wire alu_add        = alu_op == `LSOC1K_ALU_ADD  ;
-  wire alu_pcalau     = alu_op == `LSOC1K_ALU_PCALAU;
-  wire alu_sub        = alu_op == `LSOC1K_ALU_SUB  ;
-  wire alu_and        = alu_op == `LSOC1K_ALU_AND  ;
-  wire alu_andn       = alu_op == `LSOC1K_ALU_ANDN ;
-  wire alu_or         = alu_op == `LSOC1K_ALU_OR   ;
-  wire alu_orn        = alu_op == `LSOC1K_ALU_ORN  ;
-  wire alu_xor        = alu_op == `LSOC1K_ALU_XOR  ;
-  wire alu_nor        = alu_op == `LSOC1K_ALU_NOR  ;
-  wire alu_slt        = alu_op == `LSOC1K_ALU_SLT  ;
-  wire alu_sltu       = alu_op == `LSOC1K_ALU_SLTU ;
-  wire alu_sll        = alu_op == `LSOC1K_ALU_SLL  ;
-  wire alu_srl        = alu_op == `LSOC1K_ALU_SRL  ;
-  wire alu_sra        = alu_op == `LSOC1K_ALU_SRA  ;
-  wire alu_align      = alu_op == `LSOC1K_ALU_ALIGN;
-  wire alu_rot        = alu_op == `LSOC1K_ALU_ROT  ;
-  wire alu_lead_count = alu_op == `LSOC1K_ALU_COUNT_L;
-  wire alu_tail_count = alu_op == `LSOC1K_ALU_COUNT_T;
-  wire alu_bitswap    = alu_op == `LSOC1K_ALU_BITSWAP;
-  wire alu_bitrev     = alu_op == `LSOC1K_ALU_BITREV;
-  wire alu_ext        = alu_op == `LSOC1K_ALU_EXT  ;
-  wire alu_seb        = alu_op == `LSOC1K_ALU_SEB  ;
-  wire alu_seh        = alu_op == `LSOC1K_ALU_SEH  ;
-  wire alu_wsbh       = alu_op == `LSOC1K_ALU_WSBH ;
-  wire alu_selnez     = alu_op == `LSOC1K_ALU_SELNEZ;
-  wire alu_seleqz     = alu_op == `LSOC1K_ALU_SELEQZ;
-  wire alu_lsa        = alu_op == `LSOC1K_ALU_LSA || alu_op == `LSOC1K_ALU_LSAU;
-  wire alu_lsau       = alu_op == `LSOC1K_ALU_LSAU ;
-  wire alu_ins        = alu_op == `LSOC1K_ALU_INS  ;
-  wire alu_dshd       = alu_op == `LSOC1K_ALU_DSHD ;
-  wire alu_revb       = alu_op == `LSOC1K_ALU_REVB ;
+  wire alu_lu32i      = alu_op == `LALU_LU32I;
+  wire alu_lu12i      = alu_op == `LALU_LU12I;
+  wire alu_lu52i      = alu_op == `LALU_LU52I;
+  wire alu_add        = alu_op == `LALU_ADD  ;
+  wire alu_pcalau     = alu_op == `LALU_PCALAU;
+  wire alu_sub        = alu_op == `LALU_SUB  ;
+  wire alu_and        = alu_op == `LALU_AND  ;
+  wire alu_andn       = alu_op == `LALU_ANDN ;
+  wire alu_or         = alu_op == `LALU_OR   ;
+  wire alu_orn        = alu_op == `LALU_ORN  ;
+  wire alu_xor        = alu_op == `LALU_XOR  ;
+  wire alu_nor        = alu_op == `LALU_NOR  ;
+  wire alu_slt        = alu_op == `LALU_SLT  ;
+  wire alu_sltu       = alu_op == `LALU_SLTU ;
+  wire alu_sll        = alu_op == `LALU_SLL  ;
+  wire alu_srl        = alu_op == `LALU_SRL  ;
+  wire alu_sra        = alu_op == `LALU_SRA  ;
+  wire alu_align      = alu_op == `LALU_ALIGN;
+  wire alu_rot        = alu_op == `LALU_ROT  ;
+  wire alu_lead_count = alu_op == `LALU_COUNT_L;
+  wire alu_tail_count = alu_op == `LALU_COUNT_T;
+  wire alu_bitswap    = alu_op == `LALU_BITSWAP;
+  wire alu_bitrev     = alu_op == `LALU_BITREV;
+  wire alu_ext        = alu_op == `LALU_EXT  ;
+  wire alu_seb        = alu_op == `LALU_SEB  ;
+  wire alu_seh        = alu_op == `LALU_SEH  ;
+  wire alu_wsbh       = alu_op == `LALU_WSBH ;
+  wire alu_selnez     = alu_op == `LALU_SELNEZ;
+  wire alu_seleqz     = alu_op == `LALU_SELEQZ;
+  wire alu_lsa        = alu_op == `LALU_LSA || alu_op == `LALU_LSAU;
+  wire alu_lsau       = alu_op == `LALU_LSAU ;
+  wire alu_ins        = alu_op == `LALU_INS  ;
+  wire alu_dshd       = alu_op == `LALU_DSHD ;
+  wire alu_revb       = alu_op == `LALU_REVB ;
 
   // lui res
   wire [63:0] lu32i_res = {b[63:32],a[31:0]};
@@ -435,46 +435,46 @@ module alu(
   input [`GRLEN-1:0] a,
   input [`GRLEN-1:0] b,
   input double_word,
-  input [`LSOC1K_ALU_CODE_BIT-1:0] alu_op,
+  input [`LALU_CODE_BIT-1:0] alu_op,
   input [`GRLEN-1:0] c,
   output [`GRLEN-1:0] Result
 );
 
   // alu_op decoder
-  wire alu_lu32i      = alu_op == `LSOC1K_ALU_LU32I;
-  wire alu_lu12i      = alu_op == `LSOC1K_ALU_LU12I;
-  wire alu_lu52i      = alu_op == `LSOC1K_ALU_LU52I;
-  wire alu_add        = alu_op == `LSOC1K_ALU_ADD  ;
-  wire alu_pcalau     = alu_op == `LSOC1K_ALU_PCALAU;
-  wire alu_sub        = alu_op == `LSOC1K_ALU_SUB  ;
-  wire alu_and        = alu_op == `LSOC1K_ALU_AND  ;
-  wire alu_andn       = alu_op == `LSOC1K_ALU_ANDN ;
-  wire alu_or         = alu_op == `LSOC1K_ALU_OR   ;
-  wire alu_orn        = alu_op == `LSOC1K_ALU_ORN  ;
-  wire alu_xor        = alu_op == `LSOC1K_ALU_XOR  ;
-  wire alu_nor        = alu_op == `LSOC1K_ALU_NOR  ;
-  wire alu_slt        = alu_op == `LSOC1K_ALU_SLT  ;
-  wire alu_sltu       = alu_op == `LSOC1K_ALU_SLTU ;
-  wire alu_sll        = alu_op == `LSOC1K_ALU_SLL  ;
-  wire alu_srl        = alu_op == `LSOC1K_ALU_SRL  ;
-  wire alu_sra        = alu_op == `LSOC1K_ALU_SRA  ;
-  wire alu_align      = alu_op == `LSOC1K_ALU_ALIGN;
-  wire alu_rot        = alu_op == `LSOC1K_ALU_ROT  ;
-  wire alu_lead_count = alu_op == `LSOC1K_ALU_COUNT_L;
-  wire alu_tail_count = alu_op == `LSOC1K_ALU_COUNT_T;
-  wire alu_bitswap    = alu_op == `LSOC1K_ALU_BITSWAP;
-  wire alu_bitrev     = alu_op == `LSOC1K_ALU_BITREV;
-  wire alu_ext        = alu_op == `LSOC1K_ALU_EXT  ;
-  wire alu_seb        = alu_op == `LSOC1K_ALU_SEB  ;
-  wire alu_seh        = alu_op == `LSOC1K_ALU_SEH  ;
-  wire alu_wsbh       = alu_op == `LSOC1K_ALU_WSBH ;
-  wire alu_selnez     = alu_op == `LSOC1K_ALU_SELNEZ;
-  wire alu_seleqz     = alu_op == `LSOC1K_ALU_SELEQZ;
-  wire alu_lsa        = alu_op == `LSOC1K_ALU_LSA || alu_op == `LSOC1K_ALU_LSAU;
-  wire alu_lsau       = alu_op == `LSOC1K_ALU_LSAU ;
-  wire alu_ins        = alu_op == `LSOC1K_ALU_INS  ;
-  wire alu_dshd       = alu_op == `LSOC1K_ALU_DSHD ;
-  wire alu_revb       = alu_op == `LSOC1K_ALU_REVB ;
+  wire alu_lu32i      = alu_op == `LALU_LU32I;
+  wire alu_lu12i      = alu_op == `LALU_LU12I;
+  wire alu_lu52i      = alu_op == `LALU_LU52I;
+  wire alu_add        = alu_op == `LALU_ADD  ;
+  wire alu_pcalau     = alu_op == `LALU_PCALAU;
+  wire alu_sub        = alu_op == `LALU_SUB  ;
+  wire alu_and        = alu_op == `LALU_AND  ;
+  wire alu_andn       = alu_op == `LALU_ANDN ;
+  wire alu_or         = alu_op == `LALU_OR   ;
+  wire alu_orn        = alu_op == `LALU_ORN  ;
+  wire alu_xor        = alu_op == `LALU_XOR  ;
+  wire alu_nor        = alu_op == `LALU_NOR  ;
+  wire alu_slt        = alu_op == `LALU_SLT  ;
+  wire alu_sltu       = alu_op == `LALU_SLTU ;
+  wire alu_sll        = alu_op == `LALU_SLL  ;
+  wire alu_srl        = alu_op == `LALU_SRL  ;
+  wire alu_sra        = alu_op == `LALU_SRA  ;
+  wire alu_align      = alu_op == `LALU_ALIGN;
+  wire alu_rot        = alu_op == `LALU_ROT  ;
+  wire alu_lead_count = alu_op == `LALU_COUNT_L;
+  wire alu_tail_count = alu_op == `LALU_COUNT_T;
+  wire alu_bitswap    = alu_op == `LALU_BITSWAP;
+  wire alu_bitrev     = alu_op == `LALU_BITREV;
+  wire alu_ext        = alu_op == `LALU_EXT  ;
+  wire alu_seb        = alu_op == `LALU_SEB  ;
+  wire alu_seh        = alu_op == `LALU_SEH  ;
+  wire alu_wsbh       = alu_op == `LALU_WSBH ;
+  wire alu_selnez     = alu_op == `LALU_SELNEZ;
+  wire alu_seleqz     = alu_op == `LALU_SELEQZ;
+  wire alu_lsa        = alu_op == `LALU_LSA || alu_op == `LALU_LSAU;
+  wire alu_lsau       = alu_op == `LALU_LSAU ;
+  wire alu_ins        = alu_op == `LALU_INS  ;
+  wire alu_dshd       = alu_op == `LALU_DSHD ;
+  wire alu_revb       = alu_op == `LALU_REVB ;
 
   // lui res
   wire [31:0] lu32i_res = a[31:0];

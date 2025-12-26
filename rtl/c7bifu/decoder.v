@@ -1,10 +1,12 @@
-`include "../decoded.vh"
+`include "dec_defs.v"
 `include "../c7blsu/rtl/c7blsu_defs.v"
+`include "../alu_defs.v"
+`include "../bru_defs.v"
 
 
 module decoder (
     input  [31:0] inst,
-    output [`LSOC1K_DECODE_RES_BIT-1:0] res
+    output [`LDECODE_RES_BIT-1:0] res
 );
 
 wire [5:0] op_func = inst[31:26];
@@ -603,85 +605,85 @@ wire rd_write = op_clo_w || op_clz_w || op_cto_w || op_ctz_w  || op_clo_d  || op
                                                                  `LLSU_IDLE      ;
 
 
-  wire [`LSOC1K_MDU_CODE_BIT-1:0] mdu_code = op_mul_w     ? `LSOC1K_MDU_MUL_W     :
-                                             op_mulh_w    ? `LSOC1K_MDU_MULH_W    :
-                                             op_mulh_wu   ? `LSOC1K_MDU_MULH_WU   :
-                                             op_mul_d     ? `LSOC1K_MDU_MUL_D     :
-                                             op_mulh_d    ? `LSOC1K_MDU_MULH_D    :
-                                             op_mulh_du   ? `LSOC1K_MDU_MULH_DU   :
-                                             op_mulw_d_w  ? `LSOC1K_MDU_MULW_D_W  :
-                                             op_mulw_d_wu ? `LSOC1K_MDU_MULW_D_WU :
-                                             op_div_w     ? `LSOC1K_MDU_DIV_W     :
-                                             op_mod_w     ? `LSOC1K_MDU_MOD_W     :
-                                             op_div_wu    ? `LSOC1K_MDU_DIV_WU    :
-                                             op_mod_wu    ? `LSOC1K_MDU_MOD_WU    :
-                                             op_div_d     ? `LSOC1K_MDU_DIV_D     :
-                                             op_mod_d     ? `LSOC1K_MDU_MOD_D     :
-                                             op_div_du    ? `LSOC1K_MDU_DIV_DU    :
-                                                            `LSOC1K_MDU_MOD_DU    ;
+  wire [`LMDU_CODE_BIT-1:0] mdu_code = op_mul_w     ? `LMDU_MUL_W     :
+                                             op_mulh_w    ? `LMDU_MULH_W    :
+                                             op_mulh_wu   ? `LMDU_MULH_WU   :
+                                             op_mul_d     ? `LMDU_MUL_D     :
+                                             op_mulh_d    ? `LMDU_MULH_D    :
+                                             op_mulh_du   ? `LMDU_MULH_DU   :
+                                             op_mulw_d_w  ? `LMDU_MULW_D_W  :
+                                             op_mulw_d_wu ? `LMDU_MULW_D_WU :
+                                             op_div_w     ? `LMDU_DIV_W     :
+                                             op_mod_w     ? `LMDU_MOD_W     :
+                                             op_div_wu    ? `LMDU_DIV_WU    :
+                                             op_mod_wu    ? `LMDU_MOD_WU    :
+                                             op_div_d     ? `LMDU_DIV_D     :
+                                             op_mod_d     ? `LMDU_MOD_D     :
+                                             op_div_du    ? `LMDU_DIV_DU    :
+                                                            `LMDU_MOD_DU    ;
 
-  wire [`LSOC1K_ALU_CODE_BIT-1:0] alu_code = (op_add_w || op_add_d || op_addi_w || op_addi_d || op_addu16i_d || op_pcaddi || 
-                                            op_pcaddu12i || op_pcaddu18i) ? `LSOC1K_ALU_ADD :
-                                            op_pcalau12i ? `LSOC1K_ALU_PCALAU :
-                                            (op_sub_w || op_sub_d) ? `LSOC1K_ALU_SUB :
-                                            (op_and || op_andi) ? `LSOC1K_ALU_AND :
-                                            (op_andn) ? `LSOC1K_ALU_ANDN :
-                                            (op_orn) ? `LSOC1K_ALU_ORN :
-                                            (op_or || op_ori) ? `LSOC1K_ALU_OR :
-                                            (op_xor || op_xori) ? `LSOC1K_ALU_XOR :
-                                            (op_nor) ? `LSOC1K_ALU_NOR :
-                                            (op_slt || op_slti) ? `LSOC1K_ALU_SLT :
-                                            (op_sltu || op_sltui) ? `LSOC1K_ALU_SLTU :
-                                            (op_sll_w || op_sll_d || op_slli_d || op_slli_w) ? `LSOC1K_ALU_SLL :
-                                            (op_srl_w || op_srl_d || op_srli_d || op_srli_w) ? `LSOC1K_ALU_SRL :
-                                            (op_sra_w || op_sra_d || op_srai_d || op_srai_w) ? `LSOC1K_ALU_SRA :
-                                            (op_rotr_w || op_rotr_d || op_rotri_w || op_rotri_d) ? `LSOC1K_ALU_ROT :
-                                            (op_clo_w || op_clz_w ||op_clo_d || op_clz_d) ? `LSOC1K_ALU_COUNT_L :
-                                            (op_bitrev_4b || op_bitrev_8b) ? `LSOC1K_ALU_BITSWAP :
-                                            (op_bitrev_w || op_bitrev_d) ? `LSOC1K_ALU_BITREV :
-                                            (op_bstrpick_w || op_bstrpick_d) ? `LSOC1K_ALU_EXT :
-                                            (op_bstrins_w || op_bstrins_d) ? `LSOC1K_ALU_INS :
-                                            op_ext_w_b ? `LSOC1K_ALU_SEB :
-                                            op_ext_w_h ? `LSOC1K_ALU_SEH :
-                                            (op_revb_2h || op_revb_4h) ? `LSOC1K_ALU_WSBH :
-                                            (op_revb_2w || op_revb_d) ? `LSOC1K_ALU_REVB :
-                                            (op_maskeqz) ? `LSOC1K_ALU_SELNEZ :
-                                            (op_masknez) ? `LSOC1K_ALU_SELEQZ :
-                                            (op_alsl_w || op_alsl_d) ? `LSOC1K_ALU_LSA :
-                                            (op_alsl_wu) ? `LSOC1K_ALU_LSAU :
-                                            (op_bytepick_w || op_bytepick_d) ? `LSOC1K_ALU_ALIGN :
-                                            (op_cto_w || op_ctz_w || op_cto_d || op_ctz_d) ? `LSOC1K_ALU_COUNT_T :
-                                            (op_revh_d || op_revh_2w) ? `LSOC1K_ALU_DSHD :
-                                            op_lu52i_d ? `LSOC1K_ALU_LU52I :
-                                            op_lu12i_w ? `LSOC1K_ALU_LU12I :
-                                            `LSOC1K_ALU_LU32I; //op_lu32i_d 
+  wire [`LALU_CODE_BIT-1:0] alu_code = (op_add_w || op_add_d || op_addi_w || op_addi_d || op_addu16i_d || op_pcaddi || 
+                                            op_pcaddu12i || op_pcaddu18i) ? `LALU_ADD :
+                                            op_pcalau12i ? `LALU_PCALAU :
+                                            (op_sub_w || op_sub_d) ? `LALU_SUB :
+                                            (op_and || op_andi) ? `LALU_AND :
+                                            (op_andn) ? `LALU_ANDN :
+                                            (op_orn) ? `LALU_ORN :
+                                            (op_or || op_ori) ? `LALU_OR :
+                                            (op_xor || op_xori) ? `LALU_XOR :
+                                            (op_nor) ? `LALU_NOR :
+                                            (op_slt || op_slti) ? `LALU_SLT :
+                                            (op_sltu || op_sltui) ? `LALU_SLTU :
+                                            (op_sll_w || op_sll_d || op_slli_d || op_slli_w) ? `LALU_SLL :
+                                            (op_srl_w || op_srl_d || op_srli_d || op_srli_w) ? `LALU_SRL :
+                                            (op_sra_w || op_sra_d || op_srai_d || op_srai_w) ? `LALU_SRA :
+                                            (op_rotr_w || op_rotr_d || op_rotri_w || op_rotri_d) ? `LALU_ROT :
+                                            (op_clo_w || op_clz_w ||op_clo_d || op_clz_d) ? `LALU_COUNT_L :
+                                            (op_bitrev_4b || op_bitrev_8b) ? `LALU_BITSWAP :
+                                            (op_bitrev_w || op_bitrev_d) ? `LALU_BITREV :
+                                            (op_bstrpick_w || op_bstrpick_d) ? `LALU_EXT :
+                                            (op_bstrins_w || op_bstrins_d) ? `LALU_INS :
+                                            op_ext_w_b ? `LALU_SEB :
+                                            op_ext_w_h ? `LALU_SEH :
+                                            (op_revb_2h || op_revb_4h) ? `LALU_WSBH :
+                                            (op_revb_2w || op_revb_d) ? `LALU_REVB :
+                                            (op_maskeqz) ? `LALU_SELNEZ :
+                                            (op_masknez) ? `LALU_SELEQZ :
+                                            (op_alsl_w || op_alsl_d) ? `LALU_LSA :
+                                            (op_alsl_wu) ? `LALU_LSAU :
+                                            (op_bytepick_w || op_bytepick_d) ? `LALU_ALIGN :
+                                            (op_cto_w || op_ctz_w || op_cto_d || op_ctz_d) ? `LALU_COUNT_T :
+                                            (op_revh_d || op_revh_2w) ? `LALU_DSHD :
+                                            op_lu52i_d ? `LALU_LU52I :
+                                            op_lu12i_w ? `LALU_LU12I :
+                                            `LALU_LU32I; //op_lu32i_d 
 
-wire [`LSOC1K_BRU_CODE_BIT-1:0] bru_code = (op_beqz || op_bceqz) ? `LSOC1K_BRU_EQZ :
-                                           (op_bnez || op_bcnez) ? `LSOC1K_BRU_NEZ :
-                                           (op_blt) ? `LSOC1K_BRU_LT :
-                                           (op_bge) ? `LSOC1K_BRU_GE :
-                                           (op_jirl || op_jiscr0 || op_jiscr1) ? `LSOC1K_BRU_JR :
-                                           (op_beq) ? `LSOC1K_BRU_EQ :
-                                           (op_bne) ? `LSOC1K_BRU_NE :
-                                           (op_bltu)? `LSOC1K_BRU_LTU:
-                                           (op_bgeu)? `LSOC1K_BRU_GEU:
-                                           (op_bl  )? `LSOC1K_BRU_BL :
-                                           `LSOC1K_BRU_IDLE;
+wire [`LBRU_CODE_BIT-1:0] bru_code = (op_beqz || op_bceqz) ? `LBRU_EQZ :
+                                           (op_bnez || op_bcnez) ? `LBRU_NEZ :
+                                           (op_blt) ? `LBRU_LT :
+                                           (op_bge) ? `LBRU_GE :
+                                           (op_jirl || op_jiscr0 || op_jiscr1) ? `LBRU_JR :
+                                           (op_beq) ? `LBRU_EQ :
+                                           (op_bne) ? `LBRU_NE :
+                                           (op_bltu)? `LBRU_LTU:
+                                           (op_bgeu)? `LBRU_GEU:
+                                           (op_bl  )? `LBRU_BL :
+                                           `LBRU_IDLE;
 
-wire [`LSOC1K_TLB_CODE_BIT-1:0] tlb_code = op_tlbflush  ? `LSOC1K_TLB_TLBFLUSH  :
-                                           op_tlbinv    ? `LSOC1K_TLB_TLBINV    :
-                                           op_tlbp      ? `LSOC1K_TLB_TLBP      :
-                                           op_tlbr      ? `LSOC1K_TLB_TLBR      :
-                                           op_tlbwi     ? `LSOC1K_TLB_TLBWI     :
-                                           op_tlbwr     ? `LSOC1K_TLB_TLBWR     :
-                                           op_gtlbflush ? `LSOC1K_TLB_GTLBFLUSH :
-                                           op_gtlbinv   ? `LSOC1K_TLB_GTLBINV   :
-                                           op_gtlbp     ? `LSOC1K_TLB_GTLBP     :
-                                           op_gtlbr     ? `LSOC1K_TLB_GTLBR     :
-                                           op_gtlbwi    ? `LSOC1K_TLB_GTLBWI    :
-                                           op_gtlbwr    ? `LSOC1K_TLB_GTLBWR    :
-                                           op_invtlb    ? `LSOC1K_TLB_INVTLB    :
-                                                          `LSOC1K_TLB_CODE_BIT'b0;
+wire [`LTLB_CODE_BIT-1:0] tlb_code = op_tlbflush  ? `LTLB_TLBFLUSH  :
+                                           op_tlbinv    ? `LTLB_TLBINV    :
+                                           op_tlbp      ? `LTLB_TLBP      :
+                                           op_tlbr      ? `LTLB_TLBR      :
+                                           op_tlbwi     ? `LTLB_TLBWI     :
+                                           op_tlbwr     ? `LTLB_TLBWR     :
+                                           op_gtlbflush ? `LTLB_GTLBFLUSH :
+                                           op_gtlbinv   ? `LTLB_GTLBINV   :
+                                           op_gtlbp     ? `LTLB_GTLBP     :
+                                           op_gtlbr     ? `LTLB_GTLBR     :
+                                           op_gtlbwi    ? `LTLB_GTLBWI    :
+                                           op_gtlbwr    ? `LTLB_GTLBWR    :
+                                           op_invtlb    ? `LTLB_INVTLB    :
+                                                          `LTLB_CODE_BIT'b0;
 
 wire sa = op_alsl_d || op_bytepick_d || op_bytepick_w || op_alsl_w || op_alsl_wu;
 
@@ -696,13 +698,13 @@ wire eret = op_eret;
 wire rdtime = op_rdtimel_w || op_rdtimeh_w || op_rdtime_d;
 
 wire [2:0] imm_shift =  (op_pcaddi || op_ll_d || op_ll_w || op_sc_d || op_sc_w || op_ldptr_d || 
-                         op_ldptr_w || op_stptr_d || op_stptr_w || bru_related) ? `LSOC1K_IMM_SHIFT_2 :
-                        (op_lu12i_w || op_pcaddu12i || op_pcalau12i) ? `LSOC1K_IMM_SHIFT_12 :
-                        (op_addu16i_d) ? `LSOC1K_IMM_SHIFT_16 :
-                        (op_pcaddu18i) ? `LSOC1K_IMM_SHIFT_18 :
-                        (op_lu32i_d)   ? `LSOC1K_IMM_SHIFT_32 :
-                        (op_lu52i_d)   ? `LSOC1K_IMM_SHIFT_52 :
-                                         `LSOC1K_IMM_SHIFT_0  ;
+                         op_ldptr_w || op_stptr_d || op_stptr_w || bru_related) ? `LIMM_SHIFT_2 :
+                        (op_lu12i_w || op_pcaddu12i || op_pcalau12i) ? `LIMM_SHIFT_12 :
+                        (op_addu16i_d) ? `LIMM_SHIFT_16 :
+                        (op_pcaddu18i) ? `LIMM_SHIFT_18 :
+                        (op_lu32i_d)   ? `LIMM_SHIFT_32 :
+                        (op_lu52i_d)   ? `LIMM_SHIFT_52 :
+                                         `LIMM_SHIFT_0  ;
 
 wire triple_read = op_stx_b || op_stx_d || op_stx_h || op_stx_w || op_stgt_b || op_stgt_h || op_stgt_w || op_stgt_d || op_stle_b || op_stle_h || op_stle_w || op_stle_d;
 wire double_read = op_preldx || op_ldx_b || op_ldx_h || op_ldx_w || op_ldx_d || op_ldx_bu || op_ldx_hu || op_ldx_wu || op_ldgt_b || op_ldgt_h || op_ldgt_w || op_ldgt_d || op_ldle_b || op_ldle_h || op_ldle_w || op_ldle_d ||
@@ -730,10 +732,10 @@ wire fd_write = op_fadd_s || op_fadd_d || op_fsub_s || op_movgr2fr_w || op_movgr
 
 wire ff_exchange = op_movgr2fr_w || op_movgr2fr_d || op_movgr2frh_w || op_movfr2gr_s || op_movfr2gr_d || op_movfrh2gr_s;
 
-// wire [2:0] fpu_stage = op_fadd_s ? `LSOC1K_FPU_UNI :
-//                        op_fadd_d ? `LSOC1K_FPU_DOU :
-//                        op_fsub_s ? `LSOC1K_FPU_TRI :
-//                                    `LSOC1K_FPU_QUI ;
+// wire [2:0] fpu_stage = op_fadd_s ? `LFPU_UNI :
+//                        op_fadd_d ? `LFPU_DOU :
+//                        op_fsub_s ? `LFPU_TRI :
+//                                    `LFPU_QUI ;
 
 `ifdef GS264C_64BIT
 wire valid = op_clo_w     || op_clz_w     || op_cto_w     || op_ctz_w     || op_clo_d     || op_clz_d     || op_cto_d     || op_ctz_d     ||
@@ -807,61 +809,61 @@ wire valid = op_rdtimel_w || op_rdtimeh_w || op_add_w     || op_sub_w   || op_sl
 `endif
 
 ////result
-assign res[`LSOC1K_GR_WEN        ] = gr_wen;
-assign res[`LSOC1K_RJ_READ       ] = rj_read;
-assign res[`LSOC1K_RK_READ       ] = rk_read;
-assign res[`LSOC1K_RD_WRITE      ] = rd_write || fd_write;
-assign res[`LSOC1K_MUL_RELATED   ] = mul_related;
-assign res[`LSOC1K_DIV_RELATED   ] = div_related;
-assign res[`LSOC1K_DOUBLE_WORD   ] = double_word;
-assign res[`LSOC1K_HIGH_TARGET   ] = high_target;
-assign res[`LSOC1K_I5            ] = i5;
-assign res[`LSOC1K_I12           ] = i12;
-assign res[`LSOC1K_I14           ] = i14;
-assign res[`LSOC1K_I16           ] = i16;
-assign res[`LSOC1K_I20           ] = i20;
-assign res[`LSOC1K_UNSIGN        ] = unsign;
+assign res[`LGR_WEN        ] = gr_wen;
+assign res[`LRJ_READ       ] = rj_read;
+assign res[`LRK_READ       ] = rk_read;
+assign res[`LRD_WRITE      ] = rd_write || fd_write;
+assign res[`LMUL_RELATED   ] = mul_related;
+assign res[`LDIV_RELATED   ] = div_related;
+assign res[`LDOUBLE_WORD   ] = double_word;
+assign res[`LHIGH_TARGET   ] = high_target;
+assign res[`LI5            ] = i5;
+assign res[`LI12           ] = i12;
+assign res[`LI14           ] = i14;
+assign res[`LI16           ] = i16;
+assign res[`LI20           ] = i20;
+assign res[`LUNSIGN        ] = unsign;
 assign res[`LLSU_RELATED   ] = lsu_related;
-assign res[`LSOC1K_BRU_RELATED   ] = bru_related;
-assign res[`LSOC1K_CSR_RELATED   ] = csr_related;
-assign res[`LSOC1K_CSR_WRITE     ] = csr_write;
-assign res[`LSOC1K_CACHE_RELATED ] = cache_related;
-assign res[`LSOC1K_TLB_RELATED   ] = tlb_related;
-assign res[`LSOC1K_PC_RELATED    ] = pc_related;
-assign res[`LSOC1K_RD_READ       ] = rd_read;
+assign res[`LBRU_RELATED   ] = bru_related;
+assign res[`LCSR_RELATED   ] = csr_related;
+assign res[`LCSR_WRITE     ] = csr_write;
+assign res[`LCACHE_RELATED ] = cache_related;
+assign res[`LTLB_RELATED   ] = tlb_related;
+assign res[`LPC_RELATED    ] = pc_related;
+assign res[`LRD_READ       ] = rd_read;
 assign res[`LLSU_ST        ] = lsu_st;
-assign res[`LSOC1K_SA            ] = sa;
-assign res[`LSOC1K_MSBW          ] = msbd;
-assign res[`LSOC1K_BREAK         ] = op_break;
-assign res[`LSOC1K_CPUCFG        ] = cpucfg;
-assign res[`LSOC1K_SYSCALL       ] = syscall;
-assign res[`LSOC1K_ERET          ] = eret;
-assign res[`LSOC1K_OP_CODE       ] = (mul_related || div_related) ? {3'b0,mdu_code} :
+assign res[`LSA            ] = sa;
+assign res[`LMSBW          ] = msbd;
+assign res[`LBREAK         ] = op_break;
+assign res[`LCPUCFG        ] = cpucfg;
+assign res[`LSYSCALL       ] = syscall;
+assign res[`LERET          ] = eret;
+assign res[`LOP_CODE       ] = (mul_related || div_related) ? {3'b0,mdu_code} :
                                      (lsu_related && !op_invtlb ) ?       lsu_code  :
                                      bru_related                  ? {3'b0,bru_code} :
                                      tlb_related                  ? {3'b0,tlb_code} :
                                                                     {1'b0,alu_code} ;
-assign res[`LSOC1K_LUI           ] = lui;
-assign res[`LSOC1K_IMM_SHIFT     ] = imm_shift;
-assign res[`LSOC1K_RD2RJ         ] = rd2rj;
-assign res[`LSOC1K_CSR_READ      ] = csr_read;
-assign res[`LSOC1K_CSR_XCHG      ] = csr_xchg;
-assign res[`LSOC1K_TRIPLE_READ   ] = triple_read;
-assign res[`LSOC1K_DOUBLE_READ   ] = double_read;
-assign res[`LSOC1K_DBAR          ] = op_dbar ||
+assign res[`LLUI           ] = lui;
+assign res[`LIMM_SHIFT     ] = imm_shift;
+assign res[`LRD2RJ         ] = rd2rj;
+assign res[`LCSR_READ      ] = csr_read;
+assign res[`LCSR_XCHG      ] = csr_xchg;
+assign res[`LTRIPLE_READ   ] = triple_read;
+assign res[`LDOUBLE_READ   ] = double_read;
+assign res[`LDBAR          ] = op_dbar ||
                                      op_amswap_db_w || op_amswap_db_d || op_amadd_db_w || op_amadd_db_d || op_amand_db_w || op_amand_db_d || op_amor_db_w || op_amor_db_d || op_amxor_db_w || 
                                      op_amxor_db_d || op_ammax_db_w || op_ammax_db_d || op_ammin_db_w || op_ammin_db_d || op_ammax_db_wu || op_ammax_db_du || op_ammin_db_wu || op_ammin_db_du;
-assign res[`LSOC1K_IBAR          ] = op_ibar;
-assign res[`LSOC1K_FLOAT         ] = float;
-assign res[`LSOC1K_FR_WEN        ] = fr_wen;
-assign res[`LSOC1K_FJ_READ       ] = fj_read;
-assign res[`LSOC1K_FK_READ       ] = fk_read;
-assign res[`LSOC1K_FD_READ       ] = 1'b0;//fd_read;
-assign res[`LSOC1K_FF_EXCHANGE   ] = {1'b0,ff_exchange};
-// assign res[`LSOC1K_FPU_STAGE     ] = fpu_stage;
+assign res[`LIBAR          ] = op_ibar;
+assign res[`LFLOAT         ] = float;
+assign res[`LFR_WEN        ] = fr_wen;
+assign res[`LFJ_READ       ] = fj_read;
+assign res[`LFK_READ       ] = fk_read;
+assign res[`LFD_READ       ] = 1'b0;//fd_read;
+assign res[`LFF_EXCHANGE   ] = {1'b0,ff_exchange};
+// assign res[`LFPU_STAGE     ] = fpu_stage;
 
-assign res[`LSOC1K_INE           ] = !valid || (op_invtlb && ((op_rd != 5'h0) && (op_rd != 5'h1) && (op_rd != 5'h2) && (op_rd != 5'h3) && (op_rd != 5'h4) && (op_rd != 5'h5) && (op_rd != 5'h6)));
-assign res[`LSOC1K_RDTIME        ] = rdtime;
-assign res[`LSOC1K_WAIT          ] = op_wait;
+assign res[`LINE           ] = !valid || (op_invtlb && ((op_rd != 5'h0) && (op_rd != 5'h1) && (op_rd != 5'h2) && (op_rd != 5'h3) && (op_rd != 5'h4) && (op_rd != 5'h5) && (op_rd != 5'h6)));
+assign res[`LRDTIME        ] = rdtime;
+assign res[`LWAIT          ] = op_wait;
 
 endmodule

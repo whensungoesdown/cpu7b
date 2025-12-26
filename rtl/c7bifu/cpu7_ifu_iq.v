@@ -1,4 +1,3 @@
-
 module cpu7_ifu_iq (
    input             clk,
    input             resetn,

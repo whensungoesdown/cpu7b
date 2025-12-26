@@ -1,11 +1,11 @@
-`include "decoded.vh"
+`include "defines.vh"
+`include "bru_defs.v"
 
-// ALU module
 module branch(
    input                           branch_valid,
    input [`GRLEN-1:0]              branch_a,
    input [`GRLEN-1:0]              branch_b,
-   input [`LSOC1K_BRU_CODE_BIT-1:0] branch_op,
+   input [`LBRU_CODE_BIT-1:0] branch_op,
    input [`GRLEN-1:0]              branch_pc,
    //    input [31:0]                    branch_inst,
    //    input                           branch_taken,
@@ -27,17 +27,17 @@ wire take;
 //wire cancel;
 
 //BRANCHop decoder
-wire op_beqz  = branch_op == `LSOC1K_BRU_EQZ;
-wire op_bnez  = branch_op == `LSOC1K_BRU_NEZ;
-wire op_bnc   = branch_op == `LSOC1K_BRU_JR;
-wire op_beq   = branch_op == `LSOC1K_BRU_EQ;
-wire op_bne   = branch_op == `LSOC1K_BRU_NE;
-wire op_blt   = branch_op == `LSOC1K_BRU_LT;
-wire op_bge   = branch_op == `LSOC1K_BRU_GE;
-wire op_bltu  = branch_op == `LSOC1K_BRU_LTU;
-wire op_bgeu  = branch_op == `LSOC1K_BRU_GEU;
-wire op_jirl  = branch_op == `LSOC1K_BRU_JR;
-wire op_bl    = branch_op == `LSOC1K_BRU_BL;
+wire op_beqz  = branch_op == `LBRU_EQZ;
+wire op_bnez  = branch_op == `LBRU_NEZ;
+wire op_bnc   = branch_op == `LBRU_JR;
+wire op_beq   = branch_op == `LBRU_EQ;
+wire op_bne   = branch_op == `LBRU_NE;
+wire op_blt   = branch_op == `LBRU_LT;
+wire op_bge   = branch_op == `LBRU_GE;
+wire op_bltu  = branch_op == `LBRU_LTU;
+wire op_bgeu  = branch_op == `LBRU_GEU;
+wire op_jirl  = branch_op == `LBRU_JR;
+wire op_bl    = branch_op == `LBRU_BL;
 
 wire [`GRLEN-1:0] target_next;
 wire [`GRLEN-1:0] target_jr;

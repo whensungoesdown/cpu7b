@@ -1,6 +1,8 @@
 `include "../defines.vh"
-`include "../decoded.vh"
 `include "../c7blsu/rtl/c7blsu_defs.v"
+`include "../c7bcsr/csr_defs.v"
+`include "../alu_defs.v"
+`include "../bru_defs.v"
 
 module cpu7_exu_ecl(
    input                                clk,
@@ -10,7 +12,7 @@ module cpu7_exu_ecl(
 
    input  [`GRLEN-1:0]                  ifu_exu_alu_a_e,
    input  [`GRLEN-1:0]                  ifu_exu_alu_b_e,
-   input  [`LSOC1K_ALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
+   input  [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
    input  [`GRLEN-1:0]                  ifu_exu_alu_c_e,
    input                                ifu_exu_alu_double_word_e,
    input                                ifu_exu_alu_b_imm_e,
@@ -29,7 +31,7 @@ module cpu7_exu_ecl(
    input  [`GRLEN-1:0]	                ifu_exu_pc_e,
 
    input                                ifu_exu_bru_valid_e,
-   input  [`LSOC1K_BRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
+   input  [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
    input  [`GRLEN-1:0]                  ifu_exu_bru_offset_e,
 
    // mul
@@ -42,11 +44,11 @@ module cpu7_exu_ecl(
 
    // csr
    input                                ifu_exu_csr_valid_e,
-   input  [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_raddr_d,
+   input  [`LCSR_BIT-1:0]         ifu_exu_csr_raddr_d,
    input                                ifu_exu_csr_rdwen_e,
    input                                ifu_exu_csr_xchg_e,
    input                                ifu_exu_csr_wen_e,
-   input  [`LSOC1K_CSR_BIT-1:0]         ifu_exu_csr_waddr_e,
+   input  [`LCSR_BIT-1:0]         ifu_exu_csr_waddr_e,
 
    // alu
    input  [4:0]                         ifu_exu_rf_target_e,
@@ -63,7 +65,7 @@ module cpu7_exu_ecl(
    // alu
    output [`GRLEN-1:0]                  ecl_alu_a_e,
    output [`GRLEN-1:0]                  ecl_alu_b_e,
-   output [`LSOC1K_ALU_CODE_BIT-1:0]    ecl_alu_op_e,
+   output [`LALU_CODE_BIT-1:0]    ecl_alu_op_e,
    output [`GRLEN-1:0]                  ecl_alu_c_e,
    output                               ecl_alu_double_word_e,
    input  [`GRLEN-1:0]                  alu_ecl_res_e,  // alu result
@@ -82,7 +84,7 @@ module cpu7_exu_ecl(
 
    // bru
    output                               ecl_bru_valid_e,
-   output [`LSOC1K_BRU_CODE_BIT-1:0]    ecl_bru_op_e,
+   output [`LBRU_CODE_BIT-1:0]    ecl_bru_op_e,
    output [`GRLEN-1:0]                  ecl_bru_a_e,
    output [`GRLEN-1:0]                  ecl_bru_b_e,
    output [`GRLEN-1:0]                  ecl_bru_pc_e,
@@ -106,8 +108,8 @@ module cpu7_exu_ecl(
 
    // csr
    input  [`GRLEN-1:0]                  csr_byp_rdata_d,
-   output [`LSOC1K_CSR_BIT-1:0]         ecl_csr_raddr_d,
-   output [`LSOC1K_CSR_BIT-1:0]         ecl_csr_waddr_m,
+   output [`LCSR_BIT-1:0]         ecl_csr_raddr_d,
+   output [`LCSR_BIT-1:0]         ecl_csr_waddr_m,
    output [`GRLEN-1:0]                  byp_csr_wdata_m,
    output                               ecl_csr_wen_m,
    output [`GRLEN-1:0]                  ecl_csr_mask_m,
@@ -448,9 +450,9 @@ module cpu7_exu_ecl(
 
    
    // waddr is the same as raddr
-   wire [`LSOC1K_CSR_BIT-1:0]    csr_waddr_m;
+   wire [`LCSR_BIT-1:0]    csr_waddr_m;
    
-   dff_s #(`LSOC1K_CSR_BIT) csr_waddr_e2m_reg (
+   dff_s #(`LCSR_BIT) csr_waddr_e2m_reg (
       //.din (csr_waddr_e),
       .din (ifu_exu_csr_waddr_e),
       .clk (clk),
