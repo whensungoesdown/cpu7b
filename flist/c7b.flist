@@ -38,5 +38,6 @@ ${PROJECT_ROOT}/rtl/models/ram22_way1.v
 ${PROJECT_ROOT}/rtl/models/ram64.v 
 ${PROJECT_ROOT}/rtl/models/ram64_way1.v 
 ${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_iq.v 
+${PROJECT_ROOT}/rtl/amba_axi_m2s3.v 
 
 -f ${PROJECT_ROOT}/rtl/c7blsu/flist/c7blsu.flist

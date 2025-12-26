@@ -7,53 +7,28 @@
 
 PROJECT = top
 
-#INCLUDE_DIRS := \
-#	        ../../rtl/c7blsu/rtl
+PROJECT_ROOT := $(shell cd ../.. && pwd)
 
-SOURCE_FILES =  ../../rtl/alu.v \
-                ../../rtl/branch.v \
-                ../../rtl/defines.vh \
-                ../../rtl/c7bcsr/cpu7_csr_byplog.v \
-                ../../rtl/c7bcsr/cpu7_csr.v \
-                ../../rtl/c7bcsr/cpu7_csr_timer.v \
-                ../../rtl/c7bexu/cpu7_exu_eclbyplog_rs1.v \
-                ../../rtl/c7bexu/cpu7_exu_eclbyplog.v \
-                ../../rtl/c7bexu/cpu7_exu_ecl.v \
-                ../../rtl/c7bexu/cpu7_exu_rf.v \
-                ../../rtl/c7bexu/cpu7_exu.v \
-                ../../rtl/c7bifu/cpu7_ifu_dec.v \
-                ../../rtl/c7bifu/cpu7_ifu_fdp.v \
-                ../../rtl/c7bifu/cpu7_ifu_imd.v \
-                ../../rtl/c7bifu/cpu7_ifu_incr30.v \
-                ../../rtl/c7bifu/cpu7_ifu.v \
-                ../../rtl/c7bifu/decoder.v \
-                ../../rtl/cpu7_core.v \
-                ../../rtl/decoded.vh \
-                ../../rtl/mul32x32.v \
-                ../../rtl/mul64x64.v \
-                ../../rtl/models/swrvr_clib.v \
-                ../../rtl/models/swrvr_dlib.v \
-                ../../rtl/models/sram.v \
-                ../../rtl/axi_sram_bridge.v \
-                ../../rtl/cpu.v \
-                ../../rtl/c7bbiu/c7bbiu.v \
-                ../../rtl/c7bbiu/c7bbiu_rd_arb.v \
-                ../../rtl/c7bbiu/c7bbiu_wr_arb.v \
-                ../../rtl/c7bbiu/c7bbiu_axi_interface.v \
-                ../../rtl/amba_axi_m2s3.v \
-                ../../rtl/c7bicu/c7bicu.v \
-                ../../rtl/c7bicu/c7b_cache_rams.v \
-                ../../rtl/models/ram22.v \
-                ../../rtl/models/ram22_way1.v \
-                ../../rtl/models/ram64.v \
-                ../../rtl/models/ram64_way1.v \
-                ../../rtl/c7bifu/cpu7_ifu_iq.v \
-		../../rtl/c7blsu/rtl/c7blsu.v \
-		../../rtl/c7blsu/rtl/c7blsu_defs.v \
-		../../rtl/top.v
+# Define multiple file lists
+FLIST_DIR := $(PROJECT_ROOT)/flist
+TOP_FLIST := $(FLIST_DIR)/top.flist
+RTL_FLIST := $(FLIST_DIR)/c7b.flist
+#IP_FLIST := $(FLIST_DIR)/ip.files
+#TB_FLIST := $(FLIST_DIR)/tb.files
+
+# List of all flist files to process
+ALL_FLISTS := $(RTL_FLIST) $(TOP_FLIST) 
+
+# Output file for combined sources
+COMBINED_FLIST := combined_sources.files
+
+
+# Read source files from combined list
+SOURCE_FILES := $(shell cat $(COMBINED_FLIST) 2>/dev/null || echo "")
 
 
 SOURCE_FILES_PARAMETER = $(addprefix --source=, $(SOURCE_FILES))
+
 ASSIGNMENT_FILES = top.qpf top.qsf 
 
 
@@ -68,6 +43,11 @@ BOARD = c4e6e10pins
 ###################################################################
 
 all: smart.log $(PROJECT).asm.rpt $(PROJECT).sta.rpt 
+
+# Generate combined source file list
+$(COMBINED_FLIST): $(ALL_FLISTS)
+	@echo "Combining file lists..." >&2
+	@./preprocess_flist_multi.sh $@ $^ $(PROJECT_ROOT)
 
 clean:
 	rm -rf *.rpt *.chg smart.log *.htm *.eqn *.pin *.sof *.pof db
