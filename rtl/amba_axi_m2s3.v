@@ -4,6 +4,12 @@
 //---------------------------------------------------------------------------
 `define AMBA_AXI4
 
+//altera message_off 10230
+//altera message_off 10036
+
+// Warning (10036): Verilog HDL or VHDL warning at amba_axi_m2s3.v(3155): object "arid_reg" assigned a value but never read
+// Warning (10230): Verilog HDL assignment warning at amba_axi_m2s3.v(1951): truncated value with size 32 to match size of target (5)
+
 module amba_axi_m2s3
       #(parameter WIDTH_CID   = 4 // Channel ID width in bits
                 , WIDTH_ID    = 4 // ID width in bits
