@@ -26,8 +26,8 @@ SOURCE_FILES_PARAMETER = $(addprefix --source=, $(SOURCE_FILES))
 
 ASSIGNMENT_FILES = top.qpf top.qsf 
 FAMILY = "Cyclone IV E"
-PART = EP4CE6E22C8
-BOARD = c4e6e10pins
+PART = EP4CE15F23C8
+BOARD = ac415pins
 
 ###################################################################
 # Main Targets
@@ -94,6 +94,12 @@ smart.log: $(ASSIGNMENT_FILES)
 $(ASSIGNMENT_FILES):
 	quartus_sh --prepare $(PROJECT)
 	-cat $(BOARD) >> $(PROJECT).qsf
+
+
+	# 添加警告屏蔽（确保在新行）
+	@echo "" >> $(PROJECT).qsf
+	@echo "# Warning suppression" >> $(PROJECT).qsf
+	@echo "set_global_assignment -name MESSAGE_DISABLE 10335" >> $(PROJECT).qsf
 
 # Fixed: Add $(COMBINED_FLIST) dependency
 map.chg: $(COMBINED_FLIST)

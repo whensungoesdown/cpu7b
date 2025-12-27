@@ -29,7 +29,7 @@ wire take;
 //BRANCHop decoder
 wire op_beqz  = branch_op == `LBRU_EQZ;
 wire op_bnez  = branch_op == `LBRU_NEZ;
-wire op_bnc   = branch_op == `LBRU_JR;
+//wire op_bnc   = branch_op == `LBRU_JR;
 wire op_beq   = branch_op == `LBRU_EQ;
 wire op_bne   = branch_op == `LBRU_NE;
 wire op_blt   = branch_op == `LBRU_LT;
@@ -51,8 +51,8 @@ wire need_gex;
 wire need_eqz;
 wire need_nez;
 
-wire need_any;
-wire need_compute;
+//wire need_any;
+//wire need_compute;
 
 wire compare_unsigned;
 wire compare_ltx_u;
@@ -74,14 +74,14 @@ assign need_ltx = op_blt || op_bltu;
 assign need_eqz = op_beqz;
 assign need_nez = op_bnez;
 
-assign need_any = 
-       need_eqx
-    || need_nex
-    || need_gex
-    || need_ltx
-    || need_eqz
-    || need_nez;
-assign need_compute = op_jirl;
+//assign need_any = 
+//       need_eqx
+//    || need_nex
+//    || need_gex
+//    || need_ltx
+//    || need_eqz
+//    || need_nez;
+//assign need_compute = op_jirl;
 
 ////func
 //condition judge

@@ -143,8 +143,8 @@ module c7bicu
 
    //compare tag with addr
 
-   wire [31:11] tmp_tag; // convinence for checking the tag value
-   assign tmp_tag = ifu_icu_addr_ic1[31:11];
+   //wire [31:11] tmp_tag; // convinence for checking the tag value
+   //assign tmp_tag = ifu_icu_addr_ic1[31:11];
 
    assign ic_tag_way0_match_ic2 = (ram_icu_tag_rdata0[20:0] == ic_lu_addr_ic2[31:11]) & ic_tag_way0_v_ic2;
    assign ic_tag_way1_match_ic2 = (ram_icu_tag_rdata1[20:0] == ic_lu_addr_ic2[31:11]) & ic_tag_way1_v_ic2;

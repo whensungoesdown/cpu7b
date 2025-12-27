@@ -1,5 +1,5 @@
 WIDTH=64;
-DEPTH=8192;
+DEPTH=4096;
 
 ADDRESS_RADIX=HEX;
 DATA_RADIX=HEX;
@@ -12,6 +12,6 @@ CONTENT BEGIN
         0004:              0280000002800000; 
         0005:              0000000002800000; 
 --    data:
-        [0006..1FFF]  :    AABBCCDDAAAABBBB; 
+        [0006..0FFF]  :    AABBCCDDAAAABBBB; 
 
 END;

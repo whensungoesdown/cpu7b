@@ -443,7 +443,7 @@ module alu(
   // alu_op decoder
   wire alu_lu32i      = alu_op == `LALU_LU32I;
   wire alu_lu12i      = alu_op == `LALU_LU12I;
-  wire alu_lu52i      = alu_op == `LALU_LU52I;
+  //wire alu_lu52i      = alu_op == `LALU_LU52I;
   wire alu_add        = alu_op == `LALU_ADD  ;
   wire alu_pcalau     = alu_op == `LALU_PCALAU;
   wire alu_sub        = alu_op == `LALU_SUB  ;
@@ -671,7 +671,7 @@ wire [31:0] res =
     {32{alu_seleqz}} & seleqz_res |
     {32{alu_selnez}} & selnez_res ;
   // set zero flag
-  wire zf = (res == 0);
+  //wire zf = (res == 0);
   // output results
   assign Result = res;
   

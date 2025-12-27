@@ -176,7 +176,7 @@ module cpu7_ifu_dec(
    wire lsu_dispatch_d; 
    wire bru_dispatch_d;
    wire mul_dispatch_d; 
-   wire div_dispatch_d; 
+   //wire div_dispatch_d; 
    wire none_dispatch_d;
    wire ertn_dispatch_d;
 
@@ -187,7 +187,7 @@ module cpu7_ifu_dec(
    assign lsu_dispatch_d  = op_d[`LLSU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
    assign bru_dispatch_d  = op_d[`LBRU_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
    assign mul_dispatch_d  = op_d[`LMUL_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
-   assign div_dispatch_d  = op_d[`LDIV_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
+   //assign div_dispatch_d  = op_d[`LDIV_RELATED] && fdp_dec_inst_kill_vld_d && !exception_d;
    assign none_dispatch_d = (op_d[`LCSR_RELATED] || op_d[`LTLB_RELATED] || op_d[`LCACHE_RELATED]) && fdp_dec_inst_kill_vld_d && !exception_d ;
    assign ertn_dispatch_d = op_d[`LERET] && fdp_dec_inst_kill_vld_d && !exception_d;
 
@@ -223,7 +223,7 @@ module cpu7_ifu_dec(
    
    ////ALU input
    //A:
-   wire alu_a_zero = op_d[`LLUI];// op_rdpgpr_1 || op_wrpgpr_1; //zero
+   //wire alu_a_zero = op_d[`LLUI];// op_rdpgpr_1 || op_wrpgpr_1; //zero
    wire alu_a_pc = op_d[`LPC_RELATED];
 
    //B:
