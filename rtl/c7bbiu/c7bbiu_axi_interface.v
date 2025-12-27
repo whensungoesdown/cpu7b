@@ -132,12 +132,12 @@ module c7bbiu_axi_interface(
    assign ar_valid_in = (ar_valid_q & ~ext_biu_ar_ready) | arb_rd_val; 
    assign biu_ext_ar_valid = ar_valid_q;
 
-   dffrl_s #(1) ar_valid_reg (
+   dffrl_ns #(1) ar_valid_reg (
       .din   (ar_valid_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (ar_valid_q), 
-      .se(), .si(), .so());
+      .q     (ar_valid_q));
+      //.se(), .si(), .so());
    
 
 
@@ -175,7 +175,7 @@ module c7bbiu_axi_interface(
                        arb_rd_prot
                        };
 
-   dffrle_s #(57) arb_rd_reg (
+   dffrle_ns #(57) arb_rd_reg (
       .din   (arb_rd_in),
       .rst_l (resetn),
       .en    (ar_enable),  
@@ -185,8 +185,8 @@ module c7bbiu_axi_interface(
 //      so, only buffered for one cycle (WRONG!), these signals also need to
 //      be registered, to wait for the ar_ready 
       .clk   (clk),
-      .q     (arb_rd_q),
-      .se(), .si(), .so());
+      .q     (arb_rd_q));
+      //.se(), .si(), .so());
 
    assign {arb_rd_id_q,
 	   arb_rd_addr_q,
@@ -299,12 +299,12 @@ module c7bbiu_axi_interface(
    assign aw_valid_in = (aw_valid_q & ~ext_biu_aw_ready) | arb_wr_aw_val; 
    assign biu_ext_aw_valid = aw_valid_q;
 
-   dffrl_s #(1) aw_valid_reg (
+   dffrl_ns #(1) aw_valid_reg (
       .din   (aw_valid_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (aw_valid_q), 
-      .se(), .si(), .so());
+      .q     (aw_valid_q));
+      //.se(), .si(), .so());
 
 
    assign axi_aw_ready = ~(biu_ext_aw_valid & ~ext_biu_aw_ready);
@@ -335,13 +335,13 @@ module c7bbiu_axi_interface(
                           arb_wr_aw_prot
                           };
 
-   dffrle_s #(57) arb_wr_aw_reg (
+   dffrle_ns #(57) arb_wr_aw_reg (
       .din   (arb_wr_aw_in),
       .rst_l (resetn),
       .en    (aw_enable),  
       .clk   (clk),
-      .q     (arb_wr_aw_q),
-      .se(), .si(), .so());
+      .q     (arb_wr_aw_q));
+      //.se(), .si(), .so());
 
    assign {arb_wr_aw_id_q,
            arb_wr_aw_addr_q,
@@ -376,12 +376,12 @@ module c7bbiu_axi_interface(
    assign w_valid_in = (w_valid_q & ~ext_biu_w_ready) | arb_wr_w_val; 
    assign biu_ext_w_valid = w_valid_q;
 
-   dffrl_s #(1) w_valid_reg (
+   dffrl_ns #(1) w_valid_reg (
       .din   (w_valid_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (w_valid_q), 
-      .se(), .si(), .so());
+      .q     (w_valid_q)); 
+      //.se(), .si(), .so());
 
 
    assign axi_w_ready = ~(biu_ext_w_valid & ~ext_biu_w_ready);
@@ -403,13 +403,13 @@ module c7bbiu_axi_interface(
 		         arb_wr_w_last
 			 };
 
-   dffrle_s #(77) arb_wr_w_reg (
+   dffrle_ns #(77) arb_wr_w_reg (
       .din   (arb_wr_w_in),
       .rst_l (resetn),
       .en    (w_enable),  
       .clk   (clk),
-      .q     (arb_wr_w_q),
-      .se(), .si(), .so());
+      .q     (arb_wr_w_q));
+      //.se(), .si(), .so());
 
    assign {arb_wr_w_id_q,
 	   arb_wr_w_data_q,

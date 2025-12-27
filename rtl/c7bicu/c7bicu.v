@@ -75,12 +75,12 @@ module c7bicu
 
    assign ic_lu_ic1 = ifu_icu_req_ic1 & icu_ifu_ack_ic1;
 
-   dffrl_s #(1) ic_lu_reg (
+   dffrl_ns #(1) ic_lu_reg (
       .din   (ic_lu_ic1),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (ic_lu_ic2),
-      .se(), .si(), .so());
+      .q     (ic_lu_ic2));
+      //.se(), .si(), .so());
 
 
 
@@ -97,12 +97,12 @@ module c7bicu
 
    assign lu_inprog_in = (lu_inprog_q & ~data_valid_ic2) | ic_lu_ic1;
 
-   dffrl_s #(1) lu_inprog_reg (
+   dffrl_ns #(1) lu_inprog_reg (
       .din   (lu_inprog_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (lu_inprog_q),
-      .se(), .si(), .so());
+      .q     (lu_inprog_q));
+      //.se(), .si(), .so());
 
 
    wire ic_hit_ic2;
@@ -113,13 +113,13 @@ module c7bicu
 
    wire [31:3] ic_lu_addr_ic2;
 
-   dffrle_s #(29) ic_lu_addr_reg (
+   dffrle_ns #(29) ic_lu_addr_reg (
       .din   (ifu_icu_addr_ic1[31:3]),
       .en    (ic_lu_ic1),
       .rst_l (resetn),
       .clk   (clk),
-      .q     (ic_lu_addr_ic2),
-      .se(), .si(), .so());
+      .q     (ic_lu_addr_ic2));
+      //.se(), .si(), .so());
 
 
    //
@@ -162,14 +162,14 @@ module c7bicu
 
    wire ifu_cancel_q;
 
-   dffrle_s #(1) ifu_cancel_reg (
+   dffrle_ns #(1) ifu_cancel_reg (
       .din   (ifu_icu_cancel & ~data_valid_ic2), // if the data need to cancel is right valid at this cycle, then do not set ifu_cancel_reg 
       .clk   (clk),
       .rst_l (resetn),
       //.en    (ifu_icu_cancel | icu_ifu_data_valid_ic2),
       .en    (ifu_icu_cancel | data_valid_ic2),
-      .q     (ifu_cancel_q), 
-      .se(), .si(), .so());
+      .q     (ifu_cancel_q));
+      //.se(), .si(), .so());
 
 
    //
@@ -210,12 +210,12 @@ module c7bicu
 
    assign lf_inprog_in = (lf_inprog_q & ~biu_icu_data_last) | biu_icu_ack;
 
-   dffrl_s #(1) lf_inprog_reg (
+   dffrl_ns #(1) lf_inprog_reg (
       .din   (lf_inprog_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (lf_inprog_q),
-      .se(), .si(), .so());
+      .q     (lf_inprog_q));
+      //.se(), .si(), .so());
 
    wire biu_rd_busy;
    assign biu_rd_busy = lf_inprog_q; // | others
@@ -236,14 +236,14 @@ module c7bicu
 
    wire lf_req_q;
 
-   dffrle_s #(1) lf_req_reg (
+   dffrle_ns #(1) lf_req_reg (
       .din   (ic_miss_ic2),
       .clk   (clk),
       .rst_l (resetn),
       //.en    (ic_miss_ic2 | biu_icu_ack),
       .en    (ic_miss_ic2 | biu_rd_busy),
-      .q     (lf_req_q),
-      .se(), .si(), .so());
+      .q     (lf_req_q));
+      //.se(), .si(), .so());
 
    assign icu_biu_req = (lf_req_q | ic_miss_ic2) & ~biu_rd_busy;
 
@@ -260,13 +260,13 @@ module c7bicu
    assign lfb_cnt_in = {{4{icu_biu_req}} & 4'b0001} |
                        {{4{~icu_biu_req}} & {lfb_cnt_q << 1'b1}};
 
-   dffrle_s #(4) lfb_cnt_reg (
+   dffrle_ns #(4) lfb_cnt_reg (
       .clk   (clk),
       .rst_l (resetn),
       .din   (lfb_cnt_in),
       .en    (icu_biu_req | biu_icu_data_valid),
-      .q     (lfb_cnt_q),
-      .se(), .si(), .so());
+      .q     (lfb_cnt_q));
+      //.se(), .si(), .so());
 
 
    // linefill buffer is 256-bit, same as a cache line
@@ -285,33 +285,33 @@ module c7bicu
    assign lfb2_in = biu_icu_data;
    assign lfb3_in = biu_icu_data;
 
-   dffe_s #(64) lfb0_reg (
+   dffe_ns #(64) lfb0_reg (
       .clk   (clk),
       .din   (lfb0_in),
       .en    (biu_icu_data_valid & lfb_cnt_q[0]),
-      .q     (lfb0_q),
-      .se(), .si(), .so());
+      .q     (lfb0_q));
+      //.se(), .si(), .so());
 
-   dffe_s #(64) lfb1_reg (
+   dffe_ns #(64) lfb1_reg (
       .clk   (clk),
       .din   (lfb1_in),
       .en    (biu_icu_data_valid & lfb_cnt_q[1]),
-      .q     (lfb1_q),
-      .se(), .si(), .so());
+      .q     (lfb1_q));
+      //.se(), .si(), .so());
 
-   dffe_s #(64) lfb2_reg (
+   dffe_ns #(64) lfb2_reg (
       .clk   (clk),
       .din   (lfb2_in),
       .en    (biu_icu_data_valid & lfb_cnt_q[2]),
-      .q     (lfb2_q),
-      .se(), .si(), .so());
+      .q     (lfb2_q));
+      //.se(), .si(), .so());
 
-   dffe_s #(64) lfb3_reg (
+   dffe_ns #(64) lfb3_reg (
       .clk   (clk),
       .din   (lfb3_in),
       .en    (biu_icu_data_valid & lfb_cnt_q[3]),
-      .q     (lfb3_q),
-      .se(), .si(), .so());
+      .q     (lfb3_q));
+      //.se(), .si(), .so());
 
 
    assign ic_lfb_hit_data_valid = biu_icu_data_last & biu_icu_data_valid;
@@ -335,13 +335,13 @@ module c7bicu
    // reset to 0 at the last cycle of allocation, that is when
    // biu_icu_data_last is signaled
    //assign ic_al_way01_ic2 = ic_tag_way0_v_ic2 & ~ic_tag_way1_v_ic2;
-   dffrle_s #(1) ic_al_way01_ic2_reg (
+   dffrle_ns #(1) ic_al_way01_ic2_reg (
       .clk   (clk),
       .rst_l (resetn),
       .din   ((ic_tag_way0_v_ic2 & ~ic_tag_way1_v_ic2) & ~biu_icu_data_last),
       .en    (ic_al_ic2 | biu_icu_data_last),
-      .q     (ic_al_way01_ic2_q),
-      .se(), .si(), .so());
+      .q     (ic_al_way01_ic2_q));
+      //.se(), .si(), .so());
 
 //   wire ic_al_ic2_q;
 //
@@ -366,13 +366,13 @@ module c7bicu
    assign al_cnt_in = {{2{icu_biu_req}} & 2'b00} |
                        {{2{~icu_biu_req}} & {al_cnt_q + 2'b01}};
 
-   dffrle_s #(2) al_cnt_reg (
+   dffrle_ns #(2) al_cnt_reg (
       .clk   (clk),
       .rst_l (resetn),
       .din   (al_cnt_in),
       .en    (icu_biu_req | biu_icu_data_valid),
-      .q     (al_cnt_q),
-      .se(), .si(), .so());
+      .q     (al_cnt_q));
+      //.se(), .si(), .so());
 
    //assign icu_ram_data_addr0 = ic_lu_addr_ic2[14:3];
    //assign icu_ram_data_addr1 = ic_lu_addr_ic2[14:3];

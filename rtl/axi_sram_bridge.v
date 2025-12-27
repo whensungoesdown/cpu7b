@@ -83,13 +83,13 @@ module axi_sram_bridge(
    assign rd_busy_din = ar_enter & (~r_retire);
    assign rd_busy_en = ar_enter | r_retire;
    
-   dffrle_s #(1) rd_busy_reg (
+   dffrle_ns #(1) rd_busy_reg (
       .din   (rd_busy_din),
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (rd_busy_en),
-      .q     (rd_busy), 
-      .se(), .si(), .so());
+      .q     (rd_busy));
+      //.se(), .si(), .so());
 
    assign m_arready = ~rd_busy;
 
@@ -103,22 +103,22 @@ module axi_sram_bridge(
    //assign rdata_valid_next = (rdata_valid_tmp | ar_enter) & (~m_rready);
    assign rdata_valid_next = (rdata_valid_tmp | ar_enter) & (~m_rlast);
    
-   dffrl_s #(1) rdata_valid_reg (
+   dffrl_ns #(1) rdata_valid_reg (
       .din   (rdata_valid_next),
       .clk   (aclk),
       .rst_l (aresetn),
-      .q     (rdata_valid_tmp),
-      .se(), .si(), .so());
+      .q     (rdata_valid_tmp));
+      //.se(), .si(), .so());
 
    
    wire ar_enter_delay1;
 
-   dffrl_s #(1) ar_enter_delay1_reg (
+   dffrl_ns #(1) ar_enter_delay1_reg (
       .din   (ar_enter),
       .clk   (aclk),
       .rst_l (aresetn),
-      .q     (ar_enter_delay1), 
-      .se(), .si(), .so());
+      .q     (ar_enter_delay1)); 
+      //.se(), .si(), .so());
    
    // rdata_valid show up at lease one cycle
    assign rdata_valid = rdata_valid_tmp | ar_enter_delay1;
@@ -128,45 +128,45 @@ module axi_sram_bridge(
    wire [3:0] m_arid_q;
    wire [1:0] m_arburst_q;
 
-   dffrle_s #(4) arid_reg (
+   dffrle_ns #(4) arid_reg (
       .din   (m_arid),
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (ar_enter),
-      .q     (m_arid_q), 
-      .se(), .si(), .so());
+      .q     (m_arid_q));
+      //.se(), .si(), .so());
 
-   dffrle_s #(2) arburst_reg (
+   dffrle_ns #(2) arburst_reg (
       .din   (m_arburst),
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (ar_enter),
-      .q     (m_arburst_q), 
-      .se(), .si(), .so());
+      .q     (m_arburst_q));
+      //.se(), .si(), .so());
 
    wire [31:0] araddr_in;
    wire [31:0] araddr_q;
    assign araddr_in = m_arvalid ? m_araddr : araddr_q + 'h8;
 
-   dffrl_s #(32) araddr_reg (
+   dffrl_ns #(32) araddr_reg (
       .din   (araddr_in),
       .clk   (aclk),
       .rst_l (aresetn),
       //.en    (ar_enter),
-      .q     (araddr_q), 
-      .se(), .si(), .so());
+      .q     (araddr_q));
+      //.se(), .si(), .so());
 
    wire [7:0] rd_burst_cnt_in;
    wire [7:0] rd_burst_cnt_q;
    assign rd_burst_cnt_in = m_arvalid ? m_arlen : rd_burst_cnt_q - 1'b1;
 
-   dffrl_s #(8) rd_burst_cnt_reg (
+   dffrl_ns #(8) rd_burst_cnt_reg (
       .din   (rd_burst_cnt_in),
       .clk   (aclk),
       .rst_l (aresetn),
       //.en    (ar_enter),
-      .q     (rd_burst_cnt_q), 
-      .se(), .si(), .so());
+      .q     (rd_burst_cnt_q));
+      //.se(), .si(), .so());
 
    assign m_rid = m_arid_q;
    assign m_rlast = rd_busy & (m_arburst_q == 2'b00 ? 1'b1 : rd_burst_cnt_q == 1'b0);
@@ -190,31 +190,31 @@ module axi_sram_bridge(
    assign w_enter = m_wvalid & m_wready;
    assign b_retire = m_bvalid & m_bready; // & m_wlast register 
 
-   dffrle_s #(1) aw_busy_reg (
+   dffrle_ns #(1) aw_busy_reg (
       .din   (aw_enter),
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (aw_enter | b_retire),
-      .q     (aw_busy), 
-      .se(), .si(), .so());
+      .q     (aw_busy));
+      //.se(), .si(), .so());
 
    assign m_awready = ~aw_busy;
 
-   dffe_s #(32) awaddr_reg (
+   dffe_ns #(32) awaddr_reg (
       .din   (m_awaddr),
       .clk   (aclk),
       .en    (aw_enter),
-      .q     (ram_waddr), 
-      .se(), .si(), .so());
+      .q     (ram_waddr));
+      //.se(), .si(), .so());
    
    
-   dffrle_s #(1) w_busy_reg (
+   dffrle_ns #(1) w_busy_reg (
       .din   (w_enter),
       .clk   (aclk),
       .rst_l (aresetn),
       .en    (w_enter | b_retire),
-      .q     (w_busy), 
-      .se(), .si(), .so());
+      .q     (w_busy)); 
+      //.se(), .si(), .so());
 
    assign m_wready = ~w_busy;
    
@@ -227,12 +227,12 @@ module axi_sram_bridge(
    assign {m_wid_q, ram_wdata, m_wstrb_q} = wpayload_q;
 
 
-   dffe_s #(4+64+8) wpayload_reg (
+   dffe_ns #(4+64+8) wpayload_reg (
       .din   (wpayload_in),
       .clk   (aclk),
       .en    (w_enter),
-      .q     (wpayload_q), 
-      .se(), .si(), .so());
+      .q     (wpayload_q));
+      //.se(), .si(), .so());
 
    // enable ram write when both awaddr and wdata are received.
    assign ram_wen = {8{aw_busy & w_busy}} & m_wstrb_q;
@@ -249,12 +249,12 @@ module axi_sram_bridge(
    assign bresp_valid_end   = m_bready;
    assign bresp_valid_next = (bresp_valid_tmp | bresp_valid_start) & (~bresp_valid_end);
    
-   dffrl_s #(1) bresp_valid_reg (
+   dffrl_ns #(1) bresp_valid_reg (
       .din   (bresp_valid_next),
       .clk   (aclk),
       .rst_l (aresetn),
-      .q     (bresp_valid_tmp),
-      .se(), .si(), .so());
+      .q     (bresp_valid_tmp));
+      //.se(), .si(), .so());
 
    assign bresp_valid = bresp_valid_tmp | bresp_valid_start;
    

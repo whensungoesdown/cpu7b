@@ -81,7 +81,7 @@ reg	[SIZE-1:0]	dout ;
    $constraint dl_1c_chk4 ($one_cold ({sel3_l,sel2_l,sel1_l,sel0_l}));
 `endif
 
-wire [3:0] sel = {sel3_l,sel2_l,sel1_l,sel0_l}; // 0in one_cold
+//wire [3:0] sel = {sel3_l,sel2_l,sel1_l,sel0_l}; // 0in one_cold
    
 always @ (sel0_l or sel1_l or sel2_l or sel3_l or in0 or in1 or in2 or in3)
 
@@ -127,7 +127,7 @@ reg	[SIZE-1:0]	dout ;
    $constraint dl_1c_chk5 ($one_cold ({sel4_l,sel3_l,sel2_l,sel1_l,sel0_l}));
 `endif
    
-wire [4:0] sel = {sel4_l,sel3_l,sel2_l,sel1_l,sel0_l}; // 0in one_cold
+//wire [4:0] sel = {sel4_l,sel3_l,sel2_l,sel1_l,sel0_l}; // 0in one_cold
 
 always @ (sel0_l or sel1_l or sel2_l or sel3_l or sel4_l or
 		in0 or in1 or in2 or in3 or in4)
@@ -232,7 +232,7 @@ reg	[SIZE-1:0]	dout ;
    $constraint dl_1c_chk3 ($one_cold ({sel2_l,sel1_l,sel0_l}));
 `endif
 
-wire [2:0] sel = {sel2_l,sel1_l,sel0_l}; // 0in one_cold
+//wire [2:0] sel = {sel2_l,sel1_l,sel0_l}; // 0in one_cold
    
 always @ (sel0_l or sel1_l or sel2_l or in0 or in1 or in2)
 

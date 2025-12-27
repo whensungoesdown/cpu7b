@@ -627,7 +627,7 @@ reg	[SIZE-1:0]	dout ;
    $constraint cl_1h_chk3 ($one_hot ({sel2,sel1,sel0}));
 `endif
 
-wire [2:0] sel = {sel2,sel1,sel0}; // 0in one_hot
+//wire [2:0] sel = {sel2,sel1,sel0}; // 0in one_hot
    
 // priority encoding takes care of mutex'ing selects.
 always @ (sel0 or sel1 or sel2 or in0 or in1 or in2)

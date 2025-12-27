@@ -60,12 +60,12 @@ module c7bbiu_rd_arb(
    // busy_q               : __----_
    assign busy_in = (busy_q & ~ext_biu_r_last) | arb_rd_val;
 
-   dffrl_s #(1) busy_reg (
+   dffrl_ns #(1) busy_reg (
       .din   (busy_in),
       .clk   (clk),
       .rst_l (resetn),
-      .q     (busy_q),
-      .se(), .si(), .so());
+      .q     (busy_q));
+      //.se(), .si(), .so());
 
 
    // If either the IFU or LSU is selected, there is a 1-cycle delay from the

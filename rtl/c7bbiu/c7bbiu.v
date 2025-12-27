@@ -317,13 +317,13 @@ module c7bbiu(
 
    wire ifu_cancel_q;
 
-   dffrle_s #(1) ifu_cancel_reg (
+   dffrle_ns #(1) ifu_cancel_reg (
       .din   (ifu_biu_cancel),
       .clk   (clk),
       .rst_l (resetn),
       .en    (ifu_biu_cancel | axi_rdata_ifu_val),
-      .q     (ifu_cancel_q), 
-      .se(), .si(), .so());
+      .q     (ifu_cancel_q));
+      //.se(), .si(), .so());
 
    assign axi_rdata_ifu_val_qual = axi_rdata_ifu_val & ~ifu_cancel_q;
 

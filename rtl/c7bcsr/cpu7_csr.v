@@ -92,13 +92,13 @@ module cpu7_csr(
       .sel1_l (crmd_ie_mux_sel_zero_l),
       .sel2_l (crmd_ie_mux_sel_prmdpie_l));
          
-   dffrle_s #(1) crmd_ie_reg (
+   dffrle_ns #(1) crmd_ie_reg (
       .din   (crmd_ie_nxt),
       .rst_l (resetn),
       .en    (crmd_ie_msk_wen | exception | ecl_csr_ertn_e),
       .clk   (clk),
-      .q     (crmd_ie),
-      .se(), .si(), .so());
+      .q     (crmd_ie));
+      //.se(), .si(), .so());
    
 
    // CRMD.plv
@@ -135,13 +135,13 @@ module cpu7_csr(
       .sel1_l (crmd_plv_mux_sel_zero_l),
       .sel2_l (crmd_plv_mux_sel_prmdpplv_l));
    
-   dffrle_s #(2) crmd_plv_reg (
+   dffrle_ns #(2) crmd_plv_reg (
       .din   (crmd_plv_nxt),
       .rst_l (resetn),
       .en    (crmd_plv_msk_wen | exception | ecl_csr_ertn_e),
       .clk   (clk),
-      .q     (crmd_plv),
-      .se(), .si(), .so());
+      .q     (crmd_plv));
+      //.se(), .si(), .so());
 
    
    assign crmd = {
@@ -170,13 +170,13 @@ module cpu7_csr(
       .in1  (crmd_ie),
       .sel  (exception));
    
-   dffrle_s #(1) prmd_pie_reg (
+   dffrle_ns #(1) prmd_pie_reg (
       .din   (prmd_pie_nxt),
       .rst_l (resetn),
       .en    (prmd_pie_msk_wen | exception),
       .clk   (clk),
-      .q     (prmd_pie),
-      .se(), .si(), .so());
+      .q     (prmd_pie));
+      //.se(), .si(), .so());
 
 
 
@@ -193,13 +193,13 @@ module cpu7_csr(
       .in1  (crmd_plv),
       .sel  (exception));
 
-   dffrle_s #(2) prmd_pplv_reg (
+   dffrle_ns #(2) prmd_pplv_reg (
       .din   (prmd_pplv_nxt),
       .rst_l (resetn),
       .en    (prmd_pplv_msk_wen | exception),
       .clk   (clk),
-      .q     (prmd_pplv),
-      .se(), .si(), .so());
+      .q     (prmd_pplv));
+      //.se(), .si(), .so());
    
 
    assign prmd = {
@@ -231,13 +231,13 @@ module cpu7_csr(
       .in1  (ifu_exu_pc_e),
       .sel  (exception));
 
-   dffrle_s #(32) era_reg (
+   dffrle_ns #(32) era_reg (
       .din   (era_nxt),
       .rst_l (resetn),
       .en    (era_wen | exception),
       .clk   (clk),
-      .q     (era),
-      .se(), .si(), .so());
+      .q     (era));
+      //.se(), .si(), .so());
    
    assign csr_era = era;
 
@@ -262,13 +262,13 @@ module cpu7_csr(
       .in1  (ecl_csr_badv_e),
       .sel  (exception));  // illinst does not set BADV, later consider this. code review 
 
-   dffrle_s #(32) badv_reg (
+   dffrle_ns #(32) badv_reg (
       .din   (badv_nxt),
       .rst_l (resetn),
       .en    (badv_wen | exception),
       .clk   (clk),
-      .q     (badv),
-      .se(), .si(), .so());
+      .q     (badv));
+      //.se(), .si(), .so());
    
 
 
@@ -284,13 +284,13 @@ module cpu7_csr(
    assign eentry_nxt = (eentry & (~csr_mask)) | (csr_wdata & csr_mask);
    assign eentry_wen = (csr_waddr == `LCSR_EBASE) && csr_wen; // EBASE is EENTRY
 
-   dffrle_s #(32) eentry_reg (
+   dffrle_ns #(32) eentry_reg (
       .din   (eentry_nxt),
       .rst_l (resetn),
       .en    (eentry_wen),
       .clk   (clk),
-      .q     (eentry),
-      .se(), .si(), .so());
+      .q     (eentry));
+      //.se(), .si(), .so());
 
    assign csr_eentry = eentry;
 
@@ -320,13 +320,13 @@ module cpu7_csr(
 
    assign tcfg_en_nxt = csr_wdata[`LTCFG_EN];
 
-   dffrle_s #(1) tcfg_en_reg (
+   dffrle_ns #(1) tcfg_en_reg (
       .din   (tcfg_en_nxt),
       .rst_l (resetn),
       .en    (tcfg_en_msk_wen),
       .clk   (clk),
-      .q     (tcfg_en),
-      .se(), .si(), .so());
+      .q     (tcfg_en));
+      //.se(), .si(), .so());
 
 
    // TCFG.PERIODIC
@@ -338,13 +338,13 @@ module cpu7_csr(
 
    assign tcfg_periodic_nxt = csr_wdata[`LTCFG_PERIODIC];
 
-   dffrle_s #(1) tcfg_periodic_reg (
+   dffrle_ns #(1) tcfg_periodic_reg (
       .din   (tcfg_periodic_nxt),
       .rst_l (resetn),
       .en    (tcfg_periodic_msk_wen),
       .clk   (clk),
-      .q     (tcfg_periodic),
-      .se(), .si(), .so());
+      .q     (tcfg_periodic));
+      //.se(), .si(), .so());
 
 
    // TCFG.INITVAL
@@ -356,13 +356,13 @@ module cpu7_csr(
    assign tcfg_initval_msk_wen = (|csr_mask[`TIMER_BIT-1:2]) && tcfg_wen;
    assign tcfg_initval_nxt = (tcfg_initval & (~csr_mask[`TIMER_BIT-1:2])) | (csr_wdata[`TIMER_BIT-1:2] & csr_mask[`TIMER_BIT-1:2]);
 
-   dffrle_s #(`TIMER_BIT) tcfg_initval_reg (
+   dffrle_ns #(`TIMER_BIT) tcfg_initval_reg (
       .din   (tcfg_initval_nxt),
       .rst_l (resetn),
       .en    (tcfg_initval_msk_wen),
       .clk   (clk),
-      .q     (tcfg_initval),
-      .se(), .si(), .so());
+      .q     (tcfg_initval));
+      //.se(), .si(), .so());
 
 
    assign tcfg = {
@@ -422,13 +422,13 @@ module cpu7_csr(
    assign ticlr_clr_nxt = timer_intr | (~clear_timer);
    assign ticlr_clr_en = timer_intr | clear_timer;
 
-   dffre_s #(1) ticlr_clr_reg (
+   dffre_ns #(1) ticlr_clr_reg (
       .din (ticlr_clr_nxt),
       .en  (ticlr_clr_en),
       .clk (clk),
       .rst (~resetn),
-      .q   (ticlr_clr),
-      .se(), .si(), .so());
+      .q   (ticlr_clr));
+      //.se(), .si(), .so());
 
 
    //assign csr_ecl_timer_intr = ticlr_clr & crmd_ie;
@@ -455,13 +455,13 @@ module cpu7_csr(
    assign estat_sis_wdata = csr_wdata[`LESTAT_SIS];
    assign estat_sis_nxt = (estat_sis & (~csr_mask[`LESTAT_SIS])) | (estat_sis_wdata & csr_mask[`LESTAT_SIS]);
 
-   dffrle_s #(2) estat_sis_reg (
+   dffrle_ns #(2) estat_sis_reg (
       .din   (estat_sis_nxt),
       .rst_l (resetn),
       .en    (estat_sis_msk_wen),
       .clk   (clk),
-      .q     (estat_sis),
-      .se(), .si(), .so());
+      .q     (estat_sis));
+      //.se(), .si(), .so());
 
 
    wire [`LESTAT_IS] estat_is;
@@ -478,26 +478,26 @@ module cpu7_csr(
 
    // not control data, only for query, no need reset
    //  need reset, if there is no exception happened before, the estat contains x
-   dffrle_s #(6) estat_ecode_reg (
+   dffrle_ns #(6) estat_ecode_reg (
       .din   (ecl_csr_exccode_e),
       .rst_l (resetn),
       .en    (exception),             // interrupt ecode is 0, handled in ecl
       .clk   (clk),
-      .q     (estat_ecode),
-      .se(), .si(), .so());
+      .q     (estat_ecode));
+      //.se(), .si(), .so());
 
 
    wire [`LESTAT_ESUBCODE] estat_esubcode;
 
    // not control data, only for query, no need reset
    //  need reset, if there is no exception happened before, the estat contains x
-   dffrle_s #(9) estat_esubcode_reg (
+   dffrle_ns #(9) estat_esubcode_reg (
       .din   (9'b0),
       .rst_l (resetn),
       .en    (exception), 
       .clk   (clk),
-      .q     (estat_esubcode),
-      .se(), .si(), .so());
+      .q     (estat_esubcode));
+      //.se(), .si(), .so());
 
    assign estat = {
                   1'b0, // reserved
@@ -532,13 +532,13 @@ module cpu7_csr(
    assign bsec_ef_wdata = csr_wdata[`LBSEC_EF];
    assign bsec_ef_nxt = bsec_ef_wdata | bsec_ef;
    
-   dffre_s #(1) bsec_ef_reg (
+   dffre_ns #(1) bsec_ef_reg (
       .din (bsec_ef_nxt),
       .en  (bsec_ef_msk_wen),
       .clk (clk),
       .rst (~resetn),
-      .q   (bsec_ef),
-      .se(), .si(), .so());
+      .q   (bsec_ef));
+      //.se(), .si(), .so());
 
    
    assign bsec = {

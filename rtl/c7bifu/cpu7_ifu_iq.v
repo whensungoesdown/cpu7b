@@ -41,14 +41,14 @@ module cpu7_ifu_iq (
    //                                               especially on branch, e.g
    //                                               beq r0, r0, 0x1c000014
    //                                                 
-   dffrle_s #(1) iq_not_empty_reg (
+   dffrle_ns #(1) iq_not_empty_reg (
       //.din   (~(instr_2nd & ~icu_ifu_data_valid_ic2)  & ~flush_iq),
       .din   (~instr_2nd  & ~flush_iq),
       .en    (instr_2nd | icu_ifu_data_valid_ic2  | flush_iq), 
       .clk   (clk),
       .rst_l (resetn),
-      .q     (iq_not_empty_q),
-      .se(), .si(), .so());
+      .q     (iq_not_empty_q));
+      //.se(), .si(), .so());
 
 
 //   wire stalled_q;
@@ -75,12 +75,12 @@ module cpu7_ifu_iq (
 
    wire [63:0] inst_rdata_q;
 
-   dffe_s #(64) inst_rdata_reg (
+   dffe_ns #(64) inst_rdata_reg (
       .din   (icu_ifu_data_ic2),
       .en    (icu_ifu_data_valid_ic2), 
       .clk   (clk),
-      .q     (inst_rdata_q),
-      .se(), .si(), .so());
+      .q     (inst_rdata_q));
+      //.se(), .si(), .so());
 
 
    assign inst_valid_f = (icu_ifu_data_valid_ic2 | iq_not_empty_q) & ~exu_ifu_stall_req & ~flush_iq;
