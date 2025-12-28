@@ -289,7 +289,7 @@ module top(
    end
    //
 
-   cpu u_cpu(
+   c7b u_c7b(
       .clk          (clk),
       .resetn       (resetn),
       

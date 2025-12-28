@@ -1,6 +1,6 @@
 `include "defines.vh"
 
-module cpu(
+module c7b(
    input               clk    ,
    input               resetn ,
 
@@ -116,7 +116,7 @@ module cpu(
    wire [63:0]      icu_ifu_data_ic2;
 
 
-   cpu7_core cpu(
+   c7bcore u_core(
       .clk                              (clk),
       .resetn                           (resetn),
 

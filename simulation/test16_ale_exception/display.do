@@ -3,33 +3,33 @@ add wave -position end  result:/top_tb/resetn
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_bgn
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_end
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_in
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req_q
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_valid_f
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/inst_req
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_req
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_req_bgn
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_req_end
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_req_in
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_req_q
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_valid_f
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/inst_req
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_bf
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_f
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_d
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_e
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_m
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/fdp/pc_w
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/pc_bf
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/pc_f
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/pc_d
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/pc_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/pc_m
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/fdp/pc_w
 
 add wave -divider
 
-add wave -position 18  result:/top_tb/u_top/u_cpu/cpu/ifu/inst_rdata_f
-add wave -position 19  result:/top_tb/u_top/u_cpu/cpu/ifu/inst_valid_f
+add wave -position 18  result:/top_tb/u_top/u_c7b/u_core/ifu/inst_rdata_f
+add wave -position 19  result:/top_tb/u_top/u_c7b/u_core/ifu/inst_valid_f
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/timer_intr
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/exu_ifu_except
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/era_reg/q
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/timer_intr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/exu_ifu_except
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/era_reg/q
 
 
 add wave -divider
@@ -43,7 +43,7 @@ add wave -position end  result:/top_tb/u_top/ram_wen
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/inst_req
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/inst_req
 
 add wave -divider
 add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/biu_ifu_data_valid
@@ -126,9 +126,9 @@ add wave -position end  result:/top_tb/u_top/u_cpu/u_biu/lsu_biu_wr_strb
 
 add wave -divider
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/ifu/exu_ifu_stall_req
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/ifu/exu_ifu_stall_req
 add wave -position end  result:/top_tb/u_top/u_cpu/data_req
 add wave -position end  result:/top_tb/u_top/u_cpu/data_wr
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/lsu_finish_m
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/lsu/data_data_ok_m
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/ecl/ecl_lsu_valid_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/lsu/lsu_finish_m
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/lsu/data_data_ok_m
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/ecl/ecl_lsu_valid_e

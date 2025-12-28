@@ -42,17 +42,17 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c000028 === u_top.u_cpu.cpu.ifu_exu_pc_w)
+	 if (32'h1c000028 === u_top.u_c7b.u_core.ifu_exu_pc_w)
 	 begin
-		 $display("regs[5] 0x%x\n", u_top.u_cpu.cpu.exu.registers.regs[5]);
-		 $display("regs[8] 0x%x\n", u_top.u_cpu.cpu.exu.registers.regs[8]);
-		 $display("regs[6] 0x%x\n", u_top.u_cpu.cpu.exu.registers.regs[6]);
-		 $display("regs[9] 0x%x\n", u_top.u_cpu.cpu.exu.registers.regs[9]);
+		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[5]);
+		 $display("regs[8] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[8]);
+		 $display("regs[6] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[6]);
+		 $display("regs[9] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[9]);
 
-		 if (32'h7 === u_top.u_cpu.cpu.exu.registers.regs[5] 
-		  && 32'h7 === u_top.u_cpu.cpu.exu.registers.regs[8]
-		  && 32'h7 === u_top.u_cpu.cpu.exu.registers.regs[6]
-		  && 32'h6 === u_top.u_cpu.cpu.exu.registers.regs[9]
+		 if (32'h7 === u_top.u_c7b.u_core.exu.registers.regs[5] 
+		  && 32'h7 === u_top.u_c7b.u_core.exu.registers.regs[8]
+		  && 32'h7 === u_top.u_c7b.u_core.exu.registers.regs[6]
+		  && 32'h6 === u_top.u_c7b.u_core.exu.registers.regs[9]
 	            )
 		 begin
 			 $display("\nPASS!\n");

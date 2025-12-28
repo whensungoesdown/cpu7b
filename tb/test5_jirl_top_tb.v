@@ -42,13 +42,13 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c00002c === u_top.u_cpu.cpu.ifu_exu_pc_w &&
-	     32'h1c000014 === u_top.u_cpu.cpu.exu.registers.regs[1])
+	 if (32'h1c00002c === u_top.u_c7b.u_core.ifu_exu_pc_w &&
+	     32'h1c000014 === u_top.u_c7b.u_core.exu.registers.regs[1])
 	 begin
-		 $display("regs[1] 0x%x\n", u_top.u_cpu.cpu.exu.registers.regs[1]);
-		 $display("regs[5] 0x%x\n", u_top.u_cpu.cpu.exu.registers.regs[5]);
+		 $display("regs[1] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[1]);
+		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[5]);
 
-		 if (32'h5a === u_top.u_cpu.cpu.exu.registers.regs[5] 
+		 if (32'h5a === u_top.u_c7b.u_core.exu.registers.regs[5] 
 	            )
 		 begin
 			 $display("\nPASS!\n");

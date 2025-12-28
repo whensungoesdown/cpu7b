@@ -22,9 +22,9 @@ add wave -position end  result:/top_tb/u_top/u_cpu/inst_addr
 add wave -position end  result:/top_tb/u_top/u_cpu/inst_rdata_f
 add wave -position end  result:/top_tb/u_top/u_cpu/inst_valid_f
 
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/csr_wdata
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/msk_wdata
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/csr_waddr
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/csr_mask
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/csr_wen
-add wave -position end  result:/top_tb/u_top/u_cpu/cpu/exu/csr/csr_eentry
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/csr_wdata
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/msk_wdata
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/csr_waddr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/csr_mask
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/csr_wen
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/exu/csr/csr_eentry

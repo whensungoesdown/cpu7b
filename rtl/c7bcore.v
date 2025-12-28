@@ -4,7 +4,7 @@
 `include "alu_defs.v"
 `include "bru_defs.v"
 
-module cpu7_core(
+module c7bcore(
    input                 clk,
    input                 resetn,            // active low
    
@@ -193,11 +193,8 @@ module cpu7_core(
       .ifu_exu_pc_e                      (ifu_exu_pc_e),
 
       .exu_ifu_stall_req                 (exu_ifu_stall_req)
-
       );
 
-
-   
 
    cpu7_exu exu(
       .clk                               (clk),

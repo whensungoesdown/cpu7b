@@ -32,7 +32,7 @@ add wave -recursive -depth 10 *
 #add wave -position end  sim:/top_tb/u_top/u_cpu/inst_rdata_f
 #add wave -position end  sim:/top_tb/u_top/u_cpu/inst_valid_f
 #
-#add wave -position end  sim:/top_tb/u_top/u_cpu/cpu/exu/registers/regs
+#add wave -position end  sim:/top_tb/u_top/u_c7b/u_core/exu/registers/regs
 
 run 500ns
 
