@@ -11,61 +11,59 @@
 //   
 //
 module cpu7_csr(
-   input                                clk,
-   input                                resetn,
+   input                          clk,
+   input                          resetn,
    output [31:0]                  csr_rdata,
    input  [`LCSR_BIT-1:0]         csr_raddr,
    input  [31:0]                  csr_wdata,
    input  [`LCSR_BIT-1:0]         csr_waddr,
    input  [31:0]                  csr_mask,
-   input                                csr_wen,
+   input                          csr_wen,
 
    output [31:0]                  csr_eentry,
    output [31:0]                  csr_era,
    input  [31:0]                  ecl_csr_badv_e,
-   input                                exu_ifu_except,
-   input  [5:0]                         ecl_csr_exccode_e,
+   input                          exu_ifu_except,
+   input  [5:0]                   ecl_csr_exccode_e,
    input  [31:0]                  ifu_exu_pc_e,
-   input                                ecl_csr_ertn_e,
+   input                          ecl_csr_ertn_e,
 
-   output                               csr_ecl_crmd_ie,
-   output                               csr_ecl_timer_intr,
+   output                         csr_ecl_crmd_ie,
+   output                         csr_ecl_timer_intr,
 
-   input                                ext_intr
+   input                          ext_intr
    );
-
 
 
    wire exception;
 
    assign exception = exu_ifu_except; // when to store era, the timing is decided by ecl
 
+   wire               prmd_pie;
+   wire               prmd_pie_wdata;
+   wire               prmd_pie_nxt;
 
-   wire                   prmd_pie;
-   wire                   prmd_pie_wdata;
-   wire                   prmd_pie_nxt;
-
-   wire [1:0]             prmd_pplv;
-   wire [1:0]             prmd_pplv_wdata;
-   wire [1:0]             prmd_pplv_nxt;
+   wire [1:0]         prmd_pplv;
+   wire [1:0]         prmd_pplv_wdata;
+   wire [1:0]         prmd_pplv_nxt;
 
 
    //
    //  CRMD 0x0
    //
    
-   wire [31:0]       crmd;
-   wire                    crmd_wen;
+   wire [31:0]        crmd;
+   wire               crmd_wen;
    assign crmd_wen = (csr_waddr == `LCSR_CRMD) && csr_wen;
 
 
-   wire                    crmd_ie_msk_wen;
+   wire               crmd_ie_msk_wen;
    assign crmd_ie_msk_wen = csr_mask[`CRMD_IE] & crmd_wen;
 
    
-   wire                    crmd_ie;
-   wire                    crmd_ie_wdata;
-   wire                    crmd_ie_nxt;
+   wire               crmd_ie;
+   wire               crmd_ie_wdata;
+   wire               crmd_ie_nxt;
 
    assign crmd_ie_wdata = csr_wdata[`CRMD_IE];
 
@@ -103,12 +101,12 @@ module cpu7_csr(
 
    // CRMD.plv
 
-   wire                   crmd_plv_msk_wen;
+   wire               crmd_plv_msk_wen;
    assign crmd_plv_msk_wen = |csr_mask[`CRMD_PLV] & crmd_wen; // plv 2bits
    
-   wire [1:0]             crmd_plv;
-   wire [1:0]             crmd_plv_wdata;
-   wire [1:0]             crmd_plv_nxt;
+   wire [1:0]         crmd_plv;
+   wire [1:0]         crmd_plv_wdata;
+   wire [1:0]         crmd_plv_nxt;
 
    assign crmd_plv_wdata = csr_wdata[`CRMD_PLV];
 
@@ -155,11 +153,11 @@ module cpu7_csr(
    //  PRMD 0x1
    //
 
-   wire [31:0]      prmd;
-   wire                   prmd_wen;
+   wire [31:0]        prmd;
+   wire               prmd_wen;
    assign prmd_wen = (csr_waddr == `LCSR_PRMD) && csr_wen;
 
-   wire                   prmd_pie_msk_wen;
+   wire               prmd_pie_msk_wen;
    assign prmd_pie_msk_wen = csr_mask[`LPRMD_PIE] & prmd_wen;
 
    assign prmd_pie_wdata = csr_wdata[`LPRMD_PIE];
@@ -177,8 +175,6 @@ module cpu7_csr(
       .clk   (clk),
       .q     (prmd_pie));
       //.se(), .si(), .so());
-
-
 
 
 
@@ -210,16 +206,14 @@ module cpu7_csr(
 
 
 
-
-
    //
    //  ERA 0x6
    //
 
-   wire [31:0]       era;
-   wire [31:0]       era_wdata;
-   wire [31:0]       era_nxt;
-   wire                    era_wen;
+   wire [31:0]        era;
+   wire [31:0]        era_wdata;
+   wire [31:0]        era_nxt;
+   wire               era_wen;
 
    assign era_wen = (csr_waddr == `LCSR_EPC) && csr_wen;  // EPC is ERA
 
@@ -246,10 +240,10 @@ module cpu7_csr(
    // BADV 0x7
    //
 
-   wire [31:0]       badv;
-   wire [31:0]       badv_wdata;
-   wire [31:0]       badv_nxt;
-   wire                    badv_wen;
+   wire [31:0]        badv;
+   wire [31:0]        badv_wdata;
+   wire [31:0]        badv_nxt;
+   wire               badv_wen;
 
    assign badv_wen = (csr_waddr == `LCSR_BADV) && csr_wen;
 
@@ -276,9 +270,9 @@ module cpu7_csr(
    //  EENTRY 0xc
    //
 
-   wire [31:0]       eentry;
-   wire [31:0]       eentry_nxt;
-   wire                    eentry_wen;
+   wire [31:0]        eentry;
+   wire [31:0]        eentry_nxt;
+   wire               eentry_wen;
 
    //assign eentry_nxt = csr_wdata;
    assign eentry_nxt = (eentry & (~csr_mask)) | (csr_wdata & csr_mask);
@@ -295,15 +289,12 @@ module cpu7_csr(
    assign csr_eentry = eentry;
 
 
-
-
-
    //
    // TCFG  0x41
    //
 
-   wire [31:0]       tcfg;
-   wire                    tcfg_wen;
+   wire [31:0]        tcfg;
+   wire               tcfg_wen;
    
    assign tcfg_wen = (csr_waddr == `LCSR_TCFG) && csr_wen;
 
@@ -312,11 +303,11 @@ module cpu7_csr(
    // TCFG.EN
    
 
-   wire                    tcfg_en_msk_wen;
+   wire               tcfg_en_msk_wen;
    assign tcfg_en_msk_wen = csr_mask[`LTCFG_EN] && tcfg_wen;
 
-   wire                    tcfg_en; 
-   wire                    tcfg_en_nxt;
+   wire               tcfg_en; 
+   wire               tcfg_en_nxt;
 
    assign tcfg_en_nxt = csr_wdata[`LTCFG_EN];
 
@@ -330,11 +321,11 @@ module cpu7_csr(
 
 
    // TCFG.PERIODIC
-   wire                    tcfg_periodic_msk_wen;
+   wire               tcfg_periodic_msk_wen;
    assign tcfg_periodic_msk_wen = csr_mask[`LTCFG_PERIODIC] && tcfg_wen;
 
-   wire                    tcfg_periodic; 
-   wire                    tcfg_periodic_nxt;
+   wire               tcfg_periodic; 
+   wire               tcfg_periodic_nxt;
 
    assign tcfg_periodic_nxt = csr_wdata[`LTCFG_PERIODIC];
 
@@ -349,9 +340,9 @@ module cpu7_csr(
 
    // TCFG.INITVAL
   
-   wire [`TIMER_BIT-1:0]           tcfg_initval;
-   wire [`TIMER_BIT-1:0]           tcfg_initval_nxt;
-   wire                            tcfg_initval_msk_wen;
+   wire [`TIMER_BIT-1:0]          tcfg_initval;
+   wire [`TIMER_BIT-1:0]          tcfg_initval_nxt;
+   wire                           tcfg_initval_msk_wen;
    
    assign tcfg_initval_msk_wen = (|csr_mask[`TIMER_BIT-1:2]) && tcfg_wen;
    assign tcfg_initval_nxt = (tcfg_initval & (~csr_mask[`TIMER_BIT-1:2])) | (csr_wdata[`TIMER_BIT-1:2] & csr_mask[`TIMER_BIT-1:2]);
@@ -377,14 +368,14 @@ module cpu7_csr(
    wire [`TIMER_BIT+2-1:0] timeval;
    
    cpu7_csr_timer u_csr_timer(
-      .clk              (clk            ),
-      .resetn           (resetn         ),
-      .init             (tcfg_wen       ), // every tcfg write consider an init
-      .en               (tcfg_en_msk_wen ? tcfg_en_nxt : tcfg_en),  // write data not latched yet
-      .periodic         (tcfg_periodic_msk_wen ? tcfg_periodic_nxt : tcfg_periodic),
-      .initval          (tcfg_initval_msk_wen ? tcfg_initval_nxt : tcfg_initval),
-      .timeval          (timeval),
-      .intr             (timer_intr)
+      .clk                             (clk),
+      .resetn                          (resetn),
+      .init                            (tcfg_wen), // every tcfg write consider an init
+      .en                              (tcfg_en_msk_wen ? tcfg_en_nxt : tcfg_en),  // write data not latched yet
+      .periodic                        (tcfg_periodic_msk_wen ? tcfg_periodic_nxt : tcfg_periodic),
+      .initval                         (tcfg_initval_msk_wen ? tcfg_initval_nxt : tcfg_initval),
+      .timeval                         (timeval),
+      .intr                            (timer_intr)
    );
 
 
@@ -393,7 +384,7 @@ module cpu7_csr(
    // TVAL  0x42
    //
 
-   wire [31:0]           tval;
+   wire [31:0]        tval;
 
    assign tval = {
                  //32-`TIMER_BIT'b0,
@@ -405,15 +396,15 @@ module cpu7_csr(
    // TICLR  0x44
    //
 
-   wire [31:0]       ticlr;
-   wire                    ticlr_wen;
+   wire [31:0]        ticlr;
+   wire               ticlr_wen;
 
    assign ticlr = 32'b0; // manual says ticlr always read out all 0
    assign ticlr_wen = (csr_waddr == `LCSR_TICLR) && csr_wen;   
 
-   wire                    ticlr_clr;
-   wire                    ticlr_clr_nxt;
-   wire                    ticlr_clr_en;
+   wire               ticlr_clr;
+   wire               ticlr_clr_nxt;
+   wire               ticlr_clr_en;
 
    wire clear_timer;
 
@@ -441,10 +432,10 @@ module cpu7_csr(
    //
    
    wire [31:0] estat;
-   wire              estat_wen;
+   wire               estat_wen;
    assign estat_wen = (csr_waddr == `LCSR_ESTAT) && csr_wen;
 
-   wire              estat_sis_msk_wen;
+   wire               estat_sis_msk_wen;
    assign estat_sis_msk_wen = |csr_mask[`LESTAT_SIS] & estat_wen;
 
    // 1:0
@@ -509,25 +500,23 @@ module cpu7_csr(
                   };
 
 
-
-
    //
    //  SELF DEFINED: BSEC (BOOT SECURITY) 0x100
    //
 
-   wire [31:0]       bsec;
-   wire [31:0]       bsec_nxt;
-   wire                    bsec_wen;
+   wire [31:0]        bsec;
+   wire [31:0]        bsec_nxt;
+   wire               bsec_wen;
 
    assign bsec_wen = (csr_waddr == `LCSR_BSEC) && csr_wen;
 
    // bit 0, eeprom flush
-   wire                    bsec_ef_msk_wen;
+   wire              bsec_ef_msk_wen;
    assign bsec_ef_msk_wen = csr_mask[`LBSEC_EF] & bsec_wen;
 
-   wire                    bsec_ef;
-   wire                    bsec_ef_wdata;
-   wire                    bsec_ef_nxt;
+   wire               bsec_ef;
+   wire               bsec_ef_wdata;
+   wire               bsec_ef_nxt;
 
    assign bsec_ef_wdata = csr_wdata[`LBSEC_EF];
    assign bsec_ef_nxt = bsec_ef_wdata | bsec_ef;
@@ -546,13 +535,9 @@ module cpu7_csr(
                  bsec_ef
 		 };
 
-
-
-
    
    assign csr_ecl_crmd_ie = crmd_ie;
 
-   
    
    assign csr_rdata = {32{csr_raddr == `LCSR_CRMD}}  & crmd   |
 		      {32{csr_raddr == `LCSR_PRMD}}  & prmd   |

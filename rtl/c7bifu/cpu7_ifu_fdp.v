@@ -1,38 +1,38 @@
 `include "../defines.vh"
  
 module cpu7_ifu_fdp(
-   input                  clk,
-   input                  reset,
-   input  [31 :0]         pc_init,
+   input              clk,
+   input              reset,
+   input  [31 :0]     pc_init,
 
-   output                 ifu_icu_req_ic1,
-   output [31:0]          ifu_icu_addr_ic1,
-   input                  icu_ifu_ack_ic1,
-   output                 ifu_icu_cancel,
-   input  [63:0]          icu_ifu_data_ic2,
-   input                  icu_ifu_data_valid_ic2,   
+   output             ifu_icu_req_ic1,
+   output [31:0]      ifu_icu_addr_ic1,
+   input              icu_ifu_ack_ic1,
+   output             ifu_icu_cancel,
+   input  [63:0]      icu_ifu_data_ic2,
+   input              icu_ifu_data_valid_ic2,   
 
-   input                  br_taken,
-   input  [31 :0]         br_target,
+   input              br_taken,
+   input  [31 :0]     br_target,
 
    // exception
-   input  [31:0]    exu_ifu_eentry,
-   input                  exu_ifu_except,
+   input  [31:0]      exu_ifu_eentry,
+   input              exu_ifu_except,
    // ertn
-   input  [31:0]    exu_ifu_era,
-   input                  exu_ifu_ertn_e,
+   input  [31:0]      exu_ifu_era,
+   input              exu_ifu_ertn_e,
 
-   output [31:0]    fdp_dec_pc_d,
-   output [31:0]    fdp_dec_inst_d,
+   output [31:0]      fdp_dec_pc_d,
+   output [31:0]      fdp_dec_inst_d,
 
-   output                 fdp_dec_inst_kill_vld_d,
+   output             fdp_dec_inst_kill_vld_d,
 
-   output                 ifu_exu_valid_e, //
+   output             ifu_exu_valid_e, //
    
-   output [31:0]    ifu_exu_pc_w,
-   output [31:0]    ifu_exu_pc_e,
+   output [31:0]      ifu_exu_pc_w,
+   output [31:0]      ifu_exu_pc_e,
 
-   input                  exu_ifu_stall_req
+   input              exu_ifu_stall_req
    );
 
 
@@ -185,8 +185,6 @@ module cpu7_ifu_fdp(
 
    assign ifu_exu_pc_w = pc_w;
 
-   
-   
 
    assign ifu_pcbf_sel_init_bf_l = ~reset;
    // uty: test
@@ -241,9 +239,6 @@ module cpu7_ifu_fdp(
       .sel2_l  (ifu_pcbf_sel_ertnpc_bf_l));
 
 
-
-   
-
    //===================================================
    // Fetched Instruction Datapath
    //===================================================
@@ -254,8 +249,6 @@ module cpu7_ifu_fdp(
       .clk (clk),
       .q   (fdp_dec_inst_d));
       //.se(), .si(), .so());
-
-   
 
 
    //===================================================
@@ -313,7 +306,7 @@ module cpu7_ifu_fdp(
    assign ifu_icu_req_ic1 = (~reset & 
                             ~exu_ifu_stall_req &
 			    ~icu_busy &
-			    ( fetch_ahead & ~ifu_icu_addr_ic1[2]) // fetch only at 64-bit aligment
+			    (fetch_ahead & ~ifu_icu_addr_ic1[2]) // fetch only at 64-bit aligment
                             )   
 
                             // Fetch if iq is empty while icu not busy
@@ -341,20 +334,20 @@ module cpu7_ifu_fdp(
 
 
    cpu7_ifu_iq u_iq (
-      .clk                    (clk                     ),
-      .resetn                 (~reset                  ),
+      .clk                             (clk),
+      .resetn                          (~reset),
       
-      .pc_f                   (pc_f                   ),
-      .exu_ifu_stall_req      (exu_ifu_stall_req      ),
-      .flush_iq               (flush_iq               ),
+      .pc_f                            (pc_f),
+      .exu_ifu_stall_req               (exu_ifu_stall_req),
+      .flush_iq                        (flush_iq),
 
-      .icu_ifu_data_ic2       (icu_ifu_data_ic2       ),
-      .icu_ifu_data_valid_ic2 (icu_ifu_data_valid_ic2 ),
+      .icu_ifu_data_ic2                (icu_ifu_data_ic2),
+      .icu_ifu_data_valid_ic2          (icu_ifu_data_valid_ic2),
 
-      .iq_not_empty           (iq_not_empty           ),
-      .fetch_ahead            (fetch_ahead            ),
-      .inst_f                 (inst_f                 ),
-      .inst_valid_f           (inst_valid_f           )
+      .iq_not_empty                    (iq_not_empty),
+      .fetch_ahead                     (fetch_ahead),
+      .inst_f                          (inst_f),
+      .inst_valid_f                    (inst_valid_f)
       );
 
 endmodule // cpu7_ifu_fdp

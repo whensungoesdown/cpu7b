@@ -5,61 +5,61 @@
 `include "../bru_defs.v"
 
 module cpu7_exu_ecl(
-   input                                clk,
-   input                                resetn,
+   input                          clk,
+   input                          resetn,
 
-   input                                ifu_exu_valid_e,
+   input                          ifu_exu_valid_e,
 
    input  [31:0]                  ifu_exu_alu_a_e,
    input  [31:0]                  ifu_exu_alu_b_e,
    input  [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
    input  [31:0]                  ifu_exu_alu_c_e,
-   input                                ifu_exu_alu_double_word_e,
-   input                                ifu_exu_alu_b_imm_e,
-   input  [4:0]                         ifu_exu_rs1_e,
-   input  [4:0]                         ifu_exu_rs2_e,
+   input                          ifu_exu_alu_double_word_e,
+   input                          ifu_exu_alu_b_imm_e,
+   input  [4:0]                   ifu_exu_rs1_e,
+   input  [4:0]                   ifu_exu_rs2_e,
 
    // lsu
-   input                                ifu_exu_lsu_valid_e,
+   input                          ifu_exu_lsu_valid_e,
    input  [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
-   input                                ifu_exu_double_read_e,
+   input                          ifu_exu_double_read_e,
    input  [31:0]                  ifu_exu_imm_shifted_e,
-   input  [4:0]                         ifu_exu_lsu_rd_e,
-   input                                ifu_exu_lsu_wen_e,
+   input  [4:0]                   ifu_exu_lsu_rd_e,
+   input                          ifu_exu_lsu_wen_e,
 
    // bru
-   input  [31:0]	                ifu_exu_pc_e,
+   input  [31:0]	          ifu_exu_pc_e,
 
-   input                                ifu_exu_bru_valid_e,
+   input                          ifu_exu_bru_valid_e,
    input  [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
    input  [31:0]                  ifu_exu_bru_offset_e,
 
    // mul
-   input                                ifu_exu_mul_valid_e,
-   input                                ifu_exu_mul_wen_e,
-   input                                ifu_exu_mul_signed_e,
-   input                                ifu_exu_mul_double_e,
-   input                                ifu_exu_mul_hi_e,
-   input                                ifu_exu_mul_short_e,
+   input                          ifu_exu_mul_valid_e,
+   input                          ifu_exu_mul_wen_e,
+   input                          ifu_exu_mul_signed_e,
+   input                          ifu_exu_mul_double_e,
+   input                          ifu_exu_mul_hi_e,
+   input                          ifu_exu_mul_short_e,
 
    // csr
-   input                                ifu_exu_csr_valid_e,
+   input                          ifu_exu_csr_valid_e,
    input  [`LCSR_BIT-1:0]         ifu_exu_csr_raddr_d,
-   input                                ifu_exu_csr_rdwen_e,
-   input                                ifu_exu_csr_xchg_e,
-   input                                ifu_exu_csr_wen_e,
+   input                          ifu_exu_csr_rdwen_e,
+   input                          ifu_exu_csr_xchg_e,
+   input                          ifu_exu_csr_wen_e,
    input  [`LCSR_BIT-1:0]         ifu_exu_csr_waddr_e,
 
    // alu
-   input  [4:0]                         ifu_exu_rf_target_e,
-   input                                ifu_exu_alu_wen_e,
+   input  [4:0]                   ifu_exu_rf_target_e,
+   input                          ifu_exu_alu_wen_e,
 
    // ertn
-   input                                ifu_exu_ertn_valid_e,
+   input                          ifu_exu_ertn_valid_e,
 
-   //input                                ifu_exu_illinst_e,
-   input                                ifu_exu_exception_e,
-   input  [5:0]                         ifu_exu_exccode_e,
+   //input                          ifu_exu_illinst_e,
+   input                          ifu_exu_exception_e,
+   input  [5:0]                   ifu_exu_exccode_e,
 
 
    // alu
@@ -67,23 +67,23 @@ module cpu7_exu_ecl(
    output [31:0]                  ecl_alu_b_e,
    output [`LALU_CODE_BIT-1:0]    ecl_alu_op_e,
    output [31:0]                  ecl_alu_c_e,
-   output                               ecl_alu_double_word_e,
+   output                         ecl_alu_double_word_e,
    input  [31:0]                  alu_ecl_res_e,  // alu result
 
    // lsu
-   output                               ecl_lsu_valid_e,
+   output                         ecl_lsu_valid_e,
    output [`LLSU_CODE_BIT-1:0]    ecl_lsu_op_e,
    output [31:0]                  ecl_lsu_base_e,
    output [31:0]                  ecl_lsu_offset_e,
    output [31:0]                  ecl_lsu_wdata_e,
    input  [31:0]                  lsu_ecl_rdata_m, // _m inputs are for writting to regfile
-   input                                lsu_ecl_data_valid_ls3,
-   input                                lsu_ecl_wr_fin_ls3,
-   input                                lsu_ecl_ale_e, 
-   input  [31:0]                        lsu_ecl_except_badv_ls1,
+   input                          lsu_ecl_data_valid_ls3,
+   input                          lsu_ecl_wr_fin_ls3,
+   input                          lsu_ecl_ale_e, 
+   input  [31:0]                  lsu_ecl_except_badv_ls1,
 
    // bru
-   output                               ecl_bru_valid_e,
+   output                         ecl_bru_valid_e,
    output [`LBRU_CODE_BIT-1:0]    ecl_bru_op_e,
    output [31:0]                  ecl_bru_a_e,
    output [31:0]                  ecl_bru_b_e,
@@ -91,19 +91,19 @@ module cpu7_exu_ecl(
    output [31:0]                  ecl_bru_offset_e,
 
    input  [31:0]                  bru_ecl_brpc_e,
-   input                                bru_ecl_br_taken_e,
+   input                          bru_ecl_br_taken_e,
    input  [31:0]                  bru_byp_link_pc_e,
-   input                                bru_ecl_wen_e,
+   input                          bru_ecl_wen_e,
 
    // mul
-   output                               ecl_mul_valid_e,
+   output                         ecl_mul_valid_e,
    output [31:0]                  byp_mul_a_e,
    output [31:0]                  byp_mul_b_e,
-   output                               ecl_mul_signed_e,
-   output                               ecl_mul_double_e,
-   output                               ecl_mul_hi_e,
-   output                               ecl_mul_short_e,
-   input                                mul_ecl_ready_m, // mul returns result at _m, so this is signal is unused
+   output                         ecl_mul_signed_e,
+   output                         ecl_mul_double_e,
+   output                         ecl_mul_hi_e,
+   output                         ecl_mul_short_e,
+   input                          mul_ecl_ready_m, // mul returns result at _m, so this is signal is unused
    input  [31:0]                  mul_byp_res_m,
 
    // csr
@@ -111,31 +111,31 @@ module cpu7_exu_ecl(
    output [`LCSR_BIT-1:0]         ecl_csr_raddr_d,
    output [`LCSR_BIT-1:0]         ecl_csr_waddr_m,
    output [31:0]                  byp_csr_wdata_m,
-   output                               ecl_csr_wen_m,
+   output                         ecl_csr_wen_m,
    output [31:0]                  ecl_csr_mask_m,
-   output [31:0]                        ecl_csr_badv_e,
+   output [31:0]                  ecl_csr_badv_e,
 
    // exception
-   output                               exu_ifu_except,
-   output [5:0]                         ecl_csr_exccode_e,
-   input                                csr_ecl_crmd_ie,
-   input                                csr_ecl_timer_intr,
+   output                         exu_ifu_except,
+   output [5:0]                   ecl_csr_exccode_e,
+   input                          csr_ecl_crmd_ie,
+   input                          csr_ecl_timer_intr,
 
    // ertn
-   output                               exu_ifu_ertn_e,
-   output                               ecl_csr_ertn_e,
+   output                         exu_ifu_ertn_e,
+   output                         ecl_csr_ertn_e,
    
    // ifu stall req
-   output                               exu_ifu_stall_req,
+   output                         exu_ifu_stall_req,
    
    output [31:0]                  exu_ifu_brpc_e,
-   output                               exu_ifu_br_taken_e,
+   output                         exu_ifu_br_taken_e,
 
    output [31:0]                  ecl_irf_rd_data_w,
-   output                               ecl_irf_wen_w,
-   output [4:0]                         ecl_irf_rd_w,
+   output                         ecl_irf_wen_w,
+   output [4:0]                   ecl_irf_rd_w,
 
-   input                                ext_intr
+   input                          ext_intr
    );
 
 
@@ -151,13 +151,10 @@ module cpu7_exu_ecl(
 
    wire kill_e;
   
-
-
    
    /////////////////////////
    // ALU parameters
    /////////////////////////
-   
 
    assign ecl_alu_op_e = ifu_exu_alu_op_e;
    assign ecl_alu_c_e = ifu_exu_alu_c_e;
@@ -184,30 +181,30 @@ module cpu7_exu_ecl(
    
    
    cpu7_exu_eclbyplog_rs1 byplog_rs1(
-      .rs_e           (ifu_exu_rs1_e[4:0]     ),
-      .rd_m           (rd_m[4:0]              ),
-      .rd_w           (rd_w[4:0]              ),
-      .wen_m          (wen_m                  ),
-      .wen_w          (wen_w                  ),
+      .rs_e                            (ifu_exu_rs1_e[4:0]),
+      .rd_m                            (rd_m[4:0]),
+      .rd_w                            (rd_w[4:0]),
+      .wen_m                           (wen_m),
+      .wen_w                           (wen_w),
 
-      .rs_mux_sel_rf  (ecl_byp_rs1_mux_sel_rf ),
-      .rs_mux_sel_m   (ecl_byp_rs1_mux_sel_m  ),
-      .rs_mux_sel_w   (ecl_byp_rs1_mux_sel_w  )
+      .rs_mux_sel_rf                   (ecl_byp_rs1_mux_sel_rf),
+      .rs_mux_sel_m                    (ecl_byp_rs1_mux_sel_m),
+      .rs_mux_sel_w                    (ecl_byp_rs1_mux_sel_w)
       );
 
    assign use_other_e = ifu_exu_alu_b_imm_e | ifu_exu_double_read_e;
 
    cpu7_exu_eclbyplog byplog_rs2(
-      .rs_e           (ifu_exu_rs2_e[4:0]     ),
-      .rd_m           (rd_m[4:0]              ),
-      .rd_w           (rd_w[4:0]              ),
-      .wen_m          (wen_m                  ),
-      .wen_w          (wen_w                  ),
-      .use_other      (use_other_e            ),
+      .rs_e                            (ifu_exu_rs2_e[4:0]),
+      .rd_m                            (rd_m[4:0]),
+      .rd_w                            (rd_w[4:0]),
+      .wen_m                           (wen_m),
+      .wen_w                           (wen_w),
+      .use_other                       (use_other_e),
 
-      .rs_mux_sel_rf  (ecl_byp_rs2_mux_sel_rf ),
-      .rs_mux_sel_m   (ecl_byp_rs2_mux_sel_m  ),
-      .rs_mux_sel_w   (ecl_byp_rs2_mux_sel_w  )
+      .rs_mux_sel_rf                   (ecl_byp_rs2_mux_sel_rf),
+      .rs_mux_sel_m                    (ecl_byp_rs2_mux_sel_m),
+      .rs_mux_sel_w                    (ecl_byp_rs2_mux_sel_w)
       );
    
    mux3ds #(32) mux_rs1_data (.dout(byp_rs1_data_e),
@@ -233,7 +230,6 @@ module cpu7_exu_ecl(
    assign ecl_alu_b_e = byp_rs2_data_e;
 
 
-   
    
    ////////////////
    // LSU
@@ -354,7 +350,6 @@ module cpu7_exu_ecl(
       //.se(), .si(), .so());
 
    
-   
    wire [31:0]             csr_rdata_d;
    wire [31:0]             csr_rdata_e;
    wire [31:0]             csr_rdata_m;
@@ -375,9 +370,7 @@ module cpu7_exu_ecl(
       .q   (csr_rdata_m));
       //.se(), .si(), .so());
 
-   
 
-   
 
    // CSR's rd follows ALU rd's datapath
 
@@ -526,8 +519,6 @@ module cpu7_exu_ecl(
       //.se(), .si(), .so());
 
 
-   
-
    ////////////////////////////////////
    // rd wen rd_data MUX
    ////////////////////////////////////
@@ -671,7 +662,6 @@ module cpu7_exu_ecl(
       //.se(), .si(), .so());
 
 
-
    //
    // interrupt
    //
@@ -705,7 +695,6 @@ module cpu7_exu_ecl(
    assign ifu_exu_valid_rising_e = ~prev_ifu_exu_valid_e & ifu_exu_valid_e;
 
    assign intr_all_sync = intr_all & ifu_exu_valid_rising_e;
-
 
    
    //
@@ -742,7 +731,6 @@ module cpu7_exu_ecl(
    // uty: review  csr_stall_req_next probably should do the csr_stall_req_ful too
    assign exu_ifu_stall_req = lsu_stall_req_ful | csr_stall_req_next;
    //assign exu_ifu_stall_req = lsu_stall_req_ful | csr_stall_req_ful;
-   
 
 
    //

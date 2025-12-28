@@ -6,66 +6,66 @@
 `include "../bru_defs.v"
 
 module cpu7_ifu_dec(
-   input                                clk,
-   input                                resetn,
-   input  [31:0]                        fdp_dec_inst_d,
+   input                          clk,
+   input                          resetn,
+   input  [31:0]                  fdp_dec_inst_d,
 
    input [31:0]                   fdp_dec_pc_d,
-   input                                fdp_dec_inst_kill_vld_d,
+   input                          fdp_dec_inst_kill_vld_d,
 
    output [31:0]                  ifu_exu_alu_a_e,
    output [31:0]                  ifu_exu_alu_b_e,
    output [`LALU_CODE_BIT-1:0]    ifu_exu_alu_op_e,
    output [31:0]                  ifu_exu_alu_c_e,
-   output                               ifu_exu_alu_double_word_e,
-   output                               ifu_exu_alu_b_imm_e,
+   output                         ifu_exu_alu_double_word_e,
+   output                         ifu_exu_alu_b_imm_e,
 
-   output [4:0]                         ifu_exu_rs1_d,
-   output [4:0]                         ifu_exu_rs2_d,
-   output [4:0]                         ifu_exu_rs1_e,
-   output [4:0]                         ifu_exu_rs2_e,
+   output [4:0]                   ifu_exu_rs1_d,
+   output [4:0]                   ifu_exu_rs2_d,
+   output [4:0]                   ifu_exu_rs1_e,
+   output [4:0]                   ifu_exu_rs2_e,
 
    input  [31:0]                  exu_ifu_rs1_data_d,
    input  [31:0]                  exu_ifu_rs2_data_d,
 
    // lsu
-   output                               ifu_exu_lsu_valid_e,
+   output                         ifu_exu_lsu_valid_e,
    output [`LLSU_CODE_BIT-1:0]    ifu_exu_lsu_op_e,
-   output                               ifu_exu_double_read_e,
+   output                         ifu_exu_double_read_e,
    output [31:0]                  ifu_exu_imm_shifted_e,
-   output [4:0]                         ifu_exu_lsu_rd_e,
-   output                               ifu_exu_lsu_wen_e,
+   output [4:0]                   ifu_exu_lsu_rd_e,
+   output                         ifu_exu_lsu_wen_e,
 
    // bru
-   output                               ifu_exu_bru_valid_e,
+   output                         ifu_exu_bru_valid_e,
    output [`LBRU_CODE_BIT-1:0]    ifu_exu_bru_op_e,
    output [31:0]                  ifu_exu_bru_offset_e,
 
    // mul
-   output                               ifu_exu_mul_valid_e,
-   output                               ifu_exu_mul_wen_e,
-   output                               ifu_exu_mul_signed_e,
-   output                               ifu_exu_mul_double_e,
-   output                               ifu_exu_mul_hi_e,
-   output                               ifu_exu_mul_short_e,
+   output                         ifu_exu_mul_valid_e,
+   output                         ifu_exu_mul_wen_e,
+   output                         ifu_exu_mul_signed_e,
+   output                         ifu_exu_mul_double_e,
+   output                         ifu_exu_mul_hi_e,
+   output                         ifu_exu_mul_short_e,
 
    // csr
-   output                               ifu_exu_csr_valid_e,
+   output                         ifu_exu_csr_valid_e,
    output [`LCSR_BIT-1:0]         ifu_exu_csr_raddr_d,
-   output                               ifu_exu_csr_rdwen_e,
-   output                               ifu_exu_csr_xchg_e,
-   output                               ifu_exu_csr_wen_e,
+   output                         ifu_exu_csr_rdwen_e,
+   output                         ifu_exu_csr_xchg_e,
+   output                         ifu_exu_csr_wen_e,
    output [`LCSR_BIT-1:0]         ifu_exu_csr_waddr_e,
 
    // alu
-   output [4:0]                         ifu_exu_rf_target_e,
-   output                               ifu_exu_alu_wen_e,
+   output [4:0]                   ifu_exu_rf_target_e,
+   output                         ifu_exu_alu_wen_e,
    // ertn
-   output                               ifu_exu_ertn_valid_e,
+   output                         ifu_exu_ertn_valid_e,
    
-//   output                               ifu_exu_illinst_e
-   output                               ifu_exu_exception_e,
-   output [5:0]                         ifu_exu_exccode_e
+//   output                         ifu_exu_illinst_e
+   output                         ifu_exu_exception_e,
+   output [5:0]                   ifu_exu_exccode_e
    );
 
 
@@ -164,11 +164,11 @@ module cpu7_ifu_dec(
 
    // cpu7_ifu_imd, decode offset imm
    cpu7_ifu_imd u_imd(
-      .inst              (fdp_dec_inst_d        ),
-      .op                (op_d                  ),
-      .imm_shifted       (imm_shifted_d         ),
-      .alu_c             (alu_c_d               ),
-      .br_offs           (br_offs_d             )
+      .inst                            (fdp_dec_inst_d),
+      .op                              (op_d),
+      .imm_shifted                     (imm_shifted_d),
+      .alu_c                           (alu_c_d),
+      .br_offs                         (br_offs_d)
       );
    
 

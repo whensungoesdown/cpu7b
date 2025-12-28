@@ -1,58 +1,56 @@
 module c7bicu
 (
-   input                 clk,
-   input                 resetn,
+   input              clk,
+   input              resetn,
 
    // ic1
-   input                 ifu_icu_req_ic1,
-   input  [31:3]         ifu_icu_addr_ic1,
+   input              ifu_icu_req_ic1,
+   input  [31:3]      ifu_icu_addr_ic1,
    
-   output                icu_ifu_ack_ic1,
+   output             icu_ifu_ack_ic1,
 
-   input                 ifu_icu_cancel,
+   input              ifu_icu_cancel,
 
    // ic2
-   output                icu_ifu_data_valid_ic2,
-   output [63:0]         icu_ifu_data_ic2,
+   output             icu_ifu_data_valid_ic2,
+   output [63:0]      icu_ifu_data_ic2,
 
    // outputs to tag RAMs
-   output [1:0]          icu_ram_tag_en,
-   output                icu_ram_tag_wr,
-   output [9:0]          icu_ram_tag_addr,
-   output [21:0]         icu_ram_tag_wdata0, // 22 bits: V, addr[31:11]
-   output [21:0]         icu_ram_tag_wdata1, 
+   output [1:0]       icu_ram_tag_en,
+   output             icu_ram_tag_wr,
+   output [9:0]       icu_ram_tag_addr,
+   output [21:0]      icu_ram_tag_wdata0, // 22 bits: V, addr[31:11]
+   output [21:0]      icu_ram_tag_wdata1, 
 
    // inputs from tag RAMs
-   input  [21:0]         ram_icu_tag_rdata0,
-   input  [21:0]         ram_icu_tag_rdata1,
+   input  [21:0]      ram_icu_tag_rdata0,
+   input  [21:0]      ram_icu_tag_rdata1,
 
 
    // outputs to data RAMs
-   output [1:0]          icu_ram_data_en,
-   output                icu_ram_data_wr,
-   output [11:0]         icu_ram_data_addr0,
-   output [11:0]         icu_ram_data_addr1,
-   output [63:0]         icu_ram_data_wdata0,
-   output [63:0]         icu_ram_data_wdata1,
+   output [1:0]       icu_ram_data_en,
+   output             icu_ram_data_wr,
+   output [11:0]      icu_ram_data_addr0,
+   output [11:0]      icu_ram_data_addr1,
+   output [63:0]      icu_ram_data_wdata0,
+   output [63:0]      icu_ram_data_wdata1,
 
    // inputs from data RAMs
-   input  [63:0]         ram_icu_data_rdata0,
-   input  [63:0]         ram_icu_data_rdata1,
+   input  [63:0]      ram_icu_data_rdata0,
+   input  [63:0]      ram_icu_data_rdata1,
 
 
    // interface with BIU
-   output                icu_biu_req,
-   output [31:3]         icu_biu_addr,
-   output                icu_biu_single,
+   output             icu_biu_req,
+   output [31:3]      icu_biu_addr,
+   output             icu_biu_single,
 
-   input                 biu_icu_ack,
-   input                 biu_icu_data_valid,
-   input                 biu_icu_data_last,
-   input  [63:0]         biu_icu_data,
-   input                 biu_icu_fault
-
+   input              biu_icu_ack,
+   input              biu_icu_data_valid,
+   input              biu_icu_data_last,
+   input  [63:0]      biu_icu_data,
+   input              biu_icu_fault
    );
-
 
 
    wire ic_lfb_hit_data_valid;
@@ -81,7 +79,6 @@ module c7bicu
       .rst_l (resetn),
       .q     (ic_lu_ic2));
       //.se(), .si(), .so());
-
 
 
    // icache lookup in progress
@@ -320,8 +317,6 @@ module c7bicu
                             ic_lu_addr_ic2[4:3] == 2'b10 ? lfb2_q :
                                                            lfb3_in ; // the cycle that biu_icu_data_last arrives lfb3_in is not registered yet
 
-
-
    /////
    /// cache line allocation
    //
@@ -393,4 +388,3 @@ module c7bicu
    assign icu_ram_tag_wdata1 = {1'b1, ic_lu_addr_ic2[31:11]};
 
 endmodule
-   

@@ -1,36 +1,36 @@
 module c7bbiu_wr_arb(
-   input                clk,
-   input                resetn,
+   input              clk,
+   input              resetn,
 
-   input                axi_aw_ready,
-   input                axi_w_ready,
+   input              axi_aw_ready,
+   input              axi_w_ready,
 
    // now, only one requester
-   input                lsu_biu_wr_aw_req,
-   output               biu_lsu_wr_aw_ack,
-   input                lsu_biu_wr_w_req,
-   output               biu_lsu_wr_w_ack,
+   input              lsu_biu_wr_aw_req,
+   output             biu_lsu_wr_aw_ack,
+   input              lsu_biu_wr_w_req,
+   output             biu_lsu_wr_w_ack,
    
-   input [31:0]         lsu_biu_wr_addr,
-   input [63:0]         lsu_biu_wr_data,
-   input [7:0]          lsu_biu_wr_strb,
-   input                lsu_biu_wr_last,
+   input [31:0]       lsu_biu_wr_addr,
+   input [63:0]       lsu_biu_wr_data,
+   input [7:0]        lsu_biu_wr_strb,
+   input              lsu_biu_wr_last,
 
-   output               arb_wr_aw_val, 
-   output [3:0]         arb_wr_aw_id,
-   output [31:0]        arb_wr_aw_addr, 
-   output [7:0]         arb_wr_aw_len,
-   output [2:0]         arb_wr_aw_size,
-   output [1:0]         arb_wr_aw_burst,
-   output               arb_wr_aw_lock,
-   output [3:0]         arb_wr_aw_cache,
-   output [2:0]         arb_wr_aw_prot,
+   output             arb_wr_aw_val, 
+   output [3:0]       arb_wr_aw_id,
+   output [31:0]      arb_wr_aw_addr, 
+   output [7:0]       arb_wr_aw_len,
+   output [2:0]       arb_wr_aw_size,
+   output [1:0]       arb_wr_aw_burst,
+   output             arb_wr_aw_lock,
+   output [3:0]       arb_wr_aw_cache,
+   output [2:0]       arb_wr_aw_prot,
 
-   output               arb_wr_w_val, 
-   output [3:0]         arb_wr_w_id,
-   output [63:0]        arb_wr_w_data,
-   output [7:0]         arb_wr_w_strb,
-   output               arb_wr_w_last
+   output             arb_wr_w_val, 
+   output [3:0]       arb_wr_w_id,
+   output [63:0]      arb_wr_w_data,
+   output [7:0]       arb_wr_w_strb,
+   output             arb_wr_w_last
    );
 
 `include "axi_types.v"

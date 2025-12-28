@@ -1,98 +1,97 @@
 module c7bbiu_axi_interface(
-      input            clk,
-      input            resetn,
+   input              clk,
+   input              resetn,
 
-      // Arbitrated read signals
-      input            arb_rd_val, 
-      input  [3:0]     arb_rd_id,
-      input  [31:0]    arb_rd_addr, 
-      input  [1:0]     arb_rd_burst,
-      input  [7:0]     arb_rd_len,
-      input  [2:0]     arb_rd_size,
-      input            arb_rd_lock,
-      input  [3:0]     arb_rd_cache,
-      input  [2:0]     arb_rd_prot,
+   // Arbitrated read signals
+   input              arb_rd_val, 
+   input  [3:0]       arb_rd_id,
+   input  [31:0]      arb_rd_addr, 
+   input  [1:0]       arb_rd_burst,
+   input  [7:0]       arb_rd_len,
+   input  [2:0]       arb_rd_size,
+   input              arb_rd_lock,
+   input  [3:0]       arb_rd_cache,
+   input  [2:0]       arb_rd_prot,
 
-      output           axi_ar_ready,
+   output             axi_ar_ready,
 
-      // AXI Read Address Channel
-      input            ext_biu_ar_ready,
-      output           biu_ext_ar_valid,
-      output [3:0]     biu_ext_ar_id,
-      output [31:0]    biu_ext_ar_addr,
-      output [7:0]     biu_ext_ar_len,
-      output [2:0]     biu_ext_ar_size,
-      output [1:0]     biu_ext_ar_burst,
-      output           biu_ext_ar_lock,
-      output [3:0]     biu_ext_ar_cache,
-      output [2:0]     biu_ext_ar_prot,
+   // AXI Read Address Channel
+   input              ext_biu_ar_ready,
+   output             biu_ext_ar_valid,
+   output [3:0]       biu_ext_ar_id,
+   output [31:0]      biu_ext_ar_addr,
+   output [7:0]       biu_ext_ar_len,
+   output [2:0]       biu_ext_ar_size,
+   output [1:0]       biu_ext_ar_burst,
+   output             biu_ext_ar_lock,
+   output [3:0]       biu_ext_ar_cache,
+   output [2:0]       biu_ext_ar_prot,
 
-      // AXI Read Data Channel
-      output           biu_ext_r_ready,
-      input            ext_biu_r_valid,
-      input  [3:0]     ext_biu_r_id,
-      input  [63:0]    ext_biu_r_data,
-      input            ext_biu_r_last,
-      input  [1:0]     ext_biu_r_resp,
+   // AXI Read Data Channel
+   output             biu_ext_r_ready,
+   input              ext_biu_r_valid,
+   input  [3:0]       ext_biu_r_id,
+   input  [63:0]      ext_biu_r_data,
+   input              ext_biu_r_last,
+   input  [1:0]       ext_biu_r_resp,
 
-      // Arbitrated write signals
-      input            arb_wr_aw_val,
-      input  [3:0]     arb_wr_aw_id,
-      input  [31:0]    arb_wr_aw_addr,
-      input  [7:0]     arb_wr_aw_len,
-      input  [2:0]     arb_wr_aw_size,
-      input  [1:0]     arb_wr_aw_burst,
-      input            arb_wr_aw_lock,
-      input  [3:0]     arb_wr_aw_cache,
-      input  [2:0]     arb_wr_aw_prot,
+   // Arbitrated write signals
+   input              arb_wr_aw_val,
+   input  [3:0]       arb_wr_aw_id,
+   input  [31:0]      arb_wr_aw_addr,
+   input  [7:0]       arb_wr_aw_len,
+   input  [2:0]       arb_wr_aw_size,
+   input  [1:0]       arb_wr_aw_burst,
+   input              arb_wr_aw_lock,
+   input  [3:0]       arb_wr_aw_cache,
+   input  [2:0]       arb_wr_aw_prot,
 
-      output           axi_aw_ready,
+   output             axi_aw_ready,
 
-      input            arb_wr_w_val,
-      input  [3:0]     arb_wr_w_id,
-      input  [63:0]    arb_wr_w_data,
-      input  [7:0]     arb_wr_w_strb,
-      input            arb_wr_w_last,
+   input              arb_wr_w_val,
+   input  [3:0]       arb_wr_w_id,
+   input  [63:0]      arb_wr_w_data,
+   input  [7:0]       arb_wr_w_strb,
+   input              arb_wr_w_last,
 
-      output           axi_w_ready,
+   output             axi_w_ready,
+
+   // AXI Write address channel
+   input              ext_biu_aw_ready,
+   output             biu_ext_aw_valid,
+   output [3:0]       biu_ext_aw_id,
+   output [31:0]      biu_ext_aw_addr,
+   output [7:0]       biu_ext_aw_len,
+   output [2:0]       biu_ext_aw_size,
+   output [1:0]       biu_ext_aw_burst,
+   output             biu_ext_aw_lock,
+   output [3:0]       biu_ext_aw_cache,
+   output [2:0]       biu_ext_aw_prot,
+
+   // AXI Write data channel
+   input              ext_biu_w_ready,
+   output             biu_ext_w_valid,
+   output [3:0]       biu_ext_w_id,
+   output [63:0]      biu_ext_w_data,
+   output [7:0]       biu_ext_w_strb,
+   output             biu_ext_w_last,
+
+   // AXI Write response channel
+   output             biu_ext_b_ready,
+   input              ext_biu_b_valid,
+   input  [3:0]       ext_biu_b_id,
+   input  [1:0]       ext_biu_b_resp,
 
 
-      // AXI Write address channel
-      input            ext_biu_aw_ready,
-      output           biu_ext_aw_valid,
-      output [3:0]     biu_ext_aw_id,
-      output [31:0]    biu_ext_aw_addr,
-      output [7:0]     biu_ext_aw_len,
-      output [2:0]     biu_ext_aw_size,
-      output [1:0]     biu_ext_aw_burst,
-      output           biu_ext_aw_lock,
-      output [3:0]     biu_ext_aw_cache,
-      output [2:0]     biu_ext_aw_prot,
+   // Read data from the AXI interface
+   output [63:0]      axi_rdata,
+   output             axi_rdata_ifu_val,
+   output             axi_rdata_lsu_val, 
+   output             axi_rdata_icu_val, 
+   output             axi_rdata_last,
 
-      // AXI Write data channel
-      input            ext_biu_w_ready,
-      output           biu_ext_w_valid,
-      output [3:0]     biu_ext_w_id,
-      output [63:0]    biu_ext_w_data,
-      output [7:0]     biu_ext_w_strb,
-      output           biu_ext_w_last,
-
-      // AXI Write response channel
-      output           biu_ext_b_ready,
-      input            ext_biu_b_valid,
-      input  [3:0]     ext_biu_b_id,
-      input  [1:0]     ext_biu_b_resp,
-
-
-      // Read data from the AXI interface
-      output [63:0]    axi_rdata,
-      output           axi_rdata_ifu_val,
-      output           axi_rdata_lsu_val, 
-      output           axi_rdata_icu_val, 
-      output           axi_rdata_last,
-
-      // Write data to the AXI interface
-      output           axi_write_lsu_val
+   // Write data to the AXI interface
+   output             axi_write_lsu_val
    );
 
 `include "axi_types.v"
@@ -139,8 +138,6 @@ module c7bbiu_axi_interface(
       .q     (ar_valid_q));
       //.se(), .si(), .so());
    
-
-
 
    //           1                  0                   0
    //           1                  0                   1
@@ -209,7 +206,6 @@ module c7bbiu_axi_interface(
    assign biu_ext_ar_prot = arb_rd_prot_q;
 
 
-
    // r channel
 
    wire r_fin;
@@ -263,7 +259,6 @@ module c7bbiu_axi_interface(
    assign axi_rdata = ext_biu_r_data;
 
    assign axi_rdata_last = ext_biu_r_last;
-
 
 
    ///////////////////////
@@ -364,7 +359,6 @@ module c7bbiu_axi_interface(
    assign biu_ext_aw_prot  = arb_wr_aw_prot_q;
 
 
-
    ///////////////////////
    // w channel
    //
@@ -423,7 +417,6 @@ module c7bbiu_axi_interface(
    assign biu_ext_w_data = arb_wr_w_data_q;
    assign biu_ext_w_strb = arb_wr_w_strb_q;
    assign biu_ext_w_last = arb_wr_w_last_q;
-
 
 
    // b channel
