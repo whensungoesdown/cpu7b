@@ -109,7 +109,7 @@ module c7b(
    wire [31:0]      ifu_icu_addr_ic1;
    wire             icu_ifu_ack_ic1;
 
-   wire             ifu_icu_cancel; 
+   //wire             ifu_icu_cancel; 
 
    // ic2
    wire             icu_ifu_data_valid_ic2;
@@ -126,7 +126,7 @@ module c7b(
       .ifu_icu_addr_ic1                 (ifu_icu_addr_ic1),
       .icu_ifu_ack_ic1                  (icu_ifu_ack_ic1),      
 
-      .ifu_icu_cancel                   (ifu_icu_cancel),
+      //.ifu_icu_cancel                   (ifu_icu_cancel),
 
       .icu_ifu_data_ic2                 (icu_ifu_data_ic2),
       .icu_ifu_data_valid_ic2           (icu_ifu_data_valid_ic2),
@@ -158,7 +158,7 @@ module c7b(
                                                                
       .icu_ifu_ack_ic1                  (icu_ifu_ack_ic1),
 
-      .ifu_icu_cancel                   (ifu_icu_cancel),
+      .ifu_icu_cancel                   (1'b0),
                                                                
       .icu_ifu_data_valid_ic2           (icu_ifu_data_valid_ic2),
       .icu_ifu_data_ic2                 (icu_ifu_data_ic2),

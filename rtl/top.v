@@ -1,5 +1,7 @@
 `include "../../rtl/defines.vh"
 
+`undef AMBA_QOS
+
 module top(
    input              clk,
    input              resetn,

@@ -62,7 +62,7 @@ module amba_axi_m2s3
      `endif
      , input   wire                      M0_AWVALID
      , output  wire                      M0_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M0_AWQOS
      , input   wire  [ 3:0]              M0_AWREGION
      `endif
@@ -104,7 +104,7 @@ module amba_axi_m2s3
      `endif
      , input   wire                      M0_ARVALID
      , output  wire                      M0_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M0_ARQOS
      , input   wire  [ 3:0]              M0_ARREGION
      `endif
@@ -141,7 +141,7 @@ module amba_axi_m2s3
      `endif
      , input   wire                      M1_AWVALID
      , output  wire                      M1_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M1_AWQOS
      , input   wire  [ 3:0]              M1_AWREGION
      `endif
@@ -183,7 +183,7 @@ module amba_axi_m2s3
      `endif
      , input   wire                      M1_ARVALID
      , output  wire                      M1_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M1_ARQOS
      , input   wire  [ 3:0]              M1_ARREGION
      `endif
@@ -219,7 +219,7 @@ module amba_axi_m2s3
      `endif
      , output  wire                      S0_AWVALID
      , input   wire                      S0_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  wire   [ 3:0]             S0_AWQOS
      , output  wire   [ 3:0]             S0_AWREGION
      `endif
@@ -261,7 +261,7 @@ module amba_axi_m2s3
      `endif
      , output  wire                      S0_ARVALID
      , input   wire                      S0_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  wire   [ 3:0]             S0_ARQOS
      , output  wire   [ 3:0]             S0_ARREGION
      `endif
@@ -297,7 +297,7 @@ module amba_axi_m2s3
      `endif
      , output  wire                      S1_AWVALID
      , input   wire                      S1_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  wire   [ 3:0]             S1_AWQOS
      , output  wire   [ 3:0]             S1_AWREGION
      `endif
@@ -339,7 +339,7 @@ module amba_axi_m2s3
      `endif
      , output  wire                      S1_ARVALID
      , input   wire                      S1_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  wire   [ 3:0]             S1_ARQOS
      , output  wire   [ 3:0]             S1_ARREGION
      `endif
@@ -375,7 +375,7 @@ module amba_axi_m2s3
      `endif
      , output  wire                      S2_AWVALID
      , input   wire                      S2_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  wire   [ 3:0]             S2_AWQOS
      , output  wire   [ 3:0]             S2_AWREGION
      `endif
@@ -417,7 +417,7 @@ module amba_axi_m2s3
      `endif
      , output  wire                      S2_ARVALID
      , input   wire                      S2_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  wire   [ 3:0]             S2_ARQOS
      , output  wire   [ 3:0]             S2_ARREGION
      `endif
@@ -454,7 +454,7 @@ module amba_axi_m2s3
      `endif
      wire                      SD_AWVALID  ;
      wire                      SD_AWREADY  ;
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      wire  [ 3:0]              SD_AWQOS    ;
      wire  [ 3:0]              SD_AWREGION ;
      `endif
@@ -487,7 +487,7 @@ module amba_axi_m2s3
      `endif
      wire                      SD_ARVALID  ;
      wire                      SD_ARREADY  ;
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      wire  [ 3:0]              SD_ARQOS    ;
      wire  [ 3:0]              SD_ARREGION ;
      `endif
@@ -583,7 +583,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_AWVALID           (M0_AWVALID   )
                               , .M0_AWREADY           (M0_AWREADY_S0)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_AWQOS             (M0_AWQOS     )
                               , .M0_AWREGION          (M0_AWREGION  )
          `endif
@@ -613,7 +613,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_ARVALID           (M0_ARVALID   )
                               , .M0_ARREADY           (M0_ARREADY_S0)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_ARQOS             (M0_ARQOS     )
                               , .M0_ARREGION          (M0_ARREGION  )
          `endif
@@ -635,7 +635,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_AWVALID           (M1_AWVALID   )
                               , .M1_AWREADY           (M1_AWREADY_S0)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_AWQOS             (M1_AWQOS     )
                               , .M1_AWREGION          (M1_AWREGION  )
          `endif
@@ -665,7 +665,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_ARVALID           (M1_ARVALID   )
                               , .M1_ARREADY           (M1_ARREADY_S0)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_ARQOS             (M1_ARQOS     )
                               , .M1_ARREGION          (M1_ARREGION  )
          `endif
@@ -686,7 +686,7 @@ module amba_axi_m2s3
          `endif
          , .S_AWVALID            (S0_AWVALID   )
          , .S_AWREADY            (S0_AWREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_AWQOS              (S0_AWQOS     )
          , .S_AWREGION           (S0_AWREGION  )
          `endif
@@ -716,7 +716,7 @@ module amba_axi_m2s3
          `endif
          , .S_ARVALID            (S0_ARVALID   )
          , .S_ARREADY            (S0_ARREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_ARQOS              (S0_ARQOS     )
          , .S_ARREGION           (S0_ARREGION  )
          `endif
@@ -769,7 +769,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_AWVALID           (M0_AWVALID   )
                               , .M0_AWREADY           (M0_AWREADY_S1)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_AWQOS             (M0_AWQOS     )
                               , .M0_AWREGION          (M0_AWREGION  )
          `endif
@@ -799,7 +799,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_ARVALID           (M0_ARVALID   )
                               , .M0_ARREADY           (M0_ARREADY_S1)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_ARQOS             (M0_ARQOS     )
                               , .M0_ARREGION          (M0_ARREGION  )
          `endif
@@ -821,7 +821,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_AWVALID           (M1_AWVALID   )
                               , .M1_AWREADY           (M1_AWREADY_S1)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_AWQOS             (M1_AWQOS     )
                               , .M1_AWREGION          (M1_AWREGION  )
          `endif
@@ -851,7 +851,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_ARVALID           (M1_ARVALID   )
                               , .M1_ARREADY           (M1_ARREADY_S1)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_ARQOS             (M1_ARQOS     )
                               , .M1_ARREGION          (M1_ARREGION  )
          `endif
@@ -872,7 +872,7 @@ module amba_axi_m2s3
          `endif
          , .S_AWVALID            (S1_AWVALID   )
          , .S_AWREADY            (S1_AWREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_AWQOS              (S1_AWQOS     )
          , .S_AWREGION           (S1_AWREGION  )
          `endif
@@ -902,7 +902,7 @@ module amba_axi_m2s3
          `endif
          , .S_ARVALID            (S1_ARVALID   )
          , .S_ARREADY            (S1_ARREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_ARQOS              (S1_ARQOS     )
          , .S_ARREGION           (S1_ARREGION  )
          `endif
@@ -955,7 +955,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_AWVALID           (M0_AWVALID   )
                               , .M0_AWREADY           (M0_AWREADY_S2)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_AWQOS             (M0_AWQOS     )
                               , .M0_AWREGION          (M0_AWREGION  )
          `endif
@@ -985,7 +985,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_ARVALID           (M0_ARVALID   )
                               , .M0_ARREADY           (M0_ARREADY_S2)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_ARQOS             (M0_ARQOS     )
                               , .M0_ARREGION          (M0_ARREGION  )
          `endif
@@ -1007,7 +1007,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_AWVALID           (M1_AWVALID   )
                               , .M1_AWREADY           (M1_AWREADY_S2)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_AWQOS             (M1_AWQOS     )
                               , .M1_AWREGION          (M1_AWREGION  )
          `endif
@@ -1037,7 +1037,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_ARVALID           (M1_ARVALID   )
                               , .M1_ARREADY           (M1_ARREADY_S2)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_ARQOS             (M1_ARQOS     )
                               , .M1_ARREGION          (M1_ARREGION  )
          `endif
@@ -1058,7 +1058,7 @@ module amba_axi_m2s3
          `endif
          , .S_AWVALID            (S2_AWVALID   )
          , .S_AWREADY            (S2_AWREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_AWQOS              (S2_AWQOS     )
          , .S_AWREGION           (S2_AWREGION  )
          `endif
@@ -1088,7 +1088,7 @@ module amba_axi_m2s3
          `endif
          , .S_ARVALID            (S2_ARVALID   )
          , .S_ARREADY            (S2_ARREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_ARQOS              (S2_ARQOS     )
          , .S_ARREGION           (S2_ARREGION  )
          `endif
@@ -1141,7 +1141,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_AWVALID           (M0_AWVALID   )
                               , .M0_AWREADY           (M0_AWREADY_SD)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_AWQOS             (M0_AWQOS     )
                               , .M0_AWREGION          (M0_AWREGION  )
          `endif
@@ -1171,7 +1171,7 @@ module amba_axi_m2s3
          `endif
                               , .M0_ARVALID           (M0_ARVALID   )
                               , .M0_ARREADY           (M0_ARREADY_SD)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M0_ARQOS             (M0_ARQOS     )
                               , .M0_ARREGION          (M0_ARREGION  )
          `endif
@@ -1193,7 +1193,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_AWVALID           (M1_AWVALID   )
                               , .M1_AWREADY           (M1_AWREADY_SD)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_AWQOS             (M1_AWQOS     )
                               , .M1_AWREGION          (M1_AWREGION  )
          `endif
@@ -1223,7 +1223,7 @@ module amba_axi_m2s3
          `endif
                               , .M1_ARVALID           (M1_ARVALID   )
                               , .M1_ARREADY           (M1_ARREADY_SD)
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
                               , .M1_ARQOS             (M1_ARQOS     )
                               , .M1_ARREGION          (M1_ARREGION  )
          `endif
@@ -1244,7 +1244,7 @@ module amba_axi_m2s3
          `endif
          , .S_AWVALID            (SD_AWVALID   )
          , .S_AWREADY            (SD_AWREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_AWQOS              (SD_AWQOS     )
          , .S_AWREGION           (SD_AWREGION  )
          `endif
@@ -1274,7 +1274,7 @@ module amba_axi_m2s3
          `endif
          , .S_ARVALID            (SD_ARVALID   )
          , .S_ARREADY            (SD_ARREADY   )
-         `ifdef AMBA_AXI4
+         `ifdef AMBA_AXI4_QOS
          , .S_ARQOS              (SD_ARQOS     )
          , .S_ARREGION           (SD_ARREGION  )
          `endif
@@ -1516,7 +1516,7 @@ module amba_axi_m2s3
      `endif
           , .AWVALID  (SD_AWVALID )
           , .AWREADY  (SD_AWREADY )
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
           , .AWQOS    (SD_AWQOS   )
           , .AWREGION (SD_AWREGION)
      `endif
@@ -1549,7 +1549,7 @@ module amba_axi_m2s3
      `endif
           , .ARVALID  (SD_ARVALID )
           , .ARREADY  (SD_ARREADY )
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
           , .ARQOS    (SD_ARQOS   )
           , .ARREGION (SD_ARREGION)
      `endif
@@ -2178,7 +2178,7 @@ module axi_mtos_m2
      `endif
      , input   wire                      M0_AWVALID
      , output  wire                      M0_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M0_AWQOS
      , input   wire  [ 3:0]              M0_AWREGION
      `endif
@@ -2213,7 +2213,7 @@ module axi_mtos_m2
      `endif
      , input   wire                      M0_ARVALID
      , output  wire                      M0_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M0_ARQOS
      , input   wire  [ 3:0]              M0_ARREGION
      `endif
@@ -2241,7 +2241,7 @@ module axi_mtos_m2
      `endif
      , input   wire                      M1_AWVALID
      , output  wire                      M1_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M1_AWQOS
      , input   wire  [ 3:0]              M1_AWREGION
      `endif
@@ -2276,7 +2276,7 @@ module axi_mtos_m2
      `endif
      , input   wire                      M1_ARVALID
      , output  wire                      M1_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input   wire  [ 3:0]              M1_ARQOS
      , input   wire  [ 3:0]              M1_ARREGION
      `endif
@@ -2303,7 +2303,7 @@ module axi_mtos_m2
      `endif
      , output  reg                       S_AWVALID
      , input   wire                      S_AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  reg    [ 3:0]             S_AWQOS
      , output  reg    [ 3:0]             S_AWREGION
      `endif
@@ -2338,7 +2338,7 @@ module axi_mtos_m2
      `endif
      , output  reg                       S_ARVALID
      , input   wire                      S_ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , output  reg    [ 3:0]             S_ARQOS
      , output  reg    [ 3:0]             S_ARREGION
      `endif
@@ -2439,7 +2439,7 @@ module axi_mtos_m2
                     +  3                 //S_AWPROT
                        `endif
                     +  1                 //S_AWVALID
-                      `ifdef AMBA_AXI4
+                      `ifdef AMBA_AXI4_QOS
                     +  4                 //S_AWQOS
                     +  4                 //S_AWREGION
                       `endif
@@ -2476,7 +2476,7 @@ module axi_mtos_m2
                     +  3                 //S_ARPROT
                        `endif
                     +  1                 //S_ARVALID
-                      `ifdef AMBA_AXI4
+                      `ifdef AMBA_AXI4_QOS
                     +  4                 //S_ARQOS
                     +  4                 //S_ARREGION
                       `endif
@@ -2512,7 +2512,7 @@ module axi_mtos_m2
                           ,M0_AWPROT
      `endif
                           ,M0_AWVALID
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
                           ,M0_AWQOS
                           ,M0_AWREGION
      `endif
@@ -2534,7 +2534,7 @@ module axi_mtos_m2
                           ,M1_AWPROT
      `endif
                           ,M1_AWVALID
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
                           ,M1_AWQOS
                           ,M1_AWREGION
      `endif
@@ -2578,7 +2578,7 @@ module axi_mtos_m2
                           ,M0_ARPROT
      `endif
                           ,M0_ARVALID
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
                           ,M0_ARQOS
                           ,M0_ARREGION
      `endif
@@ -2600,7 +2600,7 @@ module axi_mtos_m2
                           ,M1_ARPROT
      `endif
                           ,M1_ARVALID
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
                           ,M1_ARQOS
                           ,M1_ARREGION
      `endif
@@ -2622,7 +2622,7 @@ module axi_mtos_m2
                      ,S_AWPROT\
                      `endif\
                      ,S_AWVALID\
-                     `ifdef AMBA_AXI4\
+                     `ifdef AMBA_AXI4_QOS\
                      ,S_AWQOS\
                      ,S_AWREGION\
                      `endif\
@@ -2683,7 +2683,7 @@ module axi_mtos_m2
                      ,S_ARPROT\
                      `endif\
                      ,S_ARVALID\
-                     `ifdef AMBA_AXI4\
+                     `ifdef AMBA_AXI4_QOS\
                      ,S_ARQOS\
                      ,S_ARREGION\
                      `endif\
@@ -3026,7 +3026,7 @@ module axi_default_slave
      `endif
      , input  wire                 AWVALID
      , output reg                  AWREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input  wire [ 3:0]          AWQOS
      , input  wire [ 3:0]          AWREGION
      `endif
@@ -3059,7 +3059,7 @@ module axi_default_slave
      `endif
      , input  wire                 ARVALID
      , output reg                  ARREADY
-     `ifdef AMBA_AXI4
+     `ifdef AMBA_AXI4_QOS
      , input  wire [ 3:0]          ARQOS
      , input  wire [ 3:0]          ARREGION
      `endif

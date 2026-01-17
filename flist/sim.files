@@ -3,8 +3,8 @@
 
 +incdir+${PROJECT_ROOT}/rtl/c7bbiu
 +incdir+${PROJECT_ROOT}/rtl/c7blsu/rtl
-+incdir+${PROJECT_ROOT}/rtl/c7bcsr
-+incdir+${PROJECT_ROOT}/rtl/c7bifu
++incdir+${PROJECT_ROOT}/rtl/c7bcsr/rtl
++incdir+${PROJECT_ROOT}/rtl/c7bifu/rtl
 
 ${PROJECT_ROOT}/simulation/altera_mf.v
 
@@ -13,22 +13,6 @@ ${PROJECT_ROOT}/rtl/alu_defs.v
 ${PROJECT_ROOT}/rtl/branch.v 
 ${PROJECT_ROOT}/rtl/bru_defs.v 
 ${PROJECT_ROOT}/rtl/defines.vh 
-${PROJECT_ROOT}/rtl/c7bcsr/cpu7_csr_byplog.v 
-${PROJECT_ROOT}/rtl/c7bcsr/cpu7_csr.v 
-${PROJECT_ROOT}/rtl/c7bcsr/cpu7_csr_timer.v
-${PROJECT_ROOT}/rtl/c7bcsr/csr_defs.v
-${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_eclbyplog_rs1.v 
-${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_eclbyplog.v 
-${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_ecl.v 
-${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu_rf.v 
-${PROJECT_ROOT}/rtl/c7bexu/cpu7_exu.v 
-${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_dec.v 
-${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_fdp.v 
-${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_imd.v 
-${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_incr30.v 
-${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu.v 
-${PROJECT_ROOT}/rtl/c7bifu/decoder.v 
-${PROJECT_ROOT}/rtl/c7bifu/dec_defs.v 
 ${PROJECT_ROOT}/rtl/c7bcore.v 
 ${PROJECT_ROOT}/rtl/mul32x32.v 
 ${PROJECT_ROOT}/rtl/mul64x64.v 
@@ -48,7 +32,9 @@ ${PROJECT_ROOT}/rtl/models/ram22.v
 ${PROJECT_ROOT}/rtl/models/ram22_way1.v 
 ${PROJECT_ROOT}/rtl/models/ram64.v 
 ${PROJECT_ROOT}/rtl/models/ram64_way1.v 
-${PROJECT_ROOT}/rtl/c7bifu/cpu7_ifu_iq.v 
 ${PROJECT_ROOT}/rtl/top.v
 
 -f ${PROJECT_ROOT}/rtl/c7blsu/flist/c7blsu.flist
+-f ${PROJECT_ROOT}/rtl/c7bcsr/flist/c7bcsr.flist
+-f ${PROJECT_ROOT}/rtl/c7bifu/flist/c7bifu.flist
+-f ${PROJECT_ROOT}/rtl/c7bexu/flist/c7bexu.flist
