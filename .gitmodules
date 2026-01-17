@@ -1,3 +1,12 @@
 [submodule "rtl/c7blsu"]
 	path = rtl/c7blsu
 	url = https://github.com/whensungoesdown/c7blsu.git
+[submodule "rtl/c7bcsr"]
+	path = rtl/c7bcsr
+	url = https://github.com/whensungoesdown/c7bcsr.git
+[submodule "rtl/c7bifu"]
+	path = rtl/c7bifu
+	url = https://github.com/whensungoesdown/c7bifu.git
+[submodule "rtl/c7bexu"]
+	path = rtl/c7bexu
+	url = https://github.com/whensungoesdown/c7bexu.git
