@@ -17,8 +17,8 @@ module branch(
    //    output              bru_cancel,
    output [31:0] bru_target,
    output              bru_taken,
-   output [31:0] bru_link_pc,
-   output              bru_wen
+   output [31:0] bru_link_pc
+//   output              bru_wen
    //    output [31:0] bru_pc
    );
 
@@ -140,6 +140,6 @@ assign take =
    assign bru_link_pc = target_next;
    //assign bru_pc = branch_pc;
 
-   assign bru_wen = (op_jirl | op_bl) & branch_valid;
+//   assign bru_wen = (op_jirl | op_bl) & branch_valid;
    
 endmodule
