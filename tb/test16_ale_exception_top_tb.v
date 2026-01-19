@@ -25,8 +25,9 @@ module top_tb(
    
 
    top u_top (
-      .clk      (clk      ),
-      .resetn   (resetn   )
+      .clk                             (clk),
+      .resetn                          (resetn),
+      .dumb_output                     (dumb_output)
       );
 
    always @(negedge clk)
@@ -42,11 +43,11 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c000028 === u_top.u_c7b.u_core.ifu_exu_pc_w)
+	 if (32'h1c000028 === u_top.u_c7b.u_core.u_exu.pc_w)
 	 begin
-		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.exu.registers.regs[5]);
+		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
 
-		 if (32'h5a === u_top.u_c7b.u_core.exu.registers.regs[5] 
+		 if (32'h5a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
 	            )
 		 begin
 			 $display("\nPASS!\n");
