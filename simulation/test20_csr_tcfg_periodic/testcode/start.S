@@ -22,7 +22,7 @@ start:
 
 	# setup fault handler
 	lu12i.w  $r6, 0x1c000
-	addi.w   $r6, $r6, 0x30          # fault_handler 
+	addi.w   $r6, $r6, 0x34          # fault_handler 
 	csrwr    $r6, 0xc                # EENTRY
 	
 	addi.w   $r5, $r0, 0xa
@@ -37,6 +37,7 @@ start:
 loop:
 	addi.w   $r6, $r0, 0x5a
 	bne      $r5, $r6, loop
+	nop
 	nop
 	nop
 
