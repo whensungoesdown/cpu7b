@@ -37,7 +37,7 @@ wire op_bge   = branch_op == `LBRU_GE;
 wire op_bltu  = branch_op == `LBRU_LTU;
 wire op_bgeu  = branch_op == `LBRU_GEU;
 wire op_jirl  = branch_op == `LBRU_JR;
-wire op_bl    = branch_op == `LBRU_BL;
+//wire op_bl    = branch_op == `LBRU_BL;
 
 wire [31:0] target_next;
 wire [31:0] target_jr;
