@@ -15,9 +15,16 @@ module top_tb(
 	 $display("Start ...");
 	 clk = 1'b1;
 	 resetn = 1'b0;
+	 u_top.ext_intr = 1'b0;
  
 	 #32;
 	 resetn = 1'b1;
+
+	 #250;
+	 u_top.ext_intr = 1'b1;
+
+	 #600;
+	 u_top.ext_intr = 1'b0;
 
 	 
       end
@@ -44,27 +51,11 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c000030 === u_top.u_c7b.u_core.u_exu.pc_w)
+	 if (32'h1c00006c === u_top.u_c7b.u_core.u_exu.pc_w)
 	 begin
 		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
-                 // 1c000020:       02816806        addi.w  $r6,$r0,90(0x5a)
-                 // 1c000024:       5ffffca6        bne     $r5,$r6,-4(0x3fffc) # 1c000020 <loop>
-                 // 1c000028:       02800000        addi.w  $r0,$r0,0
-                 // 1c00002c:       02800000        addi.w  $r0,$r0,0
-                 // 1c000030:       02800000        addi.w  $r0,$r0,0
 
-		 // when the r5 is added up to 0x5a, 1c000024 branch not
-		 // taken, so the control flow goes down to 1c000028,
-		 // 1c00002c ...
-		 // right at 1c00002c, another timer interrupt, the r5 is
-		 // added another 0x10.
-		 // So for this test, under current design, the r5 should be
-		 // 0x6a.
-		 // But if the design changes, the timing may not be as the
-		 // same.
-
-		 if (32'h6a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5] ||
-		     32'h5a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
+		 if (32'h5a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
 	            )
 		 begin
 			 $display("\nPASS!\n");

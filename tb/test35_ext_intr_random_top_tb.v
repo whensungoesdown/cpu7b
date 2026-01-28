@@ -10,17 +10,45 @@ module top_tb(
    reg resetn;
    wire dumb_output;
 
-   initial
-      begin
-	 $display("Start ...");
-	 clk = 1'b1;
-	 resetn = 1'b0;
- 
-	 #32;
-	 resetn = 1'b1;
+   integer seed;
+   integer rand_val;
 
-	 
+   initial
+   begin
+
+      // 从命令行获取种子
+      if (!$value$plusargs("seed=%d", seed)) begin
+              seed = 12345;
       end
+
+      $display("RANDOM: Using seed: %0d", seed);
+
+      // 设置随机种子 - 使用 $urandom 而不是 $random
+      $urandom(seed);
+
+      $display("Start ...");
+      clk = 1'b1;
+      resetn = 1'b0;
+      u_top.ext_intr = 1'b0;
+
+      #32;
+      resetn = 1'b1;
+
+      // 使用 $urandom_range 生成范围内的随机数
+      rand_val = $urandom_range(100, 1000);
+      $display("RANDOM: Random delay 1: %0d", rand_val);
+      #(rand_val);
+
+      u_top.ext_intr = 1'b1;
+      $display("RANDOM: ext_intr asserted at time %0t", $time);
+
+      rand_val = $urandom_range(100, 500);
+      $display("RANDOM: Random delay 2: %0d", rand_val);
+      #(rand_val);
+
+      u_top.ext_intr = 1'b0;
+      $display("RANDOM: ext_intr deasserted at time %0t", $time);
+   end
 
    always #5 clk=~clk;
    
@@ -44,27 +72,11 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c000030 === u_top.u_c7b.u_core.u_exu.pc_w)
+	 if (32'h1c00006c === u_top.u_c7b.u_core.u_exu.pc_w)
 	 begin
 		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
-                 // 1c000020:       02816806        addi.w  $r6,$r0,90(0x5a)
-                 // 1c000024:       5ffffca6        bne     $r5,$r6,-4(0x3fffc) # 1c000020 <loop>
-                 // 1c000028:       02800000        addi.w  $r0,$r0,0
-                 // 1c00002c:       02800000        addi.w  $r0,$r0,0
-                 // 1c000030:       02800000        addi.w  $r0,$r0,0
 
-		 // when the r5 is added up to 0x5a, 1c000024 branch not
-		 // taken, so the control flow goes down to 1c000028,
-		 // 1c00002c ...
-		 // right at 1c00002c, another timer interrupt, the r5 is
-		 // added another 0x10.
-		 // So for this test, under current design, the r5 should be
-		 // 0x6a.
-		 // But if the design changes, the timing may not be as the
-		 // same.
-
-		 if (32'h6a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5] ||
-		     32'h5a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
+		 if (32'h5a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
 	            )
 		 begin
 			 $display("\nPASS!\n");

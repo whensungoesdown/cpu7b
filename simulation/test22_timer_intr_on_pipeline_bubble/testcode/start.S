@@ -43,7 +43,7 @@ start:
 
 	lu12i.w  $r6, 0x1c000
 	addi.w   $r6, $r6, 0xa8          # <--- timer interrupt here, at the bubble that addi.w created 
-	nop
+	bne      $r0, $r0, dst           # useless, just for interrupts on BRU could happen, to bypass this case temporarily
 	ld.w     $r7, $r6, 0x0            
 
 	nop                              

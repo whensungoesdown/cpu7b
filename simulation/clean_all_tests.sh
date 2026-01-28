@@ -244,3 +244,17 @@ echo "test33_icache_smoke"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test34_ext_intr_on_branch
+echo "test34_ext_intr_on_branch"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test35_ext_intr_random
+echo "test35_ext_intr_random"
+./clean.sh
+echo ""
+cd ..
