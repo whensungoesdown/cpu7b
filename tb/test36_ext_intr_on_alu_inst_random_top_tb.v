@@ -24,10 +24,6 @@ module top_tb(
       $display("RANDOM: Using seed: %0d", seed);
 
       // 设置随机种子 - 使用 $urandom 而不是 $random
-      // $random does not work. 
-      // $urandom gives a warning, but it works
-      // # ** Warning: (vsim-PLI-3691) /home/u/prjs/cpu7b/tb/test35_ext_intr_random_top_tb.v(27): Expected a system task, not a system function '$urandom'.
-
       $urandom(seed);
 
       $display("Start ...");
@@ -42,13 +38,14 @@ module top_tb(
       rand_val = $urandom_range(100, 1000);
       $display("RANDOM: Random delay 1: %0d", rand_val);
       #(rand_val);
+      //#101
 
       u_top.ext_intr = 1'b1;
       $display("RANDOM: ext_intr asserted at time %0t", $time);
 
-      //rand_val = $urandom_range(100, 500);
-      //$display("RANDOM: Random delay 2: %0d", rand_val);
-      //#(rand_val);
+//      rand_val = $urandom_range(100, 500);
+//      $display("RANDOM: Random delay 2: %0d", rand_val);
+//      #(rand_val);
       #800
 
       u_top.ext_intr = 1'b0;
@@ -77,7 +74,7 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c00006c === u_top.u_c7b.u_core.u_exu.pc_w)
+	 if (32'h1c00018c === u_top.u_c7b.u_core.u_exu.pc_w)
 	 begin
 		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
 

@@ -10,6 +10,7 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_f
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_vld_f
 add wave -divider
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/pc_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/vld_e
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/wen_e
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/rd_e
 add wave -divider
@@ -30,6 +31,13 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/alu_b_e
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/ifu_exu_vld_d
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/stall
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/flush
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/expected_addr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/data_addr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/start_addr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/data_vld
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/queue_empty
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/queue_full
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/skip_first_half
 add wave -divider
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r5
 add wave -divider
@@ -38,4 +46,8 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/ifu_icu_req_ic1
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/icu_ifu_ack_ic1
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/icu_ifu_data_ic2
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/icu_ifu_data_valid_ic2
+add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/bru_branch_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/bru_branch_m
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/bru_branch_w
 add wave -divider

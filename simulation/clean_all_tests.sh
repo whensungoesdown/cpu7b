@@ -258,3 +258,24 @@ echo "test35_ext_intr_random"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test36_ext_intr_on_alu_inst_random
+echo "test36_ext_intr_on_alu_inst_random"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test37_ext_intr_on_lsu_inst_random
+echo "test37_ext_intr_on_lsu_inst_random"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test38_ext_intr_on_2lsu_inst_random
+echo "test38_ext_intr_on_2lsu_inst_random"
+./clean.sh
+echo ""
+cd ..

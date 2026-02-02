@@ -429,49 +429,33 @@ echo ""
 cd ..
 
 
-cd test35_ext_intr_random
-echo "test35_ext_intr_random"
-if ./simulate.sh | grep "PASS\|RANDOM"; then
-	printf ""
-else
-	printf "Fail!\n"
-	exit
-fi
+
+run_test() {
+    local test_dir="$1"
+    
+    echo "Running: $test_dir"
+    cd "$test_dir"
+    
+    # Run test and capture output
+    output=$(./run_simulate.sh 2>&1)
+    echo "$output"
+    echo ""
+    
+    # Check for PASS indicator
+    if [[ "$output" != *"All runs contained PASS!"* ]]; then
+        echo "Test FAILED: '$test_dir'"
+        exit 1
+    fi
+    
+    cd ..
+}
+
+echo "Starting RANDOM test suite..."
 echo ""
-cd ..
 
+run_test "test35_ext_intr_random"
+run_test "test36_ext_intr_on_alu_inst_random"
+run_test "test37_ext_intr_on_lsu_inst_random"
+run_test "test38_ext_intr_on_2lsu_inst_random"
 
-cd test36_ext_intr_on_alu_inst_random
-echo "test36_ext_intr_on_alu_inst_random"
-if ./simulate.sh | grep "PASS\|RANDOM"; then
-	printf ""
-else
-	printf "Fail!\n"
-	exit
-fi
-echo ""
-cd ..
-
-
-cd test37_ext_intr_on_lsu_inst_random
-echo "test37_ext_intr_on_lsu_inst_random"
-if ./simulate.sh | grep "PASS\|RANDOM"; then
-	printf ""
-else
-	printf "Fail!\n"
-	exit
-fi
-echo ""
-cd ..
-
-
-cd test38_ext_intr_on_2lsu_inst_random
-echo "test38_ext_intr_on_2lsu_inst_random"
-if ./simulate.sh | grep "PASS\|RANDOM"; then
-	printf ""
-else
-	printf "Fail!\n"
-	exit
-fi
-echo ""
-cd ..
+echo "All RANDOM tests PASSED successfully!"
