@@ -1,32 +1,38 @@
 //`include "defines.vh"
 
 module c7bcore(
-   input                 clk,
-   input                 resetn,            // active low
+   input              clk,
+   input              resetn,            // active low
    
-   input                 ext_intr,
+   input              ext_intr,
    
-   output                ifu_icu_req_ic1,
-   output [31:0]         ifu_icu_addr_ic1,
-   input                 icu_ifu_ack_ic1,
-   //output                ifu_icu_cancel,
-   input  [63:0]         icu_ifu_data_ic2,
-   input                 icu_ifu_data_valid_ic2,   
+   output             ifu_icu_req_ic1,
+   output [31:0]      ifu_icu_addr_ic1,
+   input              icu_ifu_ack_ic1,
+   //output             ifu_icu_cancel,
+   input  [63:0]      icu_ifu_data_ic2,
+   input              icu_ifu_data_valid_ic2,   
 
-   output                lsu_biu_rd_req,
-   output [31:0]         lsu_biu_rd_addr,
+   output [31:0]      ifu_biu_rd_addr,
+   output             ifu_biu_rd_req,
+   input              biu_ifu_rd_ack,
+   input              biu_ifu_data_valid,
+   input  [63:0]      biu_ifu_data,
 
-   input                 biu_lsu_rd_ack,
-   input                 biu_lsu_data_valid,
-   input  [63:0]         biu_lsu_data,
+   output             lsu_biu_rd_req,
+   output [31:0]      lsu_biu_rd_addr,
 
-   output                lsu_biu_wr_req,
-   output [31:0]         lsu_biu_wr_addr,
-   output [63:0]         lsu_biu_wr_data,
-   output [7:0]          lsu_biu_wr_strb,
+   input              biu_lsu_rd_ack,
+   input              biu_lsu_data_valid,
+   input  [63:0]      biu_lsu_data,
 
-   input                 biu_lsu_wr_ack,
-   input                 biu_lsu_write_done
+   output             lsu_biu_wr_req,
+   output [31:0]      lsu_biu_wr_addr,
+   output [63:0]      lsu_biu_wr_data,
+   output [7:0]       lsu_biu_wr_strb,
+
+   input              biu_lsu_wr_ack,
+   input              biu_lsu_write_done
 );
 
    wire exu_ifu_except;
@@ -89,12 +95,21 @@ module c7bcore(
       .clk                             (clk),
       .resetn                          (resetn),
       
+      .ic_en                           (1'b0),
+
       // icu interface
       .ifu_icu_addr_ic1                (ifu_icu_addr_ic1),
       .ifu_icu_req_ic1                 (ifu_icu_req_ic1),
       .icu_ifu_ack_ic1                 (icu_ifu_ack_ic1),
       .icu_ifu_data_valid_ic2          (icu_ifu_data_valid_ic2),
       .icu_ifu_data_ic2                (icu_ifu_data_ic2),
+
+      // biu interface
+      .ifu_biu_rd_addr                 (ifu_biu_rd_addr),
+      .ifu_biu_rd_req                  (ifu_biu_rd_req),
+      .biu_ifu_rd_ack                  (biu_ifu_rd_ack),
+      .biu_ifu_data_valid              (biu_ifu_data_valid),
+      .biu_ifu_data                    (biu_ifu_data),
 
       //
       .exu_ifu_except                  (exu_ifu_except),

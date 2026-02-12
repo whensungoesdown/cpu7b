@@ -116,36 +116,48 @@ module c7b(
    wire [63:0]      icu_ifu_data_ic2;
 
 
+   wire ifu_biu_rd_req; 
+   wire [31:0] ifu_biu_rd_addr;
+   wire biu_ifu_rd_ack;
+   wire biu_ifu_data_valid;
+   wire [63:0] biu_ifu_data;
+
+
    c7bcore u_core(
-      .clk                              (clk),
-      .resetn                           (resetn),
+      .clk                             (clk),
+      .resetn                          (resetn),
 
-      .ext_intr                         (ext_intr),
+      .ext_intr                        (ext_intr),
 
-      .ifu_icu_req_ic1                  (ifu_icu_req_ic1),
-      .ifu_icu_addr_ic1                 (ifu_icu_addr_ic1),
-      .icu_ifu_ack_ic1                  (icu_ifu_ack_ic1),      
+      .ifu_icu_req_ic1                 (ifu_icu_req_ic1),
+      .ifu_icu_addr_ic1                (ifu_icu_addr_ic1),
+      .icu_ifu_ack_ic1                 (icu_ifu_ack_ic1),      
 
-      //.ifu_icu_cancel                   (ifu_icu_cancel),
+      //.ifu_icu_cancel                  (ifu_icu_cancel),
 
-      .icu_ifu_data_ic2                 (icu_ifu_data_ic2),
-      .icu_ifu_data_valid_ic2           (icu_ifu_data_valid_ic2),
+      .icu_ifu_data_ic2                (icu_ifu_data_ic2),
+      .icu_ifu_data_valid_ic2          (icu_ifu_data_valid_ic2),
 
+      .ifu_biu_rd_addr                 (ifu_biu_rd_addr),
+      .ifu_biu_rd_req                  (ifu_biu_rd_req),
+      .biu_ifu_rd_ack                  (biu_ifu_rd_ack),
+      .biu_ifu_data_valid              (biu_ifu_data_valid),
+      .biu_ifu_data                    (biu_ifu_data),
 
-      .lsu_biu_rd_req                   (lsu_biu_rd_req),
-      .lsu_biu_rd_addr                  (lsu_biu_rd_addr),
+      .lsu_biu_rd_req                  (lsu_biu_rd_req),
+      .lsu_biu_rd_addr                 (lsu_biu_rd_addr),
 
-      .biu_lsu_rd_ack                   (biu_lsu_rd_ack),
-      .biu_lsu_data_valid               (biu_lsu_data_valid),
-      .biu_lsu_data                     (biu_lsu_data), 
+      .biu_lsu_rd_ack                  (biu_lsu_rd_ack),
+      .biu_lsu_data_valid              (biu_lsu_data_valid),
+      .biu_lsu_data                    (biu_lsu_data), 
 
-      .lsu_biu_wr_req                   (lsu_biu_wr_req),
-      .lsu_biu_wr_addr                  (lsu_biu_wr_addr),
-      .lsu_biu_wr_data                  (lsu_biu_wr_data),
-      .lsu_biu_wr_strb                  (lsu_biu_wr_strb),
+      .lsu_biu_wr_req                  (lsu_biu_wr_req),
+      .lsu_biu_wr_addr                 (lsu_biu_wr_addr),
+      .lsu_biu_wr_data                 (lsu_biu_wr_data),
+      .lsu_biu_wr_strb                 (lsu_biu_wr_strb),
 
-      .biu_lsu_wr_ack                   (biu_lsu_wr_aw_ack & biu_lsu_wr_aw_ack),
-      .biu_lsu_write_done               (biu_lsu_write_done)
+      .biu_lsu_wr_ack                  (biu_lsu_wr_aw_ack & biu_lsu_wr_aw_ack),
+      .biu_lsu_write_done              (biu_lsu_write_done)
    );
 
 
@@ -217,10 +229,6 @@ module c7b(
    );
 
 
-   // unused
-   wire biu_ifu_rd_ack;
-   wire biu_ifu_data_valid;
-   wire [63:0] biu_ifu_data;
 
    c7bbiu u_biu(
       .clk                              (clk),
@@ -228,8 +236,8 @@ module c7b(
 
       // IFU Interface
       // for ifu uncache fetch, not used yet 
-      .ifu_biu_rd_req                   (1'b0),    
-      .ifu_biu_rd_addr                  ('h0),
+      .ifu_biu_rd_req                   (ifu_biu_rd_req),    
+      .ifu_biu_rd_addr                  (ifu_biu_rd_addr),
       .ifu_biu_cancel                   (1'b0),
 
       .biu_ifu_rd_ack                   (biu_ifu_rd_ack), 
