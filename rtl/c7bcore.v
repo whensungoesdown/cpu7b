@@ -92,13 +92,15 @@ module c7bcore(
 
    
    wire csr_ifu_ic_en; 
+   wire csr_ifu_ic_en_pls;
 
 
    c7bifu u_ifu(
       .clk                             (clk),
       .resetn                          (resetn),
       
-      .ic_en                           (csr_ifu_ic_en),
+      .csr_ifu_ic_en                   (csr_ifu_ic_en),
+      .csr_ifu_ic_en_pls               (csr_ifu_ic_en_pls),
 
       // icu interface
       .ifu_icu_addr_ic1                (ifu_icu_addr_ic1),
@@ -247,7 +249,8 @@ module c7bcore(
       .biu_lsu_wr_ack                  (biu_lsu_wr_ack),
       .biu_lsu_wr_fin                  (biu_lsu_write_done),
 
-      .csr_ifu_ic_en                   (csr_ifu_ic_en) 
+      .csr_ifu_ic_en                   (csr_ifu_ic_en),
+      .csr_ifu_ic_en_pls               (csr_ifu_ic_en_pls)  
    );
 
 endmodule // cpu7
