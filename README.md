@@ -220,8 +220,6 @@ u@uu:~/prjs/cpu7b$ cd systhesis/altera/
 u@uu:~/prjs/cpu7b/systhesis/altera$ make
 `````
 
-`````
-
 ### Run tests
 
 `````shell
