@@ -475,3 +475,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test39_ic_en
+echo "test39_ic_en"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test40_alsl.w
+echo "test40_alsl.w"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

@@ -279,3 +279,17 @@ echo "test38_ext_intr_on_2lsu_inst_random"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test39_ic_en
+echo "test39_ic_en"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test40_alsl.w
+echo "test40_alsl.w"
+./clean.sh
+echo ""
+cd ..
