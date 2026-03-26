@@ -307,3 +307,17 @@ echo "test42_mod.w"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test43_div.wu
+echo "test43_div.wu"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test44_mod.wu
+echo "test44_mod.wu"
+./clean.sh
+echo ""
+cd ..

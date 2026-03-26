@@ -523,3 +523,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test43_div.wu
+echo "test43_div.wu"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test44_mod.wu
+echo "test44_mod.wu"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
