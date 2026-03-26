@@ -499,3 +499,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test41_div.w
+echo "test41_div.w"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

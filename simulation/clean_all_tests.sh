@@ -293,3 +293,10 @@ echo "test40_alsl.w"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test41_div.w
+echo "test41_div.w"
+./clean.sh
+echo ""
+cd ..
