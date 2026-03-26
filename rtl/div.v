@@ -25,13 +25,8 @@ reg  x_31_saved;
 reg  y_31_saved;
 
 wire complete_delay;
-wire real_complete;
 
 assign complete_delay = (count == 8'hf0);
-assign real_complete = complete_delay || complete;
-
-// 在div上升沿保存输入值
-wire div_posedge = div && ~div_started;
 
 always @(posedge div_clk or posedge reset) begin 
     if (reset) begin 
