@@ -76,6 +76,11 @@ module c7bcore(
    wire ifu_exu_mul_hi_d;
    wire ifu_exu_mul_short_d;
 
+   // div
+   wire ifu_exu_div_vld_d;
+   wire ifu_exu_div_signed_d;
+   wire ifu_exu_div_mod_d;
+
    // csr
    wire ifu_exu_csr_vld_d;
    wire [13:0] ifu_exu_csr_raddr_d; // CSR_BIT 14
@@ -158,6 +163,11 @@ module c7bcore(
       .ifu_exu_mul_hi_d                (ifu_exu_mul_hi_d),
       .ifu_exu_mul_short_d             (ifu_exu_mul_short_d),
 
+      // div
+      .ifu_exu_div_vld_d               (ifu_exu_div_vld_d),
+      .ifu_exu_div_signed_d            (ifu_exu_div_signed_d),
+      .ifu_exu_div_mod_d               (ifu_exu_div_mod_d),
+
       // csr
       .ifu_exu_csr_vld_d               (ifu_exu_csr_vld_d),
       .ifu_exu_csr_raddr_d             (ifu_exu_csr_raddr_d),
@@ -220,6 +230,11 @@ module c7bcore(
       .ifu_exu_mul_double_d            (ifu_exu_mul_double_d),
       .ifu_exu_mul_hi_d                (ifu_exu_mul_hi_d),
       .ifu_exu_mul_short_d             (ifu_exu_mul_short_d),
+
+      // div
+      .ifu_exu_div_vld_d               (ifu_exu_div_vld_d),
+      .ifu_exu_div_signed_d            (ifu_exu_div_signed_d),
+      .ifu_exu_div_mod_d               (ifu_exu_div_mod_d),
 
       // csr
       .ifu_exu_csr_vld_d               (ifu_exu_csr_vld_d),

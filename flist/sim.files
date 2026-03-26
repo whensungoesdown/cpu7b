@@ -32,6 +32,7 @@ ${PROJECT_ROOT}/rtl/models/ram22.v
 ${PROJECT_ROOT}/rtl/models/ram22_way1.v 
 ${PROJECT_ROOT}/rtl/models/ram64.v 
 ${PROJECT_ROOT}/rtl/models/ram64_way1.v 
+${PROJECT_ROOT}/rtl/div.v 
 ${PROJECT_ROOT}/rtl/top.v
 
 -f ${PROJECT_ROOT}/rtl/c7blsu/flist/c7blsu.flist
