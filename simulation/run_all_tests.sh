@@ -511,3 +511,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test42_mod.w
+echo "test42_mod.w"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

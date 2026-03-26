@@ -300,3 +300,10 @@ echo "test41_div.w"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test42_mod.w
+echo "test42_mod.w"
+./clean.sh
+echo ""
+cd ..
