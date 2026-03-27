@@ -68,11 +68,9 @@ More blogs are kept at:
 
 ---
 
-## Instruction Set Support
+## LoongArch32r Instruction Set
 
-### Implemented Instructions
-
-#### Integer Arithmetic
+### Integer Arithmetic
 
 
 `````assembly
@@ -90,7 +88,7 @@ More blogs are kept at:
   NOP
 `````
 	
-#### Bit-Shift
+### Bit-Shift
 
 `````assembly
   SLL.W SRL.W SRA.W SLL.W SRL.W SRA.W
@@ -98,7 +96,7 @@ More blogs are kept at:
   SLLI.W SRLI.W SRAI.W
 `````
 
-#### Branch and Jump
+### Branch and Jump
 
 `````assembly
   BEQ BNE BLT[U] BGE[U]
@@ -108,19 +106,19 @@ More blogs are kept at:
   JIRL
 `````
 
-#### Integer Multiply
+### Integer Multiply
 
 `````assembly
   MUL.W MULH.W[U]
 `````
 
-#### Integer Divide
+### Integer Divide
 
 `````assembly
   DIV.W[U]  MOD.W[U]
 `````
 
-#### Memory Access
+### Memory Access
 
 `````assembly
   LD.B LD.H LD.W LD.BU LD.HU LD.HU
@@ -128,19 +126,27 @@ More blogs are kept at:
   ST.B ST.H ST.W
 `````
 
-#### CSR Access
+### CSR Access
 
 `````assembly
   CSRRD CSRWR CSRXCHG
 `````
 
-#### Miscellaneous
+### Miscellaneous
 
 
 `````assembly
   ERTN
 `````
 
+## To Do
+
+- [ ] Memory access: `PRELD`
+- [ ] Atomic memory access: `LL.W`, `SC.W`
+- [ ] Barrier instructions: `DBAR`, `IBAR`
+- [ ] Floating-point instructions
+- [ ] Cache and TLB instructions
+- [ ] Miscellaneous: `SYSCALL`, `BREAK`, `RDCNTV{L/H}.W`, `RDCNTID`, `IDLE`
 
 ---
 
@@ -168,16 +174,6 @@ More blogs are kept at:
 - Ext Interrupt
 ---
 
-## To Do
-
-- [ ] Memory access: `PRELD`
-- [ ] Atomic memory access: `LL.W`, `SC.W`
-- [ ] Barrier instructions: `DBAR`, `IBAR`
-- [ ] Floating-point instructions
-- [ ] Cache and TLB instructions
-- [ ] Miscellaneous: `SYSCALL`, `BREAK`, `RDCNTV{L/H}.W`, `RDCNTID`, `IDLE`
-
----
 
 
 
