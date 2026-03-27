@@ -1,4 +1,4 @@
-# CPU7B (LoongArch32 ISA)
+# CPU7B (LoongArch32r ISA)
 
 
 More blogs are kept at:
