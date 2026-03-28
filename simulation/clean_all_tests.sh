@@ -321,3 +321,17 @@ echo "test44_mod.wu"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test45_break_exception
+echo "test45_break_exception"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test46_syscall_exception
+echo "test46_syscall_exception"
+./clean.sh
+echo ""
+cd ..

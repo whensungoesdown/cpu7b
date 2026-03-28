@@ -547,3 +547,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test45_break_exception
+echo "test45_break_exception"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test46_syscall_exception
+echo "test46_syscall_exception"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
