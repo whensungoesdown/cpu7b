@@ -335,3 +335,17 @@ echo "test46_syscall_exception"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test47_timer_intr_pending
+echo "test47_timer_intr_pending"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test48_csr_save0_3
+echo "test48_csr_save0_3"
+./clean.sh
+echo ""
+cd ..

@@ -571,3 +571,29 @@ else
 fi
 echo ""
 cd ..
+
+
+# related code is deleted from c7bexu.v
+# but the test case can stay
+cd test47_timer_intr_pending
+echo "test47_timer_intr_pending"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test48_csr_save0_3
+echo "test48_csr_save0_3"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
