@@ -349,3 +349,10 @@ echo "test48_csr_save0_3"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test49_rdtime
+echo "test49_rdtime"
+./clean.sh
+echo ""
+cd ..

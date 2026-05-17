@@ -597,3 +597,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test49_rdtime
+echo "test49_rdtime"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
