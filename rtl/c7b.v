@@ -69,6 +69,11 @@ module c7b(
    wire             biu_lsu_wr_aw_ack;
    wire             biu_lsu_wr_w_ack;
 
+   wire             biu_lsu_fault;
+   wire [1:0]       biu_lsu_fault_code;
+   wire             biu_lsu_write_fault;
+   wire [1:0]       biu_lsu_write_fault_code;
+
    // itag
    wire [1:0]       icu_ram_tag_en;
    wire             icu_ram_tag_wr;
@@ -101,6 +106,7 @@ module c7b(
    wire             biu_icu_data_last;
    wire [63:0]      biu_icu_data;
    wire             biu_icu_fault;
+   wire [1:0]       biu_icu_fault_code;
 
 
    // these are the new signals that cpu7_core need to provide to icu
@@ -114,6 +120,8 @@ module c7b(
    // ic2
    wire             icu_ifu_data_valid_ic2;
    wire [63:0]      icu_ifu_data_ic2;
+   wire             icu_ifu_fault_ic2;
+   wire [1:0]       icu_ifu_fault_code_ic2;
 
 
    wire ifu_biu_rd_req; 
@@ -121,6 +129,9 @@ module c7b(
    wire biu_ifu_rd_ack;
    wire biu_ifu_data_valid;
    wire [63:0] biu_ifu_data;
+
+   wire       biu_ifu_fault;
+   wire [1:0] biu_ifu_fault_code;
 
 
    c7bcore u_core(
@@ -137,12 +148,16 @@ module c7b(
 
       .icu_ifu_data_ic2                (icu_ifu_data_ic2),
       .icu_ifu_data_valid_ic2          (icu_ifu_data_valid_ic2),
+      .icu_ifu_fault_ic2               (icu_ifu_fault_ic2),
+      .icu_ifu_fault_code_ic2          (icu_ifu_fault_code_ic2),
 
       .ifu_biu_rd_addr                 (ifu_biu_rd_addr),
       .ifu_biu_rd_req                  (ifu_biu_rd_req),
       .biu_ifu_rd_ack                  (biu_ifu_rd_ack),
       .biu_ifu_data_valid              (biu_ifu_data_valid),
       .biu_ifu_data                    (biu_ifu_data),
+      .biu_ifu_fault                   (biu_ifu_fault),
+      .biu_ifu_fault_code              (biu_ifu_fault_code),
 
       .lsu_biu_rd_req                  (lsu_biu_rd_req),
       .lsu_biu_rd_addr                 (lsu_biu_rd_addr),
@@ -150,6 +165,9 @@ module c7b(
       .biu_lsu_rd_ack                  (biu_lsu_rd_ack),
       .biu_lsu_data_valid              (biu_lsu_data_valid),
       .biu_lsu_data                    (biu_lsu_data), 
+      .biu_lsu_fault                   (biu_lsu_fault),
+      .biu_lsu_fault_code              (biu_lsu_fault_code),
+
 
       .lsu_biu_wr_req                  (lsu_biu_wr_req),
       .lsu_biu_wr_addr                 (lsu_biu_wr_addr),
@@ -157,7 +175,9 @@ module c7b(
       .lsu_biu_wr_strb                 (lsu_biu_wr_strb),
 
       .biu_lsu_wr_ack                  (biu_lsu_wr_aw_ack & biu_lsu_wr_aw_ack),
-      .biu_lsu_write_done              (biu_lsu_write_done)
+      .biu_lsu_write_done              (biu_lsu_write_done),
+      .biu_lsu_write_fault             (biu_lsu_write_fault),
+      .biu_lsu_write_fault_code        (biu_lsu_write_fault_code)
    );
 
 
@@ -175,6 +195,8 @@ module c7b(
       .icu_ifu_data_valid_ic2           (icu_ifu_data_valid_ic2),
       .icu_ifu_data_ic2                 (icu_ifu_data_ic2),
 
+      .icu_ifu_fault_ic2                (icu_ifu_fault_ic2),
+      .icu_ifu_fault_code_ic2           (icu_ifu_fault_code_ic2),
 
       .icu_ram_tag_en                   (icu_ram_tag_en),
       .icu_ram_tag_wr                   (icu_ram_tag_wr),
@@ -202,7 +224,8 @@ module c7b(
       .biu_icu_data_valid               (biu_icu_data_valid),
       .biu_icu_data_last                (biu_icu_data_last),
       .biu_icu_data                     (biu_icu_data),
-      .biu_icu_fault                    (biu_icu_fault)
+      .biu_icu_fault                    (biu_icu_fault),
+      .biu_icu_fault_code               (biu_icu_fault_code)
 
    );
    
@@ -238,11 +261,12 @@ module c7b(
       // for ifu uncache fetch, not used yet 
       .ifu_biu_rd_req                   (ifu_biu_rd_req),    
       .ifu_biu_rd_addr                  (ifu_biu_rd_addr),
-      .ifu_biu_cancel                   (1'b0),
 
       .biu_ifu_rd_ack                   (biu_ifu_rd_ack), 
       .biu_ifu_data_valid               (biu_ifu_data_valid),
       .biu_ifu_data                     (biu_ifu_data),
+      .biu_ifu_fault                    (biu_ifu_fault),
+      .biu_ifu_fault_code               (biu_ifu_fault_code),
 
 
       // LSU Interface
@@ -252,6 +276,8 @@ module c7b(
       .biu_lsu_rd_ack                   (biu_lsu_rd_ack), //
       .biu_lsu_data_valid               (biu_lsu_data_valid),
       .biu_lsu_data                     (biu_lsu_data),
+      .biu_lsu_fault                    (biu_lsu_fault),
+      .biu_lsu_fault_code               (biu_lsu_fault_code),
                                                            
       .lsu_biu_wr_aw_req                (lsu_biu_wr_req), // aw w are requested at the same time
       .lsu_biu_wr_addr                  (lsu_biu_wr_addr),
@@ -263,6 +289,8 @@ module c7b(
       .biu_lsu_wr_aw_ack                (biu_lsu_wr_aw_ack), //
       .biu_lsu_wr_w_ack                 (biu_lsu_wr_w_ack), //
       .biu_lsu_write_done               (biu_lsu_write_done),
+      .biu_lsu_write_fault              (biu_lsu_write_fault),
+      .biu_lsu_write_fault_code         (biu_lsu_write_fault_code),
 
       // ICU Interface
       .icu_biu_req                      (icu_biu_req),
@@ -274,6 +302,7 @@ module c7b(
       .biu_icu_data_last                (biu_icu_data_last),
       .biu_icu_data                     (biu_icu_data),
       .biu_icu_fault                    (biu_icu_fault),
+      .biu_icu_fault_code               (biu_icu_fault_code),
       
 
       // AXI Read Address Channel

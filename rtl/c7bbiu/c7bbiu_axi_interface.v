@@ -83,15 +83,26 @@ module c7bbiu_axi_interface(
    input  [1:0]       ext_biu_b_resp,
 
 
-   // Read data from the AXI interface
+   // Read data from the AXI interface (success)
    output [63:0]      axi_rdata,
    output             axi_rdata_ifu_val,
    output             axi_rdata_lsu_val, 
    output             axi_rdata_icu_val, 
    output             axi_rdata_last,
 
-   // Write data to the AXI interface
-   output             axi_write_lsu_val
+   // Write data to the AXI interface (success)
+   output             axi_write_lsu_val,
+
+   // fault
+   output             axi_rdata_ifu_fault,
+   output [1:0]       axi_rdata_ifu_fault_code,           
+   output             axi_rdata_lsu_fault,
+   output [1:0]       axi_rdata_lsu_fault_code,           
+   output             axi_rdata_icu_fault,
+   output [1:0]       axi_rdata_icu_fault_code,           
+
+   output             axi_write_lsu_fault,
+   output [1:0]       axi_write_lsu_fault_code
    );
 
 `include "axi_types.v"
@@ -260,6 +271,13 @@ module c7bbiu_axi_interface(
 
    assign axi_rdata_last = ext_biu_r_last;
 
+   assign axi_rdata_ifu_fault = (ext_biu_r_id == AXI_RID_IFU) & (|ext_biu_r_resp);
+   assign axi_rdata_lsu_fault = (ext_biu_r_id == AXI_RID_LSU) & (|ext_biu_r_resp);
+   assign axi_rdata_icu_fault = (ext_biu_r_id == AXI_RID_ICU) & (|ext_biu_r_resp);
+
+   assign axi_rdata_ifu_fault_code = ext_biu_r_resp;
+   assign axi_rdata_lsu_fault_code = ext_biu_r_resp;
+   assign axi_rdata_icu_fault_code = ext_biu_r_resp;
 
    ///////////////////////
    // aw channel
@@ -424,7 +442,11 @@ module c7bbiu_axi_interface(
    assign b_fin = ext_biu_b_valid & biu_ext_b_ready;
 
    assign biu_ext_b_ready = 1'b1;
-   assign axi_write_lsu_val = b_fin & (ext_biu_b_id == AXI_WID_LSU);
-
+   assign axi_write_lsu_val = b_fin 
+                              & (ext_biu_b_id == AXI_WID_LSU)
+                              & ~(|ext_biu_b_resp) // bresp should be 0 to indicate no error
+                              ;
+   assign axi_write_lsu_fault = (ext_biu_b_id == AXI_WID_LSU) & (|ext_biu_b_resp);
+   assign axi_write_lsu_fault_code = ext_biu_b_resp;
 
 endmodule

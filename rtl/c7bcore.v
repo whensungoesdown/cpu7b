@@ -12,12 +12,16 @@ module c7bcore(
    //output             ifu_icu_cancel,
    input  [63:0]      icu_ifu_data_ic2,
    input              icu_ifu_data_valid_ic2,   
+   input              icu_ifu_fault_ic2,
+   input  [1:0]       icu_ifu_fault_code_ic2,
 
    output [31:0]      ifu_biu_rd_addr,
    output             ifu_biu_rd_req,
    input              biu_ifu_rd_ack,
    input              biu_ifu_data_valid,
    input  [63:0]      biu_ifu_data,
+   input              biu_ifu_fault,
+   input  [1:0]       biu_ifu_fault_code,
 
    output             lsu_biu_rd_req,
    output [31:0]      lsu_biu_rd_addr,
@@ -25,6 +29,8 @@ module c7bcore(
    input              biu_lsu_rd_ack,
    input              biu_lsu_data_valid,
    input  [63:0]      biu_lsu_data,
+   input              biu_lsu_fault,
+   input  [1:0]       biu_lsu_fault_code,
 
    output             lsu_biu_wr_req,
    output [31:0]      lsu_biu_wr_addr,
@@ -32,7 +38,9 @@ module c7bcore(
    output [7:0]       lsu_biu_wr_strb,
 
    input              biu_lsu_wr_ack,
-   input              biu_lsu_write_done
+   input              biu_lsu_write_done,
+   input              biu_lsu_write_fault,
+   input  [1:0]       biu_lsu_write_fault_code
 );
 
    wire exu_ifu_except;
@@ -96,6 +104,7 @@ module c7bcore(
    // exc
    wire ifu_exu_exc_vld_d;
    wire [5:0] ifu_exu_exc_code_d;
+   wire [31:0] ifu_exu_exc_badv_d;
 
    
    wire csr_ifu_ic_en; 
@@ -116,12 +125,17 @@ module c7bcore(
       .icu_ifu_data_valid_ic2          (icu_ifu_data_valid_ic2),
       .icu_ifu_data_ic2                (icu_ifu_data_ic2),
 
+      .icu_ifu_fault_ic2               (icu_ifu_fault_ic2),
+      .icu_ifu_fault_code_ic2          (icu_ifu_fault_code_ic2),
+
       // biu interface
       .ifu_biu_rd_addr                 (ifu_biu_rd_addr),
       .ifu_biu_rd_req                  (ifu_biu_rd_req),
       .biu_ifu_rd_ack                  (biu_ifu_rd_ack),
       .biu_ifu_data_valid              (biu_ifu_data_valid),
       .biu_ifu_data                    (biu_ifu_data),
+      .biu_ifu_fault                   (biu_ifu_fault),
+      .biu_ifu_fault_code              (biu_ifu_fault_code),
 
       //
       .exu_ifu_except                  (exu_ifu_except),
@@ -184,7 +198,8 @@ module c7bcore(
 
       // exc
       .ifu_exu_exc_vld_d               (ifu_exu_exc_vld_d),
-      .ifu_exu_exc_code_d              (ifu_exu_exc_code_d)
+      .ifu_exu_exc_code_d              (ifu_exu_exc_code_d),
+      .ifu_exu_exc_badv_d              (ifu_exu_exc_badv_d)
    );
 
    
@@ -255,6 +270,7 @@ module c7bcore(
       // exc
       .ifu_exu_exc_vld_d               (ifu_exu_exc_vld_d),
       .ifu_exu_exc_code_d              (ifu_exu_exc_code_d),
+      .ifu_exu_exc_badv_d              (ifu_exu_exc_badv_d),
 
       // biu interface
       .lsu_biu_rd_req                  (lsu_biu_rd_req),
@@ -262,6 +278,8 @@ module c7bcore(
       .biu_lsu_rd_ack                  (biu_lsu_rd_ack),
       .biu_lsu_data_vld                (biu_lsu_data_valid),
       .biu_lsu_data                    (biu_lsu_data),
+      .biu_lsu_fault                   (biu_lsu_fault),
+      .biu_lsu_fault_code              (biu_lsu_fault_code),
 
       .lsu_biu_wr_req                  (lsu_biu_wr_req),
       .lsu_biu_wr_addr                 (lsu_biu_wr_addr),
@@ -269,6 +287,8 @@ module c7bcore(
       .lsu_biu_wr_strb                 (lsu_biu_wr_strb),
       .biu_lsu_wr_ack                  (biu_lsu_wr_ack),
       .biu_lsu_wr_fin                  (biu_lsu_write_done),
+      .biu_lsu_wr_fault                (biu_lsu_write_fault),
+      .biu_lsu_wr_fault_code           (biu_lsu_write_fault_code),
 
       .csr_ifu_ic_en                   (csr_ifu_ic_en),
       .csr_ifu_ic_en_pls               (csr_ifu_ic_en_pls)  

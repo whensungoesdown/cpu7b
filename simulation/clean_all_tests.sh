@@ -356,3 +356,17 @@ echo "test49_rdtime"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test50_fetch_address_violation
+echo "test50_fetch_address_violation"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test51_fetch_address_violation_icu
+echo "test51_fetch_address_violation_icu"
+./clean.sh
+echo ""
+cd ..

@@ -609,3 +609,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test50_fetch_address_violation
+echo "test50_fetch_address_violation"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test51_fetch_address_violation_icu
+echo "test51_fetch_address_violation_icu"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

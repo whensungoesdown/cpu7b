@@ -5,12 +5,12 @@ module c7bbiu(
    // IFU Interface
    input              ifu_biu_rd_req,
    input  [31:0]      ifu_biu_rd_addr,
-   input              ifu_biu_cancel,   
    
    output             biu_ifu_rd_ack,
    output             biu_ifu_data_valid,
    output [63:0]      biu_ifu_data,
-   //output             biu_ifu_fault,
+   output             biu_ifu_fault,
+   output [1:0]       biu_ifu_fault_code,
 
 
    // LSU Interface
@@ -32,7 +32,10 @@ module c7bbiu(
    output             biu_lsu_wr_w_ack, 
    output             biu_lsu_write_done,  
 
-   //output             biu_lsu_fault,
+   output             biu_lsu_fault,
+   output [1:0]       biu_lsu_fault_code,
+   output             biu_lsu_write_fault,
+   output [1:0]       biu_lsu_write_fault_code,
 
    // ICU Interface
    input              icu_biu_req,
@@ -44,6 +47,7 @@ module c7bbiu(
    output             biu_icu_data_last,
    output [63:0]      biu_icu_data,
    output             biu_icu_fault,
+   output [1:0]       biu_icu_fault_code,
 
 
    // AXI Read Address Channel
@@ -131,13 +135,22 @@ module c7bbiu(
    // Read data from the AXI interface
    wire [63:0]        axi_rdata;
    wire               axi_rdata_ifu_val;
-   wire               axi_rdata_ifu_val_qual;
    wire               axi_rdata_lsu_val; 
    wire               axi_rdata_icu_val;
    wire               axi_rdata_last;
 
+
+   wire               axi_rdata_ifu_fault;
+   wire [1:0]         axi_rdata_ifu_fault_code;
+   wire               axi_rdata_lsu_fault;
+   wire [1:0]         axi_rdata_lsu_fault_code;
+   wire               axi_rdata_icu_fault;
+   wire [1:0]         axi_rdata_icu_fault_code;
+
    // Write data to the AXI interface
    wire               axi_write_lsu_val;
+   wire               axi_write_lsu_fault;
+   wire [1:0]         axi_write_lsu_fault_code;
 
 
    c7bbiu_rd_arb u_read_arbiter(
@@ -302,40 +315,38 @@ module c7bbiu(
       .axi_rdata_icu_val               (axi_rdata_icu_val),
       .axi_rdata_last                  (axi_rdata_last), 
 
+      .axi_rdata_ifu_fault             (axi_rdata_ifu_fault),
+      .axi_rdata_ifu_fault_code        (axi_rdata_ifu_fault_code),
+      .axi_rdata_lsu_fault             (axi_rdata_lsu_fault),
+      .axi_rdata_lsu_fault_code        (axi_rdata_lsu_fault_code),
+      .axi_rdata_icu_fault             (axi_rdata_icu_fault),
+      .axi_rdata_icu_fault_code        (axi_rdata_icu_fault_code),
+
       // Write data to the AXI interface
-      .axi_write_lsu_val               (axi_write_lsu_val)
+      .axi_write_lsu_val               (axi_write_lsu_val),
+      .axi_write_lsu_fault             (axi_write_lsu_fault),
+      .axi_write_lsu_fault_code        (axi_write_lsu_fault_code)
    );
 
 
-   // should remove uty: review
-   //
-   // ifu cancel(ignore) next coming data
-   //
-
-   wire ifu_cancel_q;
-
-   dffrle_ns #(1) ifu_cancel_reg (
-      .din   (ifu_biu_cancel),
-      .clk   (clk),
-      .rst_l (resetn),
-      .en    (ifu_biu_cancel | axi_rdata_ifu_val),
-      .q     (ifu_cancel_q));
-      //.se(), .si(), .so());
-
-   assign axi_rdata_ifu_val_qual = axi_rdata_ifu_val & ~ifu_cancel_q;
-
-
-   assign biu_ifu_data_valid = axi_rdata_ifu_val_qual;
+   assign biu_ifu_data_valid = axi_rdata_ifu_val;
    assign biu_ifu_data = axi_rdata;
+   assign biu_ifu_fault = axi_rdata_ifu_fault;
+   assign biu_ifu_fault_code = axi_rdata_ifu_fault_code;
 
    assign biu_lsu_data_valid = axi_rdata_lsu_val;
    assign biu_lsu_data = axi_rdata;
+   assign biu_lsu_fault = axi_rdata_lsu_fault;
+   assign biu_lsu_fault_code = axi_rdata_lsu_fault_code;
 
    assign biu_lsu_write_done = axi_write_lsu_val;
+   assign biu_lsu_write_fault = axi_write_lsu_fault;
+   assign biu_lsu_write_fault_code = axi_write_lsu_fault_code;
 
    assign biu_icu_data_valid = axi_rdata_icu_val;
    assign biu_icu_data = axi_rdata;
    assign biu_icu_data_last = axi_rdata_last;
-   assign biu_icu_fault = 1'b0;
+   assign biu_icu_fault = axi_rdata_icu_fault;
+   assign biu_icu_fault_code = axi_rdata_icu_fault_code;
 
 endmodule

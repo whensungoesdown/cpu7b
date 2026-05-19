@@ -15,6 +15,9 @@ module c7bicu
    output             icu_ifu_data_valid_ic2,
    output [63:0]      icu_ifu_data_ic2,
 
+   output             icu_ifu_fault_ic2,
+   output [1:0]       icu_ifu_fault_code_ic2,
+
    // outputs to tag RAMs
    output [1:0]       icu_ram_tag_en,
    output             icu_ram_tag_wr,
@@ -49,7 +52,8 @@ module c7bicu
    input              biu_icu_data_valid,
    input              biu_icu_data_last,
    input  [63:0]      biu_icu_data,
-   input              biu_icu_fault
+   input              biu_icu_fault,
+   input  [1:0]       biu_icu_fault_code
    );
 
 
@@ -183,13 +187,19 @@ module c7bicu
    //assign icu_ifu_data_valid_ic2 = ic_tag_way0_match_ic2 | ic_tag_way1_match_ic2;
 //   assign icu_ifu_data_valid_ic2 = ic_hit_ic2 |
 //                                   ic_lfb_hit_data_valid; // data fetched in the linefill buffer
-   assign data_valid_ic2 = ic_hit_ic2 | ic_lfb_hit_data_valid; // data fetched in the linefill buffer
+   //assign data_valid_ic2 = ic_hit_ic2 | ic_lfb_hit_data_valid; // data fetched in the linefill buffer
+   assign data_valid_ic2 = ic_hit_ic2 
+                         | ic_lfb_hit_data_valid // data fetched in the linefill buffer
+			 | biu_icu_fault  // need this to finish lookup process. linefill progress is finished by biu_icu_data_last 
+			 ;
    assign icu_ifu_data_valid_ic2 = data_valid_ic2 & ~(ifu_icu_cancel | ifu_cancel_q);
 
    assign icu_ifu_data_ic2 = ram_icu_data_rdata0 & {64{ic_tag_way0_match_ic2}} |
 	                     ram_icu_data_rdata1 & {64{ic_tag_way1_match_ic2}} |
                              ic_lfb_hit_data & {64{ic_lfb_hit_data_valid}} ;
 
+   assign icu_ifu_fault_ic2 = biu_icu_fault;
+   assign icu_ifu_fault_code_ic2 = biu_icu_fault_code;
 
    ////////
    // cache miss and linefile
