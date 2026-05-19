@@ -370,3 +370,17 @@ echo "test51_fetch_address_violation_icu"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test52_ld_access_violation
+echo "test52_ld_access_violation"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test53_st_access_violation
+echo "test53_st_access_violation"
+./clean.sh
+echo ""
+cd ..

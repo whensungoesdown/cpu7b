@@ -633,3 +633,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test52_ld_access_violation
+echo "test52_ld_access_violation"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test53_st_access_violation
+echo "test53_st_access_violation"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
