@@ -384,3 +384,17 @@ echo "test53_st_access_violation"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test54_dbar
+echo "test54_dbar"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test55_ibar
+echo "test55_ibar"
+./clean.sh
+echo ""
+cd ..

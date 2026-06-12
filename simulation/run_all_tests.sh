@@ -657,3 +657,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test54_dbar
+echo "test54_dbar"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test55_ibar
+echo "test55_ibar"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

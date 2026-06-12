@@ -69,6 +69,8 @@ module c7bcore(
 
    // lsu
    wire ifu_exu_lsu_vld_d;
+   wire ifu_exu_lsu_ibar_d;
+   wire ifu_exu_lsu_dbar_d;
    wire [6:0] ifu_exu_lsu_op_d; // LSU_CODE_BIT 7
    wire ifu_exu_lsu_double_read_d;
 
@@ -164,6 +166,8 @@ module c7bcore(
 
       // lsu
       .ifu_exu_lsu_vld_d               (ifu_exu_lsu_vld_d),
+      .ifu_exu_lsu_ibar_d              (ifu_exu_lsu_ibar_d),
+      .ifu_exu_lsu_dbar_d              (ifu_exu_lsu_dbar_d),
       .ifu_exu_lsu_op_d                (ifu_exu_lsu_op_d),
       .ifu_exu_lsu_double_read_d       (ifu_exu_lsu_double_read_d),
 
@@ -235,6 +239,8 @@ module c7bcore(
 
       // lsu
       .ifu_exu_lsu_vld_d               (ifu_exu_lsu_vld_d),
+      .ifu_exu_lsu_ibar_d              (ifu_exu_lsu_ibar_d),
+      .ifu_exu_lsu_dbar_d              (ifu_exu_lsu_dbar_d),
       .ifu_exu_lsu_op_d                (ifu_exu_lsu_op_d),
       .ifu_exu_lsu_double_read_d       (ifu_exu_lsu_double_read_d),
 
