@@ -86,7 +86,7 @@ module c7b(
 
    // idata
    wire [1:0]       icu_ram_data_en;
-   wire             icu_ram_data_wr;
+   wire [1:0]       icu_ram_data_wr;
    wire [11:0]      icu_ram_data_addr0;
    wire [11:0]      icu_ram_data_addr1;
    wire [63:0]      icu_ram_data_wdata0;

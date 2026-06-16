@@ -18,7 +18,7 @@ module c7b_cache_rams
 
    // icache DATA
    input  [1:0]          icu_ram_data_en,
-   input                 icu_ram_data_wr,
+   input  [1:0]          icu_ram_data_wr,
    input  [11:0]         icu_ram_data_addr0, // 256 cache lines, 1024 ram lines, ignore [11:10]
    input  [11:0]         icu_ram_data_addr1,
    input  [63:0]         icu_ram_data_wdata0,
@@ -34,7 +34,7 @@ module c7b_cache_rams
       .rden              (icu_ram_tag_en[0]      ),
       .rdaddress         (icu_ram_tag_addr[7:0]  ),
       .q                 (ram_icu_tag_rdata0     ),
-      .wren              (icu_ram_tag_wr[0]),
+      .wren              (icu_ram_tag_wr[0]      ),
       .wraddress         (icu_ram_tag_addr[7:0]  ),
       .data              (icu_ram_tag_wdata0     )
    );
@@ -46,7 +46,7 @@ module c7b_cache_rams
       .rden              (icu_ram_tag_en[1]      ),
       .rdaddress         (icu_ram_tag_addr[7:0]  ),
       .q                 (ram_icu_tag_rdata1     ),
-      .wren              (icu_ram_tag_wr[1]),
+      .wren              (icu_ram_tag_wr[1]      ),
       .wraddress         (icu_ram_tag_addr[7:0]  ),
       .data              (icu_ram_tag_wdata1     )
    );
@@ -59,7 +59,7 @@ module c7b_cache_rams
       .rden              (icu_ram_data_en[0]      ),
       .rdaddress         (icu_ram_data_addr0[9:0] ),
       .q                 (ram_icu_data_rdata0     ),
-      .wren              (icu_ram_data_en[0] & icu_ram_data_wr),
+      .wren              (icu_ram_data_wr[0]      ),
       .wraddress         (icu_ram_data_addr0[9:0] ),
       .data              (icu_ram_data_wdata0     )
    );
@@ -69,7 +69,7 @@ module c7b_cache_rams
       .rden              (icu_ram_data_en[1]      ),
       .rdaddress         (icu_ram_data_addr1[9:0] ),
       .q                 (ram_icu_data_rdata1     ),
-      .wren              (icu_ram_data_en[1] & icu_ram_data_wr),
+      .wren              (icu_ram_data_wr[1]      ),
       .wraddress         (icu_ram_data_addr1[9:0] ),
       .data              (icu_ram_data_wdata1     )
    );

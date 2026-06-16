@@ -32,7 +32,7 @@ module c7bicu
 
    // outputs to data RAMs
    output [1:0]       icu_ram_data_en,
-   output             icu_ram_data_wr,
+   output [1:0]       icu_ram_data_wr,
    output [11:0]      icu_ram_data_addr0,
    output [11:0]      icu_ram_data_addr1,
    output [63:0]      icu_ram_data_wdata0,
@@ -364,8 +364,11 @@ module c7bicu
 
    // update idata
    // icu_ram_data_en is used both in ic1 and ic2
-   assign icu_ram_data_en = {2{ic_lu_ic1}} | {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
-   assign icu_ram_data_wr = biu_icu_data_valid;
+   //assign icu_ram_data_en = {2{ic_lu_ic1}} | {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
+   assign icu_ram_data_en = {2{ic_lu_ic1}};
+   wire [1:0] data_wr_way = {2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10};
+   assign icu_ram_data_wr[0] = data_wr_way[0] & biu_icu_data_valid;
+   assign icu_ram_data_wr[1] = data_wr_way[1] & biu_icu_data_valid;
 
 
    wire [1:0] al_cnt_in;
