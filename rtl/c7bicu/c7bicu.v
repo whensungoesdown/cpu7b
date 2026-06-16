@@ -208,17 +208,21 @@ module c7bicu
    // cache miss and linefile
    //
 
-   // start biu_icu_ack             : _-_____
-   // end last_valid                : _____-_
+   // start biu_icu_ack                 : _-_____
+   // end (last_valid | biu_icu_fault)  : _____-_
    //
-   // lf_inprog_in                  : _----__
-   // lf_inprog_q                   : __----_
+   // lf_inprog_in                      : _----__
+   // lf_inprog_q                       : __----_
 
    // linefill in progress
    wire lf_inprog_in;
    wire lf_inprog_q;
 
-   assign lf_inprog_in = (lf_inprog_q & ~last_valid) | biu_icu_ack;
+   //assign lf_inprog_in = (lf_inprog_q & ~(last_valid | biu_icu_fault)) | biu_icu_ack;
+   // This is better if biu_icu_fault=1，biu_icu_ack=1 at the same time, then
+   // lf_inprog_in could still be 0.
+   assign lf_inprog_in = (lf_inprog_q & ~last_valid & ~biu_icu_fault) |
+                      (biu_icu_ack & ~biu_icu_fault);
 
    dffrl_ns #(1) lf_inprog_reg (
       .din   (lf_inprog_in),
@@ -246,14 +250,23 @@ module c7bicu
 
    wire lf_req_q;
 
+   //dffrle_ns #(1) lf_req_reg (
+   //   .din   (ic_miss_ic2),
+   //   .clk   (clk),
+   //   .rst_l (resetn),
+   //   //.en    (ic_miss_ic2 | biu_icu_ack),
+   //   .en    (ic_miss_ic2 | biu_rd_busy),
+   //   .q     (lf_req_q));
+   //   //.se(), .si(), .so());
+   wire lf_req_en = ic_miss_ic2 | biu_rd_busy | biu_icu_fault;
+   wire lf_req_din = biu_icu_fault ? 1'b0 : ic_miss_ic2;
+   
    dffrle_ns #(1) lf_req_reg (
-      .din   (ic_miss_ic2),
+      .din   (lf_req_din),
       .clk   (clk),
       .rst_l (resetn),
-      //.en    (ic_miss_ic2 | biu_icu_ack),
-      .en    (ic_miss_ic2 | biu_rd_busy),
+      .en    (lf_req_en),
       .q     (lf_req_q));
-      //.se(), .si(), .so());
 
    assign icu_biu_req = (lf_req_q | ic_miss_ic2) & ~biu_rd_busy;
 
@@ -267,16 +280,27 @@ module c7bicu
    wire [3:0] lfb_cnt_in;
    wire [3:0] lfb_cnt_q;
 
-   assign lfb_cnt_in = {{4{icu_biu_req}} & 4'b0001} |
-                       {{4{~icu_biu_req}} & {lfb_cnt_q << 1'b1}};
+   //assign lfb_cnt_in = {{4{icu_biu_req}} & 4'b0001} |
+   //                    {{4{~icu_biu_req}} & {lfb_cnt_q << 1'b1}};
 
+   //dffrle_ns #(4) lfb_cnt_reg (
+   //   .clk   (clk),
+   //   .rst_l (resetn),
+   //   .din   (lfb_cnt_in),
+   //   .en    (icu_biu_req | biu_icu_data_valid),
+   //   .q     (lfb_cnt_q));
+   //   //.se(), .si(), .so());
+   wire lfb_cnt_en = icu_biu_req | biu_icu_data_valid | biu_icu_fault;
+   wire [3:0] lfb_cnt_in_next = {{4{icu_biu_req}} & 4'b0001} |
+                                {{4{~icu_biu_req}} & {lfb_cnt_q << 1'b1}};
+   assign lfb_cnt_in = biu_icu_fault ? 4'b0 : lfb_cnt_in_next;
+   
    dffrle_ns #(4) lfb_cnt_reg (
       .clk   (clk),
       .rst_l (resetn),
       .din   (lfb_cnt_in),
-      .en    (icu_biu_req | biu_icu_data_valid),
+      .en    (lfb_cnt_en),
       .q     (lfb_cnt_q));
-      //.se(), .si(), .so());
 
 
    // linefill buffer is 256-bit, same as a cache line
@@ -367,23 +391,34 @@ module c7bicu
    //assign icu_ram_data_en = {2{ic_lu_ic1}} | {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
    assign icu_ram_data_en = {2{ic_lu_ic1}};
    wire [1:0] data_wr_way = {2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10};
-   assign icu_ram_data_wr[0] = data_wr_way[0] & biu_icu_data_valid;
-   assign icu_ram_data_wr[1] = data_wr_way[1] & biu_icu_data_valid;
+   assign icu_ram_data_wr[0] = data_wr_way[0] & biu_icu_data_valid & ~biu_icu_fault;
+   assign icu_ram_data_wr[1] = data_wr_way[1] & biu_icu_data_valid & ~biu_icu_fault;
 
 
    wire [1:0] al_cnt_in;
    wire [1:0] al_cnt_q;
 
-   assign al_cnt_in = {{2{icu_biu_req}} & 2'b00} |
-                       {{2{~icu_biu_req}} & {al_cnt_q + 2'b01}};
+   //assign al_cnt_in = {{2{icu_biu_req}} & 2'b00} |
+   //                    {{2{~icu_biu_req}} & {al_cnt_q + 2'b01}};
 
+   //dffrle_ns #(2) al_cnt_reg (
+   //   .clk   (clk),
+   //   .rst_l (resetn),
+   //   .din   (al_cnt_in),
+   //   .en    (icu_biu_req | biu_icu_data_valid),
+   //   .q     (al_cnt_q));
+   //   //.se(), .si(), .so());
+   wire al_cnt_en = icu_biu_req | biu_icu_data_valid | biu_icu_fault;
+   wire [1:0] al_cnt_in_next = {{2{icu_biu_req}} & 2'b00} |
+                               {{2{~icu_biu_req}} & {al_cnt_q + 2'b01}};
+   assign al_cnt_in = biu_icu_fault ? 2'b0 : al_cnt_in_next;
+   
    dffrle_ns #(2) al_cnt_reg (
       .clk   (clk),
       .rst_l (resetn),
       .din   (al_cnt_in),
-      .en    (icu_biu_req | biu_icu_data_valid),
+      .en    (al_cnt_en),
       .q     (al_cnt_q));
-      //.se(), .si(), .so());
 
    //assign icu_ram_data_addr0 = ic_lu_addr_ic2[14:3];
    //assign icu_ram_data_addr1 = ic_lu_addr_ic2[14:3];
@@ -398,8 +433,8 @@ module c7bicu
    //assign icu_ram_tag_en = {2{ic_lu_ic1}} | {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
    assign icu_ram_tag_en = {2{ic_lu_ic1}};
    wire [1:0] tag_wr_way = {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
-   assign icu_ram_tag_wr[0] = tag_wr_way[0] & last_valid;
-   assign icu_ram_tag_wr[1] = tag_wr_way[1] & last_valid;
+   assign icu_ram_tag_wr[0] = tag_wr_way[0] & last_valid & ~biu_icu_fault;
+   assign icu_ram_tag_wr[1] = tag_wr_way[1] & last_valid & ~biu_icu_fault;
 
    //
    assign icu_ram_tag_addr = {{10{ic_lu_ic1}} & ifu_icu_addr_ic1[14:5]} | {{10{~ic_lu_ic1}} & ic_lu_addr_ic2[14:5]};
