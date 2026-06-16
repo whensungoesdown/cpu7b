@@ -76,7 +76,7 @@ module c7b(
 
    // itag
    wire [1:0]       icu_ram_tag_en;
-   wire             icu_ram_tag_wr;
+   wire [1:0]       icu_ram_tag_wr;
    wire [9:0]       icu_ram_tag_addr;
    wire [21:0]      icu_ram_tag_wdata0; // 22 bits: V, addr[31:11]
    wire [21:0]      icu_ram_tag_wdata1;

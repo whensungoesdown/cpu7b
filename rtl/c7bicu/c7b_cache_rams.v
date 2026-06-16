@@ -9,7 +9,7 @@ module c7b_cache_rams
 
    // icache TAG
    input  [1:0]          icu_ram_tag_en,
-   input                 icu_ram_tag_wr,
+   input  [1:0]          icu_ram_tag_wr,
    input  [9:0]          icu_ram_tag_addr, // 256 entries, ignore [9:8]
    input  [21:0]         icu_ram_tag_wdata0,
    input  [21:0]         icu_ram_tag_wdata1,
@@ -34,7 +34,7 @@ module c7b_cache_rams
       .rden              (icu_ram_tag_en[0]      ),
       .rdaddress         (icu_ram_tag_addr[7:0]  ),
       .q                 (ram_icu_tag_rdata0     ),
-      .wren              (icu_ram_tag_en[0] & icu_ram_tag_wr),
+      .wren              (icu_ram_tag_wr[0]),
       .wraddress         (icu_ram_tag_addr[7:0]  ),
       .data              (icu_ram_tag_wdata0     )
    );
@@ -46,7 +46,7 @@ module c7b_cache_rams
       .rden              (icu_ram_tag_en[1]      ),
       .rdaddress         (icu_ram_tag_addr[7:0]  ),
       .q                 (ram_icu_tag_rdata1     ),
-      .wren              (icu_ram_tag_en[1] & icu_ram_tag_wr),
+      .wren              (icu_ram_tag_wr[1]),
       .wraddress         (icu_ram_tag_addr[7:0]  ),
       .data              (icu_ram_tag_wdata1     )
    );

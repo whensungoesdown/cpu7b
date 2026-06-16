@@ -20,7 +20,7 @@ module c7bicu
 
    // outputs to tag RAMs
    output [1:0]       icu_ram_tag_en,
-   output             icu_ram_tag_wr,
+   output [1:0]       icu_ram_tag_wr,
    output [9:0]       icu_ram_tag_addr,
    output [21:0]      icu_ram_tag_wdata0, // 22 bits: V, addr[31:11]
    output [21:0]      icu_ram_tag_wdata1, 
@@ -62,6 +62,9 @@ module c7bicu
 
    // internal data valid
    wire data_valid_ic2;
+
+   // NOTE: biu_icu_data_last can not be used alone!
+   wire last_valid = biu_icu_data_last & biu_icu_data_valid;
 
    ////////
    // cache lookup and hit
@@ -205,17 +208,17 @@ module c7bicu
    // cache miss and linefile
    //
 
-   // start biu_icu_ack       : _-_____
-   // end biu_icu_data_last   : _____-_
+   // start biu_icu_ack             : _-_____
+   // end last_valid                : _____-_
    //
-   // lf_inprog_in            : _----__
-   // lf_inprog_q             : __----_
+   // lf_inprog_in                  : _----__
+   // lf_inprog_q                   : __----_
 
    // linefill in progress
    wire lf_inprog_in;
    wire lf_inprog_q;
 
-   assign lf_inprog_in = (lf_inprog_q & ~biu_icu_data_last) | biu_icu_ack;
+   assign lf_inprog_in = (lf_inprog_q & ~last_valid) | biu_icu_ack;
 
    dffrl_ns #(1) lf_inprog_reg (
       .din   (lf_inprog_in),
@@ -343,8 +346,8 @@ module c7bicu
    dffrle_ns #(1) ic_al_way01_ic2_reg (
       .clk   (clk),
       .rst_l (resetn),
-      .din   ((ic_tag_way0_v_ic2 & ~ic_tag_way1_v_ic2) & ~biu_icu_data_last),
-      .en    (ic_al_ic2 | biu_icu_data_last),
+      .din   ((ic_tag_way0_v_ic2 & ~ic_tag_way1_v_ic2) & ~last_valid),
+      .en    (ic_al_ic2 | last_valid),
       .q     (ic_al_way01_ic2_q));
       //.se(), .si(), .so());
 
@@ -389,8 +392,11 @@ module c7bicu
    // update itag
    // update tag at last cycle
    //assign icu_ram_tag_en = {2{ic_lu_ic1}} | biu_icu_data_last;
-   assign icu_ram_tag_en = {2{ic_lu_ic1}} | {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
-   assign icu_ram_tag_wr = biu_icu_data_last;
+   //assign icu_ram_tag_en = {2{ic_lu_ic1}} | {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
+   assign icu_ram_tag_en = {2{ic_lu_ic1}};
+   wire [1:0] tag_wr_way = {{2{~ic_lu_ic1}} & {ic_al_way01_ic2_q == 1'b0 ? 2'b01 : 2'b10}};
+   assign icu_ram_tag_wr[0] = tag_wr_way[0] & last_valid;
+   assign icu_ram_tag_wr[1] = tag_wr_way[1] & last_valid;
 
    //
    assign icu_ram_tag_addr = {{10{ic_lu_ic1}} & ifu_icu_addr_ic1[14:5]} | {{10{~ic_lu_ic1}} & ic_lu_addr_ic2[14:5]};
