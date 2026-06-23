@@ -398,3 +398,45 @@ echo "test55_ibar"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test56_ll_sc
+echo "test56_ll_sc"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test57_sc
+echo "test57_sc"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test58_ll_sc_ertn
+echo "test58_ll_sc_ertn"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test59_ll_sc_ertn_klo
+echo "test59_ll_sc_ertn_klo"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test60_ll_sc_ertn_klo2
+echo "test60_ll_sc_ertn_klo2"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test61_ll_sc_rollb_wcllb
+echo "test61_ll_sc_rollb_wcllb"
+./clean.sh
+echo ""
+cd ..

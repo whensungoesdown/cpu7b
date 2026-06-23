@@ -681,3 +681,75 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test56_ll_sc
+echo "test56_ll_sc"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test57_sc
+echo "test57_sc"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test58_ll_sc_ertn
+echo "test58_ll_sc_ertn"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test59_ll_sc_ertn_klo
+echo "test59_ll_sc_ertn_klo"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test60_ll_sc_ertn_klo2
+echo "test60_ll_sc_ertn_klo2"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test61_ll_sc_rollb_wcllb
+echo "test61_ll_sc_rollb_wcllb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
