@@ -440,3 +440,24 @@ echo "test61_ll_sc_rollb_wcllb"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test62_crmd_da_pg
+echo "test62_crmd_da_pg"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test63_csr_dmw
+echo "test63_csr_dmw"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test64_pg_mode_dmw
+echo "test64_pg_mode_dmw"
+./clean.sh
+echo ""
+cd ..

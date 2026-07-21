@@ -44,7 +44,7 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c000010 === u_top.u_c7b.u_core.u_exu.pc_w)
+	 if (32'h1c000020 === u_top.u_c7b.u_core.u_exu.pc_w)
 	 begin
 		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
 

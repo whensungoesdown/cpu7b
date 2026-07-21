@@ -112,6 +112,13 @@ module c7bcore(
    wire csr_ifu_ic_en; 
    wire csr_ifu_ic_en_pls;
 
+   wire csr_ifu_crmd_da;
+   wire csr_ifu_crmd_pg;
+
+   wire [2:0] csr_ifu_dmw0_pseg;
+   wire [2:0] csr_ifu_dmw0_vseg;
+   wire [2:0] csr_ifu_dmw1_pseg;
+   wire [2:0] csr_ifu_dmw1_vseg;
 
    c7bifu u_ifu(
       .clk                             (clk),
@@ -203,7 +210,15 @@ module c7bcore(
       // exc
       .ifu_exu_exc_vld_d               (ifu_exu_exc_vld_d),
       .ifu_exu_exc_code_d              (ifu_exu_exc_code_d),
-      .ifu_exu_exc_badv_d              (ifu_exu_exc_badv_d)
+      .ifu_exu_exc_badv_d              (ifu_exu_exc_badv_d),
+
+      .csr_ifu_crmd_da                 (csr_ifu_crmd_da),
+      .csr_ifu_crmd_pg                 (csr_ifu_crmd_pg),
+
+      .csr_ifu_dmw0_pseg               (csr_ifu_dmw0_pseg),
+      .csr_ifu_dmw0_vseg               (csr_ifu_dmw0_vseg),
+      .csr_ifu_dmw1_pseg               (csr_ifu_dmw1_pseg),
+      .csr_ifu_dmw1_vseg               (csr_ifu_dmw1_vseg)
    );
 
    
@@ -297,7 +312,15 @@ module c7bcore(
       .biu_lsu_wr_fault_code           (biu_lsu_write_fault_code),
 
       .csr_ifu_ic_en                   (csr_ifu_ic_en),
-      .csr_ifu_ic_en_pls               (csr_ifu_ic_en_pls)  
+      .csr_ifu_ic_en_pls               (csr_ifu_ic_en_pls),
+
+      .csr_ifu_crmd_da                 (csr_ifu_crmd_da),
+      .csr_ifu_crmd_pg                 (csr_ifu_crmd_pg),
+
+      .csr_ifu_dmw0_pseg               (csr_ifu_dmw0_pseg),
+      .csr_ifu_dmw0_vseg               (csr_ifu_dmw0_vseg),
+      .csr_ifu_dmw1_pseg               (csr_ifu_dmw1_pseg),
+      .csr_ifu_dmw1_vseg               (csr_ifu_dmw1_vseg)
    );
 
 endmodule // cpu7

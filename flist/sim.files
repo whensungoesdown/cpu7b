@@ -39,3 +39,4 @@ ${PROJECT_ROOT}/rtl/top.v
 -f ${PROJECT_ROOT}/rtl/c7bcsr/flist/c7bcsr.flist
 -f ${PROJECT_ROOT}/rtl/c7bifu/flist/c7bifu.flist
 -f ${PROJECT_ROOT}/rtl/c7bexu/flist/c7bexu.flist
+-f ${PROJECT_ROOT}/rtl/c7btlb/flist/c7btlb.flist

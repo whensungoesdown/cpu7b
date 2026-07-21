@@ -753,3 +753,39 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test62_crmd_da_pg
+echo "test62_crmd_da_pg"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test63_csr_dmw
+echo "test63_csr_dmw"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test64_pg_mode_dmw
+echo "test64_pg_mode_dmw"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

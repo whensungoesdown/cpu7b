@@ -26,8 +26,8 @@ start:
 	csrwr    $r6, 0xc                # EENTRY
 	
 
-	addi.w   $r6, $r0, 0x4           # 
-	csrwr    $r6, 0x0                # CRMD.ie = 1
+	addi.w   $r6, $r0, 0xc           # 
+	csrwr    $r6, 0x0                # CRMD.ie = 1  CRMD.da = 1
 	
 	# do not enable timer
 	#addi.w   $r6, $r0, 0x11          # 3'b10001   initval=100  periodic=0 en=1

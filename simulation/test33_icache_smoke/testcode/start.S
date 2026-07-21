@@ -25,8 +25,8 @@ start:
 	addi.w   $r6, $r6, 0x70          # fault_handler 
 	csrwr    $r6, 0xc                # EENTRY
 	
-	addi.w   $r6, $r0, 0x4           # 
-	csrwr    $r6, 0x0                # CRMD.ie = 1
+	addi.w   $r6, $r0, 0xc           # 
+	csrwr    $r6, 0x0                # CRMD.ie = 1  CRMD.da = 1
 	
 	lu12i.w  $r7, 0x1c000
 	ld.w $r8, $r7, 0x20

@@ -21,15 +21,15 @@ _start:
 start:
 	
 	addi.w   $r6, $r0, 0xff          # r6 = ff
-	csrwr    $r6, 0x0                # 0x0 CRMD        now, noly CRMD.plv CRMD.ie are implemented, should only write in 3'b111
+	csrwr    $r6, 0x0                # 0x0 CRMD        now, noly plv ie da pg are implemented, should only write in 5'b11111
 #	nop
 	addi.w   $r5, $r0, 0x66
 	addi.w   $r7, $r0, 0xf0
-	csrxchg  $r5, $r7, 0x0           # mask 11110000, nothing will be write in, CRMD remains 0x7, r5 should be the old CRMD value, 0x7
-	csrrd    $r8, 0x0                # r8 should be 0x7
+	csrxchg  $r5, $r7, 0x0           # mask 11110000, CRMD becomes 0xf, r5 should be the old CRMD value, 0x1f
+	csrrd    $r8, 0x0                # r8 should be 0xf
 	addi.w   $r6, $r0, 0x66
 	addi.w   $r7, $r0, 0x0f
-	csrxchg  $r6, $r7, 0x0           # mask 00001111, 0x06 should be write in, r6 should have the old CRMD value, 0x7
+	csrxchg  $r6, $r7, 0x0           # mask 00001111, 0x06 should be write in, r6 should have the old CRMD value, 0xf
 	csrrd    $r9, 0x0                # r9 should be 0x6
 	nop
 	nop

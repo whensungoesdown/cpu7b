@@ -27,8 +27,10 @@ start:
 	
 	addi.w   $r5, $r0, 0xa
 
-	addi.w   $r6, $r0, 0x4           # 
-	csrwr    $r6, 0x0                # CRMD.ie = 1
+        li.w     t1, 0x4            # 要写入的值：IE=1  bit2
+        li.w     t2, 0x4            # 掩码：只操作 bit2
+        csrxchg  t2, t1, 0x0
+
 	addi.w   $r6, $r0, 0x11          # 3'b10001   initval=100  periodic=0 en=1
 	csrwr    $r6, 0x41               # TCFG
 
@@ -59,7 +61,6 @@ start:
 	nop
 dst:
         add.w   $r5, $r5, $r7	
-	nop
 	nop
 	nop
 	nop

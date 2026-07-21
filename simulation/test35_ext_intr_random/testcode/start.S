@@ -25,8 +25,9 @@ start:
 	addi.w   $r6, $r6, 0x70          # fault_handler 
 	csrwr    $r6, 0xc                # EENTRY
 	
-	addi.w   $r6, $r0, 0x4           # 
-	csrwr    $r6, 0x0                # CRMD.ie = 1
+        li.w     t1, 0x4            # 要写入的值：IE=1  bit2
+        li.w     t2, 0x4            # 掩码：只操作 bit2
+        csrxchg  t2, t1, 0x0
 	
 	lu12i.w  $r7, 0x1c000
         bne      $r0, $r0, jmp
@@ -56,7 +57,6 @@ jmp:
 loop:
 	bne $r5, $r6, loop
 
-	nop
 	nop
 	nop
 	nop

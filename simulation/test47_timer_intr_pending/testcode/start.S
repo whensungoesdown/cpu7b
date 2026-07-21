@@ -32,8 +32,8 @@ start:
 	csrwr   $r12,0x2
 	csrwr   $r12,0x4
 
-	addi.w   $r6, $r0, 0x4           # 
-	csrwr    $r6, 0x0                # CRMD.ie = 1
+	addi.w   $r6, $r0, 0xc           # 
+	csrwr    $r6, 0x0                # CRMD.ie = 1  CRMD.da = 1
 #	addi.w   $r6, $r0, 0x23          # 3'b100011   initval=1000  periodic=1 en=1
 #	addi.w   $r6, $r0, 0x33          # 3'b110011   initval=1100  periodic=1 en=1
 	addi.w   $r6, $r0, 0x67          # 

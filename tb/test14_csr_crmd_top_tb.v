@@ -44,16 +44,16 @@ module top_tb(
 	 //      $finish;
 	 //   end
 	 
-	 if (32'h1c000028 === u_top.u_c7b.u_core.u_exu.pc_w)
+	 if (32'h1c000030 === u_top.u_c7b.u_core.u_exu.pc_w)
 	 begin
 		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
 		 $display("regs[8] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[8]);
 		 $display("regs[6] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[6]);
 		 $display("regs[9] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[9]);
 
-		 if (32'h7 === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
-		  && 32'h7 === u_top.u_c7b.u_core.u_exu.u_rf.regs[8]
-		  && 32'h7 === u_top.u_c7b.u_core.u_exu.u_rf.regs[6]
+		 if (32'h1f === u_top.u_c7b.u_core.u_exu.u_rf.regs[5]
+		  && 32'hf === u_top.u_c7b.u_core.u_exu.u_rf.regs[8]
+		  && 32'hf === u_top.u_c7b.u_core.u_exu.u_rf.regs[6]
 		  && 32'h6 === u_top.u_c7b.u_core.u_exu.u_rf.regs[9]
 	            )
 		 begin

@@ -34,13 +34,13 @@ start:
 	addi.w   $r5, $r5, 0x51          # r5 = 1c000051
 	st.w     $r7, $r5, 0x0
 
-	# read CRMD, should remains 0x7
+	# read CRMD, should remains 0xf
 	csrrd    $r6, 0x0
 	
-	# after this, r5 should be 0xe
+	# after this, r5 should be 0x16
 	add.w    $r5, $r5, $r6
 
-	addi.w   $r5, $r5, 0x4c     
+	addi.w   $r5, $r5, 0x44     
 
 	nop
 	nop
@@ -56,8 +56,8 @@ fault_handler:
 	# r5 should be 0x7
 	addi.w   $r5, $r11, 0x0
 
-	# set CRMD to all 0s. crmd should be restored when ertn returns
-	addi.w   $r11, $r0, 0x0
+	# set CRMD to 4'b1000. crmd.plv crmd.ie should be restored when ertn returns
+	addi.w   $r11, $r0, 0x8
 	csrwr    $r11, 0x0
 
 	# skip faulting instruction
