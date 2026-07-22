@@ -17,14 +17,14 @@ _start:
     jr      $t0
 0:
 
-#    # ----- Initialize exception entry points -----
-#    # Set EENTRY (CSR 0x0C) to except_handler
-#    la      $t0, except_handler
-#    csrwr   $t0, 0x0C
-#
-#    # Set TLBRENTRY (CSR 0x88) to tlbr_handler
-#    la      $t0, tlbr_handler
-#    csrwr   $t0, 0x88
+    # ----- Initialize exception entry points -----
+    # Set EENTRY (CSR 0x0C) to except_handler
+    la      $t0, except_handler
+    csrwr   $t0, 0x0C
+
+    # Set TLBRENTRY (CSR 0x88) to tlbr_handler
+    la      $t0, tlbr_handler
+    csrwr   $t0, 0x88
 
     # ----- 5 addi instructions -----
     addi.w  $t0, $r0, 1
@@ -73,6 +73,7 @@ fail:
     li.w    $r5, 0
 
 success:
+    nop
     nop
     nop
     nop

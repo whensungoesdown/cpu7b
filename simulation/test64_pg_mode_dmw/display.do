@@ -61,6 +61,10 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/biu_ifu_fault_co
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/biu_ifu_rd_ack
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/lsu_biu_rd_addr_ls2
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/lsu_biu_rd_req_ls2
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/biu_lsu_data_ls3
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/biu_lsu_data_valid_ls3
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/lsu_ecl_data_ls3
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/lsu_ecl_data_valid_ls3
 add wave -divider
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_addr_f
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_f
