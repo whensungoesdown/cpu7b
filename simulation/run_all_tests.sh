@@ -789,3 +789,75 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test65_csr_tlbidx
+echo "test65_csr_tlbidx"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test66_csr_tlbehi
+echo "test66_csr_tlbehi"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test67_csr_tlbelo
+echo "test67_csr_tlbelo"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test68_csr_pgdhl
+echo "test68_csr_pgdhl"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test69_csr_pgd
+echo "test69_csr_pgd"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test70_pg_mode_tlbfill
+echo "test70_pg_mode_tlbfill"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

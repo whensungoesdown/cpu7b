@@ -461,3 +461,45 @@ echo "test64_pg_mode_dmw"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test65_csr_tlbidx
+echo "test65_csr_tlbidx"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test66_csr_tlbehi
+echo "test66_csr_tlbehi"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test67_csr_tlbelo
+echo "test67_csr_tlbelo"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test68_csr_pgdhl
+echo "test68_csr_pgdhl"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test69_csr_pgd
+echo "test69_csr_pgd"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test70_pg_mode_tlbfill
+echo "test70_pg_mode_tlbfill"
+./clean.sh
+echo ""
+cd ..
