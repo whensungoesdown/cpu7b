@@ -110,6 +110,7 @@ module c7bcore(
    // exc
    wire ifu_exu_exc_vld_d;
    wire [5:0] ifu_exu_exc_code_d;
+   wire [8:0] ifu_exu_exc_subcode_d;
    wire [31:0] ifu_exu_exc_badv_d;
 
    
@@ -128,6 +129,7 @@ module c7bcore(
 
    wire        csr_itlb_tlbidx_ne;
    wire [5:0]  csr_itlb_tlbidx_ps;
+   wire        csr_itlb_tlbidx_i_d;
    wire [4:0]  csr_itlb_tlbidx_index;
 
    wire [19:0] csr_itlb_tlbelo0_ppn;
@@ -143,10 +145,38 @@ module c7bcore(
    wire [1:0]  csr_itlb_tlbelo1_plv;
    wire        csr_itlb_tlbelo1_d;
    wire        csr_itlb_tlbelo1_v;
+   wire [9:0]  csr_itlb_asid_asid;
 
    wire        csr_itlb_tlbrefill_ctx; 
 
    wire [4:0]  exu_itlb_random_index;
+
+   wire        exu_itlb_tlbfill_vld_e;
+   wire        exu_itlb_tlbwr_vld_e;
+   wire        exu_itlb_tlbsrch_vld_e;
+   wire        exu_itlb_invtlb_vld_e;
+
+   wire [4:0]  exu_itlb_invtlb_op_e;
+   wire [9:0]  exu_itlb_invtlb_asid_e;
+   wire [18:0] exu_itlb_invtlb_vppn_e;
+
+   // itlb to csr
+   wire [4:0]  itlb_csr_tlbidx_index;
+   wire [18:0] itlb_csr_tlbehi_vppn;
+   wire        itlb_csr_tlbelo_g;
+   wire [5:0]  itlb_csr_tlbidx_ps;
+   wire        itlb_csr_tlbidx_e;
+   wire        itlb_csr_tlbelo0_v;
+   wire        itlb_csr_tlbelo0_d;
+   wire [1:0]  itlb_csr_tlbelo0_mat;
+   wire [1:0]  itlb_csr_tlbelo0_plv;
+   wire [19:0] itlb_csr_tlbelo0_ppn;
+   wire        itlb_csr_tlbelo1_v;
+   wire        itlb_csr_tlbelo1_d;
+   wire [1:0]  itlb_csr_tlbelo1_mat;
+   wire [1:0]  itlb_csr_tlbelo1_plv;
+   wire [19:0] itlb_csr_tlbelo1_ppn;
+   wire [9:0]  itlb_csr_asid_asid;
 
 
    c7bifu u_ifu(
@@ -243,6 +273,7 @@ module c7bcore(
       // exc
       .ifu_exu_exc_vld_d               (ifu_exu_exc_vld_d),
       .ifu_exu_exc_code_d              (ifu_exu_exc_code_d),
+      .ifu_exu_exc_subcode_d           (ifu_exu_exc_subcode_d),
       .ifu_exu_exc_badv_d              (ifu_exu_exc_badv_d),
 
       .csr_ifu_crmd_da                 (csr_ifu_crmd_da),
@@ -257,6 +288,7 @@ module c7bcore(
 
       .csr_itlb_tlbidx_ne              (csr_itlb_tlbidx_ne),
       .csr_itlb_tlbidx_ps              (csr_itlb_tlbidx_ps),
+      .csr_itlb_tlbidx_i_d             (csr_itlb_tlbidx_i_d),
       .csr_itlb_tlbidx_index           (csr_itlb_tlbidx_index),
 
       .csr_itlb_tlbelo0_ppn            (csr_itlb_tlbelo0_ppn),
@@ -271,13 +303,39 @@ module c7bcore(
       .csr_itlb_tlbelo1_mat            (csr_itlb_tlbelo1_mat),
       .csr_itlb_tlbelo1_plv            (csr_itlb_tlbelo1_plv),
       .csr_itlb_tlbelo1_d              (csr_itlb_tlbelo1_d),
-      .csr_itlb_tlbelo1_v              (csr_itlb_tlbelo1_v), 
+      .csr_itlb_tlbelo1_v              (csr_itlb_tlbelo1_v),
+
+      .csr_itlb_asid_asid              (csr_itlb_asid_asid),
 
       .csr_itlb_tlbrefill_ctx          (csr_itlb_tlbrefill_ctx),
 
       .exu_itlb_random_index           (exu_itlb_random_index),
 
-      .csr_itlb_tlbfill_vld_e          (csr_itlb_tlbfill_vld_e) 
+      .exu_itlb_tlbfill_vld_e          (exu_itlb_tlbfill_vld_e), 
+      .exu_itlb_tlbwr_vld_e            (exu_itlb_tlbwr_vld_e),
+      .exu_itlb_tlbsrch_vld_e          (exu_itlb_tlbsrch_vld_e),
+      .exu_itlb_invtlb_vld_e           (exu_itlb_invtlb_vld_e),
+
+      .exu_itlb_invtlb_op_e            (exu_itlb_invtlb_op_e),
+      .exu_itlb_invtlb_asid_e          (exu_itlb_invtlb_asid_e),
+      .exu_itlb_invtlb_vppn_e          (exu_itlb_invtlb_vppn_e),
+
+      .itlb_csr_tlbidx_index           (itlb_csr_tlbidx_index),
+      .itlb_csr_tlbehi_vppn            (itlb_csr_tlbehi_vppn),
+      .itlb_csr_tlbelo_g               (itlb_csr_tlbelo_g),
+      .itlb_csr_tlbidx_ps              (itlb_csr_tlbidx_ps),
+      .itlb_csr_tlbidx_e               (itlb_csr_tlbidx_e),
+      .itlb_csr_tlbelo0_v              (itlb_csr_tlbelo0_v),
+      .itlb_csr_tlbelo0_d              (itlb_csr_tlbelo0_d),
+      .itlb_csr_tlbelo0_mat            (itlb_csr_tlbelo0_mat),
+      .itlb_csr_tlbelo0_plv            (itlb_csr_tlbelo0_plv),
+      .itlb_csr_tlbelo0_ppn            (itlb_csr_tlbelo0_ppn),
+      .itlb_csr_tlbelo1_v              (itlb_csr_tlbelo1_v),
+      .itlb_csr_tlbelo1_d              (itlb_csr_tlbelo1_d),
+      .itlb_csr_tlbelo1_mat            (itlb_csr_tlbelo1_mat),
+      .itlb_csr_tlbelo1_plv            (itlb_csr_tlbelo1_plv),
+      .itlb_csr_tlbelo1_ppn            (itlb_csr_tlbelo1_ppn),
+      .itlb_csr_asid_asid              (itlb_csr_asid_asid) 
    );
 
    
@@ -354,6 +412,7 @@ module c7bcore(
       // exc
       .ifu_exu_exc_vld_d               (ifu_exu_exc_vld_d),
       .ifu_exu_exc_code_d              (ifu_exu_exc_code_d),
+      .ifu_exu_exc_subcode_d           (ifu_exu_exc_subcode_d),
       .ifu_exu_exc_badv_d              (ifu_exu_exc_badv_d),
 
       // biu interface
@@ -389,6 +448,7 @@ module c7bcore(
 
       .csr_itlb_tlbidx_ne              (csr_itlb_tlbidx_ne),
       .csr_itlb_tlbidx_ps              (csr_itlb_tlbidx_ps),
+      .csr_itlb_tlbidx_i_d             (csr_itlb_tlbidx_i_d),
       .csr_itlb_tlbidx_index           (csr_itlb_tlbidx_index),
 
       .csr_itlb_tlbelo0_ppn            (csr_itlb_tlbelo0_ppn),
@@ -405,11 +465,37 @@ module c7bcore(
       .csr_itlb_tlbelo1_d              (csr_itlb_tlbelo1_d),
       .csr_itlb_tlbelo1_v              (csr_itlb_tlbelo1_v), 
 
+      .csr_itlb_asid_asid              (csr_itlb_asid_asid),
+
       .csr_itlb_tlbrefill_ctx          (csr_itlb_tlbrefill_ctx),
 
       .exu_itlb_random_index           (exu_itlb_random_index),
 
-      .csr_itlb_tlbfill_vld_e          (csr_itlb_tlbfill_vld_e) 
+      .exu_itlb_tlbfill_vld_e          (exu_itlb_tlbfill_vld_e), 
+      .exu_itlb_tlbwr_vld_e            (exu_itlb_tlbwr_vld_e),
+      .exu_itlb_tlbsrch_vld_e          (exu_itlb_tlbsrch_vld_e),
+      .exu_itlb_invtlb_vld_e           (exu_itlb_invtlb_vld_e),
+
+      .exu_itlb_invtlb_op_e            (exu_itlb_invtlb_op_e),
+      .exu_itlb_invtlb_asid_e          (exu_itlb_invtlb_asid_e),
+      .exu_itlb_invtlb_vppn_e          (exu_itlb_invtlb_vppn_e),
+
+      .itlb_csr_tlbidx_index           (itlb_csr_tlbidx_index),
+      .itlb_csr_tlbehi_vppn            (itlb_csr_tlbehi_vppn),
+      .itlb_csr_tlbelo_g               (itlb_csr_tlbelo_g),
+      .itlb_csr_tlbidx_ps              (itlb_csr_tlbidx_ps),
+      .itlb_csr_tlbidx_e               (itlb_csr_tlbidx_e),
+      .itlb_csr_tlbelo0_v              (itlb_csr_tlbelo0_v),
+      .itlb_csr_tlbelo0_d              (itlb_csr_tlbelo0_d),
+      .itlb_csr_tlbelo0_mat            (itlb_csr_tlbelo0_mat),
+      .itlb_csr_tlbelo0_plv            (itlb_csr_tlbelo0_plv),
+      .itlb_csr_tlbelo0_ppn            (itlb_csr_tlbelo0_ppn),
+      .itlb_csr_tlbelo1_v              (itlb_csr_tlbelo1_v),
+      .itlb_csr_tlbelo1_d              (itlb_csr_tlbelo1_d),
+      .itlb_csr_tlbelo1_mat            (itlb_csr_tlbelo1_mat),
+      .itlb_csr_tlbelo1_plv            (itlb_csr_tlbelo1_plv),
+      .itlb_csr_tlbelo1_ppn            (itlb_csr_tlbelo1_ppn),
+      .itlb_csr_asid_asid              (itlb_csr_asid_asid) 
    );
 
 endmodule // cpu7

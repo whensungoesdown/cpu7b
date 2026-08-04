@@ -503,3 +503,150 @@ echo "test70_pg_mode_tlbfill"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test71_tlbwr_tlbrd_itlb
+echo "test71_tlbwr_tlbrd_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test72_tlbwr_tlbrd_dtlb
+echo "test72_tlbwr_tlbrd_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test73_csr_asid
+echo "test73_csr_asid"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test74_tlbsrch_itlb
+echo "test74_tlbsrch_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test75_tlbsrch_dtlb
+echo "test75_tlbsrch_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test76_pg_mode_tlbfill_dtlb
+echo "test76_pg_mode_tlbfill_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test77_sltui
+echo "test77_sltui"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test78_invtlb_op0_itlb
+echo "test78_invtlb_op0_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test79_invtlb_op0_dtlb
+echo "test79_invtlb_op0_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test80_invtlb_op1_itlb
+echo "test80_invtlb_op1_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test81_invtlb_op1_dtlb
+echo "test81_invtlb_op1_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test82_invtlb_op2_itlb
+echo "test82_invtlb_op2_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test83_invtlb_op2_dtlb
+echo "test83_invtlb_op2_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test84_invtlb_op3_itlb
+echo "test84_invtlb_op3_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test85_invtlb_op3_dtlb
+echo "test85_invtlb_op3_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test86_invtlb_op4_itlb
+echo "test86_invtlb_op4_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test87_invtlb_op4_dtlb
+echo "test87_invtlb_op4_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test88_invtlb_op5_itlb
+echo "test88_invtlb_op5_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test89_invtlb_op5_dtlb
+echo "test89_invtlb_op5_dtlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test90_invtlb_op6_itlb
+echo "test90_invtlb_op6_itlb"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test91_invtlb_op6_dtlb
+echo "test91_invtlb_op6_dtlb"
+./clean.sh
+echo ""
+cd ..

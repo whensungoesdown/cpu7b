@@ -861,3 +861,255 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test71_tlbwr_tlbrd_itlb
+echo "test71_tlbwr_tlbrd_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test72_tlbwr_tlbrd_dtlb
+echo "test72_tlbwr_tlbrd_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test73_csr_asid
+echo "test72_csr_asid"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test74_tlbsrch_itlb
+echo "test74_tlbsrch_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test75_tlbsrch_dtlb
+echo "test75_tlbsrch_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test76_pg_mode_tlbfill_dtlb
+echo "test76_pg_mode_tlbfill_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test77_sltui
+echo "test77_sltui"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test78_invtlb_op0_itlb
+echo "test78_invtlb_op0_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd..
+
+
+cd test79_invtlb_op0_dtlb
+echo "test79_invtlb_op0_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test80_invtlb_op1_itlb
+echo "test80_invtlb_op1_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test81_invtlb_op1_dtlb
+echo "test81_invtlb_op1_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test82_invtlb_op2_itlb
+echo "test82_invtlb_op2_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test83_invtlb_op2_dtlb
+echo "test83_invtlb_op2_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test84_invtlb_op3_itlb
+echo "test84_invtlb_op3_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test85_invtlb_op3_dtlb
+echo "test85_invtlb_op3_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test86_invtlb_op4_itlb
+echo "test86_invtlb_op4_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test87_invtlb_op4_dtlb
+echo "test87_invtlb_op4_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test88_invtlb_op5_itlb
+echo "test88_invtlb_op5_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test89_invtlb_op5_dtlb
+echo "test89_invtlb_op5_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test90_invtlb_op6_itlb
+echo "test90_invtlb_op6_itlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test91_invtlb_op6_dtlb
+echo "test91_invtlb_op6_dtlb"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
