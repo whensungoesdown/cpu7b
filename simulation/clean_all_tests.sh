@@ -650,3 +650,10 @@ echo "test91_invtlb_op6_dtlb"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test92_pif_exception
+echo "test92_pif_exception"
+./clean.sh
+echo ""
+cd ..

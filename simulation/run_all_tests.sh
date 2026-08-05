@@ -1113,3 +1113,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test92_pif_exception
+echo "test92_pif_exception"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
