@@ -23,8 +23,6 @@ echo ""
 cd ..
 
 
-
-
 cd test3_st.w
 echo "test3_st.w"
 ./clean.sh
@@ -654,6 +652,41 @@ cd ..
 
 cd test92_pif_exception
 echo "test92_pif_exception"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test93_pil_exception
+echo "test93_pil_exception"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test94_pis_exception
+echo "test94_pis_exception"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test95_pme_exception
+echo "test95_pme_exception"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test96_ppi_exception_fetch
+echo "test96_ppi_exception_fetch"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test97_ppi_exception_store
+echo "test97_ppi_exception_store"
 ./clean.sh
 echo ""
 cd ..

@@ -149,6 +149,8 @@ module c7bcore(
 
    wire        csr_itlb_tlbrefill_ctx; 
 
+   wire [1:0]  csr_itlb_crmd_plv;
+
    wire [4:0]  exu_itlb_random_index;
 
    wire        exu_itlb_tlbfill_vld_e;
@@ -309,6 +311,8 @@ module c7bcore(
 
       .csr_itlb_tlbrefill_ctx          (csr_itlb_tlbrefill_ctx),
 
+      .csr_itlb_crmd_plv               (csr_itlb_crmd_plv),
+
       .exu_itlb_random_index           (exu_itlb_random_index),
 
       .exu_itlb_tlbfill_vld_e          (exu_itlb_tlbfill_vld_e), 
@@ -468,6 +472,8 @@ module c7bcore(
       .csr_itlb_asid_asid              (csr_itlb_asid_asid),
 
       .csr_itlb_tlbrefill_ctx          (csr_itlb_tlbrefill_ctx),
+
+      .csr_itlb_crmd_plv               (csr_itlb_crmd_plv),
 
       .exu_itlb_random_index           (exu_itlb_random_index),
 
