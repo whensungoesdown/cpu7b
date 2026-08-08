@@ -32,10 +32,10 @@ More blogs are kept at:
  |      | |  +-----------------+       |     +-------- +   |        |    |       |    |    |
  |      | |  |                 |       |                   |        |    +-------+    |    |
  |      | |  | L1 icache       |       |  +-----------+    |        |    +-------+    |    |
- |      | |  |                 |       |  |           |    |        |    |  div  |    |    |
- |      | |  |                 |       |  |    lsu    |    |        |    |       |    |    |
- |      | |  +-----------------+       |  |           |    +--------+    +-------+    |    |
- |      | |    | |                     |  +------------                               |    |
+ |      | |  +--------+        |       |  |   lsu     |    |        |    |  div  |    |    |
+ |      | |  |  itlb  |        |       |  +------+    |    |        |    |       |    |    |
+ |      | |  +--------+--------+       |  | dtlb |    |    +--------+    +-------+    |    |
+ |      | |    | |                     |  +------+-----                               |    |
  |      | |    | |                     +-----|------|---------------------------------+    |
  |      | |    | |                           |      |                                      |
  |  +-------------------------------------------------+                                    |
@@ -129,6 +129,12 @@ More blogs are kept at:
   DBAR IBAR
 `````
 
+### TLB
+
+`````assembly
+  TLBSRCH TLBRD TLBWR TLBFILL INVTLB
+`````
+
 ### Miscellaneous
 
 
@@ -140,39 +146,52 @@ More blogs are kept at:
 
 - [ ] Memory access: `PRELD`
 - [ ] Floating-point instructions
-- [ ] Cache and TLB instructions
 - [ ] Miscellaneous: `RDCNTID`, `IDLE`
 
 ---
 
 ## CSR Registers
 
-| Address | Register | Description          |
-|---------|----------|----------------------|
-| 0x0     | CRMD     | Current Mode Information |
-| 0x1     | PRMD     | Pre-exception Mode Information |
-| 0x5     | ESTAT    | Exception Status     |
-| 0x6     | ERA      | Exception Return Address |
-| 0x7     | BADV     | Bad Virtual Address |
-| 0xc     | EENTRY   | Exception Entry Base Address |
-| 0x30~0x33| SAVE0~SAVE3 | Data Save Register |
-| 0x41    | TCFG     | Timer Configuration  |
-| 0x42    | TVAL     | Timer Value          |
-| 0x43    | TICLR    | Timer Interrupt Clearing |
-| 0x60    | LLBCTL   | LLBit Controller     |
+| Address     | Register    | Description                         |
+|-------------|-------------|-------------------------------------|
+| 0x0         | CRMD        | Current Mode Information            |
+| 0x1         | PRMD        | Pre-exception Mode Information      |
+| 0x5         | ESTAT       | Exception Status                    |
+| 0x6         | ERA         | Exception Return Address            |
+| 0x7         | BADV        | Bad Virtual Address                 |
+| 0xc         | EENTRY      | Exception Entry Base Address        |
+| 0x10        | TLBIDX      | TLB InDeX                           | 
+| 0x11        | TLBEHI      | TLB Entry HIgh-order bits           |
+| 0x12        | TLBELO0     | TLB Entry LOw-order bits 0          |
+| 0x13        | TLBELO1     | TLB Entry LOw-order bits 1          |
+| 0x18        | ASID        | Address Space IDentifier            |
+| 0x19        | PGDL        | Page Global Directory base address for Lower half address space  |
+| 0x1a        | PGDH        | Page Global Directory base address for Higher half address space |
+| 0x1b        | PGD         | Page Global Directory base address  |
+| 0x30~0x33   | SAVE0~SAVE3 | Data Save Register                  |
+| 0x41        | TCFG        | Timer Configuration                 |
+| 0x42        | TVAL        | Timer Value                         |
+| 0x43        | TICLR       | Timer Interrupt Clearing            |
+| 0x60        | LLBCTL      | LLBit Controller                    |
+| 0x88        | TLBRENTRY   | TLB Refill exception ENTRY address  |
+| 0x180~0x181 | DMW0~DMW1   | Direct Mapping configuration Window |
 
 ---
 
 ## Exceptions
 
+- 0x0 Timer Interrupt, Ext Interrupt
+- 0x1 Page Invalid exception for Load operation (PIL)
+- 0x2 Page Invalid exception for Store operation (PIS)
+- 0x3 Page Invalid exception for Fetch operation (PIF)
+- 0x4 Page Modification Exception (PME)
+- 0x7 Page Privilege level Illegal exception (PPI)
 - 0x8 ADdress error Exception for Fetching instructions (ADEF)
 - 0x8 ADdress error Exception for Memory access instructions (ADEM)
 - 0x9 Address aLignment fault Exception (ALE)
 - 0xB SYStem call exception (SYS)
 - 0xC BReaKpoint exception (BRK)
 - 0xD Instruction Non-defined Exception (INE)
-- 0x0 Timer Interrupt
-- 0x0 Ext Interrupt
 ---
 
 ## L1 Instruction Cache
@@ -217,6 +236,78 @@ Each way contains a 22-bit tag ram and 4 64-bit data ram.
 
     |______________________________________________________________________|
    63                                data                                  0
+`````
+
+## TLB (itlb & dtlb)
+
+- 32 entries per TLB, 5-bit index (0..31).                           
+
+- Independent iTLB and dTLB, selected by TLBIDX.I_D (bit 16).        
+
+- Software-managed: all operations (TLBWR, TLBFILL, TLBSRCH, INVTLB) 
+  are performed by software. No hardware page table walk.            
+
+`````c
+
+
++==============================================================================+
+|                             TLB Entry                                        |
++==============================================================================+
+| VPPN  | Virtual Paired Page Number (19 bits). Each entry maps two adjacent   |
+|       | pages (odd/even). Effective VPN = VPPN << 1. Page offset is taken    |
+|       | from the faulting address (BADV).                                    |
++-------+----------------------------------------------------------------------+
+| ASID  | Address Space ID (10 bits). Used to distinguish processes to avoid   |
+|       | TLB flushes on context switches. Ignored when G=1.                   |
++-------+----------------------------------------------------------------------+
+| MAT   | Memory Access Type (2 bits). Controls cache attributes (e.g.,        |
+|       | strongly ordered, cached, write-back, etc.).                         |
++-------+----------------------------------------------------------------------+
+| PLV   | Privilege Level (2 bits). Compared with current CRMD.PLV to detect   |
+|       | PPI (Privilege Violation). 0 = kernel, 3 = user.                     |
++-------+----------------------------------------------------------------------+
+| G     | Global (1 bit). If 1, the ASID is ignored during lookup. Used for    |
+|       | kernel mappings that are shared across all address spaces.           |
++-------+----------------------------------------------------------------------+
+| D     | Dirty (1 bit). Indicates the page has been written to. Used for      |
+|       | PME (Page Modification Exception) and swapping optimizations.        |
++-------+----------------------------------------------------------------------+
+| V     | Valid (1 bit). If 0, the entry is invalid; accesses cause PIF/PIL/PIS|
+|       | exceptions (page invalid faults).                                    |
++-------+----------------------------------------------------------------------+
+| E     | Entry Valid (1 bit). Software-maintained validity flag for the TLB   |
+|       | entry itself. Cleared by invalidation operations.                    |
++-------+----------------------------------------------------------------------+
+| PPN   | Physical Page Number (20 bits). Combined with page offset from the   |
+|       | virtual address to form the physical address.                        |
++-------+----------------------------------------------------------------------+
+
++==============================================================================+
+|                          TLBIDX CONTROL REGISTER                             |
++==============================================================================+
+|    Field    |  Bits  | Width | Description                                   |
++-------------+--------+-------+-----------------------------------------------+
+| NE          |   31   |   1   | 0 = found/hit, 1 = not found (search result)  |
+| PS          |  29:24 |   6   | Page size (e.g., 12 for 4KB)                  |
+| I_D         |   16   |   1   | 0 = iTLB, 1 = dTLB                            |
+| INDEX       |   4:0  |   5   | Entry index (0..31) for read/write            |
++-------------+--------+-------+-----------------------------------------------+
+
++==============================================================================+
+|                         EXAMPLE: DTLB ENTRY                                  |
++==============================================================================+
+| Virtual address:     0x20001000 (page offset 0x000)                          |
+| VPPN = 0x10008 (0x20001000 >> 13)                                            |
+| ASID = 0x123                                                                 |
+| MAT  = 0x3                                                                   |
+| PLV  = 0x0                                                                   |
+| G    = 1                                                                     |
+| D    = 1                                                                     |
+| V    = 0          ← invalid → PIS exception on store                         |
+| E    = 1                                                                     |
+| PPN  = 0x1c0001                                                              |
+| TLBIDX.I_D = 1 (dTLB), INDEX selected by TLBFILL.                            |
++==============================================================================+
 `````
 
 ----------
