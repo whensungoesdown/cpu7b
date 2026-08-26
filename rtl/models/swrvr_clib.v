@@ -918,3 +918,24 @@ always @ (negedge clkl or posedge rst)
 
 endmodule // dffr_async_ns_cl_r1
 
+// uty: test
+// Asynchronous reset D flip-flop with clock enable
+module dffrle_rstval #(
+    parameter WIDTH  = 1,        // Data width
+    parameter RST_VAL = 1'b0     // Reset value (must match WIDTH)
+)(
+    input  wire               clk,     // Clock
+    input  wire               rst_l,   // Asynchronous reset, active low
+    input  wire               en,      // Clock enable
+    input  wire [WIDTH-1:0]   din,     // Data input
+    output reg  [WIDTH-1:0]   q        // Data output
+);
+
+    always @(posedge clk or negedge rst_l) begin
+        if (!rst_l)
+            q <= RST_VAL;              // Asynchronous reset, highest priority
+        else if (en)
+            q <= din;                  // Update on clock edge if enabled
+    end
+
+endmodule
