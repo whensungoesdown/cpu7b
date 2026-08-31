@@ -690,3 +690,10 @@ echo "test97_ppi_exception_store"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test98_preld
+echo "test98_preld"
+./clean.sh
+echo ""
+cd ..

@@ -1185,3 +1185,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test98_preld
+echo "test98_preld"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
