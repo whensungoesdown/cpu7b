@@ -138,8 +138,8 @@ set_i_d_done:
     csrwr   $t3, 0x10             # 写回 TLBIDX
 
     # ---- 填充 TLB 条目 ----
-    li.w    $t0, 0x1C000000
-    csrwr   $t0, 0x11
+    #li.w    $t0, 0x1C000000
+    #csrwr   $t0, 0x11
     li.w    $t0, 0x1C00043
     csrwr   $t0, LOONGARCH_CSR_TLBELO0
     li.w    $t0, 0x1C00043

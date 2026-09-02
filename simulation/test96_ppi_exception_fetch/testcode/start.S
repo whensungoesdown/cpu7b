@@ -123,8 +123,8 @@ tlbr_handler:
     or      $t1, $t1, $t0
     csrwr   $t1, LOONGARCH_CSR_TLBIDX
 
-    csrrd   $t1, LOONGARCH_CSR_BADV
-    csrwr   $t1, LOONGARCH_CSR_TLBEHI
+    #csrrd   $t1, LOONGARCH_CSR_BADV
+    #csrwr   $t1, LOONGARCH_CSR_TLBEHI
 
     li.w    $t0, 0x1c00043           # V=1, G=1, D=1, PLV=0
     csrwr   $t0, LOONGARCH_CSR_TLBELO0
@@ -141,8 +141,8 @@ itlb_refill:
     and     $t1, $t1, $t0
     csrwr   $t1, LOONGARCH_CSR_TLBIDX
 
-    csrrd   $t1, LOONGARCH_CSR_BADV
-    csrwr   $t1, LOONGARCH_CSR_TLBEHI
+    #csrrd   $t1, LOONGARCH_CSR_BADV
+    #csrwr   $t1, LOONGARCH_CSR_TLBEHI
 
     li.w    $t0, 0x1c00043           # PLV=0, V=1, G=1, D=1, PPN=0x1c000
     csrwr   $t0, LOONGARCH_CSR_TLBELO0

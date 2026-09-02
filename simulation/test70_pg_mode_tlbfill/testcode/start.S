@@ -101,8 +101,8 @@ except_handler:
     ertn
 
 tlbr_handler:
-        li.w    $t0, 0x1C000000  # 将值 0x1C000000 加载到通用寄存器 $t0
-        csrwr   $t0, 0x11        # 将 $t0 的值写入 CSR 0x11 (TLBEHI)
+        #li.w    $t0, 0x1C000000  # 将值 0x1C000000 加载到通用寄存器 $t0
+        #csrwr   $t0, 0x11        # 将 $t0 的值写入 CSR 0x11 (TLBEHI)
 
 	# G=1, PLV=0, V=1, D=1, PPN=1c000
 	li.w    $t0, 0x1c00043

@@ -91,8 +91,8 @@ success:
 # TLBR (TLB Refill) exception handler (virtual at 0xa000_xxxx)
 # ============================================================
 tlbr_handler:
-    csrrd   $t0, LOONGARCH_CSR_BADV
-    csrwr   $t0, LOONGARCH_CSR_TLBEHI
+    #csrrd   $t0, LOONGARCH_CSR_BADV
+    #csrwr   $t0, LOONGARCH_CSR_TLBEHI
 
     li.w    $t0, 0x1c00042         # V=0, G=1, D=1
     csrwr   $t0, LOONGARCH_CSR_TLBELO0
@@ -113,8 +113,8 @@ except_handler:
     bne     $t1, $t2, fail
 
     # Locate TLB entry via tlbsrch
-    csrrd   $t0, LOONGARCH_CSR_BADV
-    csrwr   $t0, LOONGARCH_CSR_TLBEHI
+    #csrrd   $t0, LOONGARCH_CSR_BADV
+    #csrwr   $t0, LOONGARCH_CSR_TLBEHI
     tlbsrch
 
     # Check NE bit (0 = found)

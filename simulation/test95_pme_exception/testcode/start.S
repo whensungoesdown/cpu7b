@@ -111,8 +111,8 @@ tlbr_handler:
     or      $t1, $t1, $t0
     csrwr   $t1, LOONGARCH_CSR_TLBIDX
 
-    csrrd   $t1, LOONGARCH_CSR_BADV
-    csrwr   $t1, LOONGARCH_CSR_TLBEHI
+    #csrrd   $t1, LOONGARCH_CSR_BADV
+    #csrwr   $t1, LOONGARCH_CSR_TLBEHI
 
     # V=1, G=1, D=0, PPN=0x1c0001
     li.w    $t0, 0x1c000141          # (0x1c0001<<8) | (1<<6) | (1<<0)
@@ -174,8 +174,8 @@ except_handler:
     csrwr   $t0, LOONGARCH_CSR_TLBIDX
 
     # Locate TLB entry via tlbsrch
-    csrrd   $t0, LOONGARCH_CSR_BADV
-    csrwr   $t0, LOONGARCH_CSR_TLBEHI
+    #csrrd   $t0, LOONGARCH_CSR_BADV
+    #csrwr   $t0, LOONGARCH_CSR_TLBEHI
     tlbsrch
 
     # Check NE bit (0 = found)
