@@ -96,6 +96,7 @@ tlbr_handler:
 
     li.w    $t0, 0x1c00042         # V=0, G=1, D=1
     csrwr   $t0, LOONGARCH_CSR_TLBELO0
+    li.w    $t0, 0x1c00042         # V=0, G=1, D=1
     csrwr   $t0, LOONGARCH_CSR_TLBELO1
 
     tlbfill
@@ -126,6 +127,7 @@ except_handler:
     # Update entry: V=1
     li.w    $t1, 0x1c00043
     csrwr   $t1, LOONGARCH_CSR_TLBELO0
+    li.w    $t1, 0x1c00043
     csrwr   $t1, LOONGARCH_CSR_TLBELO1
     tlbwr
     ertn

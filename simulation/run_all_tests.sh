@@ -1197,3 +1197,39 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test99_csrxchg_tlbidx_i_d
+echo "test99_csrxchg_tlbidx_i_d"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test100_pif_excep_first_v0
+echo "test100_pif_excep_first_v0"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test101_pis_badv_tlbehi
+echo "test101_pis_badv_tlbehi"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..

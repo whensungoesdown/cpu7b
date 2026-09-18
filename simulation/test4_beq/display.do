@@ -31,9 +31,7 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/alu_b_e
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/ifu_exu_vld_d
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/stall
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/flush
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/expected_addr
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/data_addr
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/start_addr
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/data_vld
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/queue_empty
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_iq/queue_full

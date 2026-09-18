@@ -697,3 +697,24 @@ echo "test98_preld"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test99_csrxchg_tlbidx_i_d
+echo "test99_csrxchg_tlbidx_i_d"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test100_pif_excep_first_v0
+echo "test100_pif_excep_first_v0"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test101_pis_badv_tlbehi
+echo "test101_pis_badv_tlbehi"
+./clean.sh
+echo ""
+cd ..

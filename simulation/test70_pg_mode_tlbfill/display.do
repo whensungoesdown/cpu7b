@@ -68,22 +68,6 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_vppn
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_vppn_g
 
 add wave -divider
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_asid
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_d0
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_d1
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_e
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_g
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_mat0
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_mat1
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_plv0
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_plv1
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_ppn0
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_ppn1
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_ps
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_v0
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_v1
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb0_vppn
-add wave -divider
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_addr_f
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_f
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_vld_f

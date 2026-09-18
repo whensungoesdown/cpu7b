@@ -28,7 +28,7 @@ add wave -position end  sim:/top_tb/u_top/cpu_rvalid
 add wave -position end  sim:/top_tb/u_top/cpu_rready
 
 
-run 2000ns
+run 5000ns
 
 # read in stimulus
 #do stim.do
