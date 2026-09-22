@@ -66,6 +66,26 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_vppn
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_vppn_g
 
 add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/exu_ifu_stall
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_ecl/lsu_bgn
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_ecl/lsu_end
+add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/badv
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_vaddr_q
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_addr_sel_brn
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_addr_sel_ert
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_addr_sel_inc
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_addr_sel_init
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_addr_sel_isr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_addr_sel_old
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_vaddr_in
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/csr_era
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/era_wen
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/era_exception_wen
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/ifu_exu_pc_w
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/estat_ecode
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/estat_esubcode
+add wave -divider
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_addr_f
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_f
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/inst_vld_f
@@ -90,29 +110,55 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/wen_w
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/rd_w
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/rd_data_w
 add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_vaddr_q
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf2_phyaddr
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_pfn
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_v
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_found
+add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/csr_itlb_tlbidx_i_d
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlbr_exception
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pif_exception
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/estat_ecode
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/estat_esubcode
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_found
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_vld
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_v
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/sel_v
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_odd_page
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_odd_page_g
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb_v0
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/test_tlb_v1
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/match_index
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/tlbidx
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/itlb_csr_tlbidx_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/tlb_ne_data
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/tlbsrch_vld_m
+add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/u_dtlb/test_tlb_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/u_dtlb/test_tlb_v0
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_lsu/u_dtlb/test_tlb_v1
+add wave -divider
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r1
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r5
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r6
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r7
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r11
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r12
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_rf/r13
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/tlbelo0
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/tlbelo1
 add wave -divider
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/da_mode
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pg_mode
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/pf_vaddr_q
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/fcl_req
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/tlb_s_vld
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/u_itlb/s_found
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/ifu_biu_rd_addr
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/ifu_biu_rd_req
-
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/era
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/exc_badv_w
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/exu_csr_except_w
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/era_nxt
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/era
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/pc_w
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/stall_reg_mw
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/reg_en_m
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/pc_m
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/pc_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/reg_en_e
+add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/vld_e
 add wave -divider
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/crmd_da
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/crmd_pg
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/crmd_da_din
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/crmd_da_en
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/crmd_da_wen
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/ertn_tlbr_excep
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/csr_wdata
-
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/exu_ifu_except
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_ifu/exu_ifu_isr_addr

@@ -718,3 +718,17 @@ echo "test101_pis_badv_tlbehi"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test102_linux_tlbrefill_valid_ptes
+echo "test102_linux_tlbrefill_valid_ptes"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test103_simu_linux_tlbrefill_pif
+echo "test103_simu_linux_tlbrefill_pif"
+./clean.sh
+echo ""
+cd ..

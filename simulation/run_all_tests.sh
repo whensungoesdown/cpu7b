@@ -1233,3 +1233,27 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test102_linux_tlbrefill_valid_ptes
+echo "test102_linux_tlbrefill_valid_ptes"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test103_simu_linux_tlbrefill_pif
+echo "test103_simu_linux_tlbrefill_pif"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
