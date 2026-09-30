@@ -732,3 +732,24 @@ echo "test103_simu_linux_tlbrefill_pif"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test104_simu_linux_tlbrefill_pis
+echo "test104_simu_linux_tlbrefill_pis"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test105_simu_linux_tlbrefill_pis_secondpage
+echo "test105_simu_linux_tlbrefill_pis_secondpage"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test106_simu_linux_tlbrefill_pif_pis_secondpage
+echo "test106_simu_linux_tlbrefill_pif_pis_secondpage"
+./clean.sh
+echo ""
+cd ..
