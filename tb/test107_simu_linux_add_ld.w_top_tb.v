@@ -1,0 +1,97 @@
+//`include "../rtl/defines.vh"
+
+`timescale 1ns / 1ps
+//`timescale 1ns / 1ns
+
+module top_tb(
+   );
+
+   reg clk;
+   reg resetn;
+   wire dumb_output;
+
+   initial
+      begin
+	 $display("Start ...");
+	 clk = 1'b1;
+	 resetn = 1'b0;
+ 
+	 #32;
+	 resetn = 1'b1;
+
+	 
+      end
+
+   always #5 clk=~clk;
+   
+
+   top u_top (
+      .clk                             (clk),
+      .resetn                          (resetn),
+      .dumb_output                     (dumb_output)
+      );
+
+   always @(negedge clk)
+      begin
+	 $display("+");
+	 $display("reset %b", resetn);
+
+
+	 //if (1'b1 === u_top.fake_cpu.axi_rd_ret)
+	 //   begin
+	 //      $display("read back data 0x%x", u_top.fake_cpu.rdata);
+	 //      $display("\nPASS!\n");
+	 //      $finish;
+	 //   end
+	 
+         $display("regs[12] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[12]);
+
+	 if (32'h3c001018 === u_top.u_c7b.u_core.u_exu.pc_w)
+	 //if (32'hbc000160 === u_top.u_c7b.u_core.u_exu.pc_w)
+	 begin
+		 $display("regs[5] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[5]);
+		 $display("regs[12] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[12]);
+		 $display("regs[13] 0x%x\n", u_top.u_c7b.u_core.u_exu.u_rf.regs[13]);
+
+		 if (32'h5a === u_top.u_c7b.u_core.u_exu.u_rf.regs[5] &&
+		     32'haaaabbbb === u_top.u_c7b.u_core.u_exu.u_rf.regs[12]
+	            )
+		 begin
+			 $display("\nPASS!\n");
+			 $display("\033[0;32m");
+	                 $display("**************************************************");
+	                 $display("*                                                *");
+	                 $display("*      * * *       *        * * *     * * *      *");
+	                 $display("*      *    *     * *      *         *           *");
+	                 $display("*      * * *     *   *      * * *     * * *      *");
+	                 $display("*      *        * * * *          *         *     *");
+	                 $display("*      *       *       *    * * *     * * *      *");
+	                 $display("*                                                *");
+	                 $display("**************************************************");
+	                 $display("\n");
+	                 $display("\033[0m");
+			 $finish;
+		 end
+		 else
+		 begin
+			 $display("\nFAIL!\n");
+			 $display("\033[0;31m");
+	                 $display("**************************************************");
+	                 $display("*                                                *");
+	                 $display("*      * * *       *         ***      *          *");
+	                 $display("*      *          * *         *       *          *");
+	                 $display("*      * * *     *   *        *       *          *");
+	                 $display("*      *        * * * *       *       *          *");
+	                 $display("*      *       *       *     ***      * * *      *");
+	                 $display("*                                                *");
+	                 $display("**************************************************");
+	                 $display("\n");
+	                 $display("\033[0m");
+			 $finish;
+		 end
+	 end
+
+	
+      end
+   
+endmodule // top_tb

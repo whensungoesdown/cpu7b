@@ -38,6 +38,17 @@ echo ""
 cd ..
 
 
+cd test1_2_add_ld.w
+echo "test1_2_add_ld.w"
+if ./simulate.sh | grep PASS; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
 
 cd test3_st.w
 echo "test3_st.w"
@@ -1285,6 +1296,18 @@ cd ..
 
 cd test106_simu_linux_tlbrefill_pif_pis_secondpage
 echo "test106_simu_linux_tlbrefill_pif_pis_secondpage"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
+
+
+cd test107_simu_linux_add_ld.w
+echo "test107_simu_linux_add_ld.w"
 if ./simulate.sh | grep "PASS\|RANDOM"; then
 	printf ""
 else

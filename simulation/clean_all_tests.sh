@@ -23,6 +23,13 @@ echo ""
 cd ..
 
 
+cd test1_2_add_ld.w
+echo "test1_2_add_ld.w"
+./clean.sh
+echo ""
+cd ..
+
+
 cd test3_st.w
 echo "test3_st.w"
 ./clean.sh
@@ -750,6 +757,13 @@ cd ..
 
 cd test106_simu_linux_tlbrefill_pif_pis_secondpage
 echo "test106_simu_linux_tlbrefill_pif_pis_secondpage"
+./clean.sh
+echo ""
+cd ..
+
+
+cd test107_simu_linux_add_ld.w
+echo "test107_simu_linux_add_ld.w"
 ./clean.sh
 echo ""
 cd ..
