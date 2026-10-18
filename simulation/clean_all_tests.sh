@@ -767,3 +767,10 @@ echo "test107_simu_linux_add_ld.w"
 ./clean.sh
 echo ""
 cd ..
+
+
+cd test108_simu_linux_ld.w_tlbr
+echo "test108_simu_linux_ld.w_tlbr"
+./clean.sh
+echo ""
+cd ..

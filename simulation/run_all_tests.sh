@@ -1316,3 +1316,15 @@ else
 fi
 echo ""
 cd ..
+
+
+cd test108_simu_linux_ld.w_tlbr
+echo "test108_simu_linux_ld.w_tlbr"
+if ./simulate.sh | grep "PASS\|RANDOM"; then
+	printf ""
+else
+	printf "Fail!\n"
+	exit
+fi
+echo ""
+cd ..
