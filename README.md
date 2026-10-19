@@ -1,356 +1,261 @@
-# CPU7B (LoongArch32r ISA)
+# CPU7B — a LoongArch32r processor core
 
+CPU7B is a single-issue, in-order processor core that implements the
+integer subset of the LoongArch32 Reduced (LA32R) ISA. It has a 16 KB L1
+instruction cache, separate software-managed instruction and data TLBs,
+two direct-mapping windows and an AXI4 master interface. It boots
+Linux 5.14 in the [SoC2](https://github.com/whensungoesdown) FPGA system.
 
-More blogs are kept at:
-- https://whensungoesdown.github.io
+| | |
+|---|---|
+| ISA | LA32R integer subset, PLV0 / PLV3 |
+| Pipeline | Single issue, in order: `bf → f → d → e → m → w` |
+| LSU | `ls1 → ls2 → ls3`, one access in flight, no data cache |
+| L1 I-cache | 16 KB, 2-way set associative, 32-byte lines, `ic1 → ic2` |
+| MMU | 32-entry iTLB and 32-entry dTLB, 4 KB pages, DMW0 / DMW1 |
+| Bus | AXI4 master, 64-bit data |
+| Interrupts | Timer, one external interrupt line |
 
-## Pipeline
-
-- Single-issue, in-order core
-
-- Main pipeline: `bf → f → d → e → m(ex2) → w`
-
-- LSU pipeline: `ls1 → ls2 → ls3`
-
-- 16KB 2-way set-associative L1 instruction cache: `ic1 → ic2`
-
-## Modules
-
-`````c
- +-CPU7B-----------------------------------------------------------------------------------+
- | +-----------------------------+     +----------------------------------------------+    |
- | |IFU                          |     | EXU               +--------+    +-------+    |    |
- | |  +------------+  +--------+ |     |     +---------+   |        |    |  alu  |    |    |
- | |  |            |  |        | |     |     |         |   |        |    |       |    |    |
- | |  |    fcl     |  |        | |     |     |   csr   |   |        |    +-------+    |    |
- | |  |            |->| decode | | ->  |     |         |   |        |    +-------+    |    |
- | |  |   instr Q  |  |        | |     |     +---------+   |        |    |  bru  |    |    |
- | |  |            |  |        | |     |     +---------+   |  ecl   |    |       |    |    |
- | |  +------------+  +--------+ |     |     |         |   |   &    |    +-------+    |    |
- | +----| |--- | |---------------+     |     | regfile |   |  byp   |    +-------+    |    |
- |      | |    | |                     |     |         |   |        |    |  mul  |    |    |
- |      | |  +-----------------+       |     +-------- +   |        |    |       |    |    |
- |      | |  |                 |       |                   |        |    +-------+    |    |
- |      | |  | L1 icache       |       |  +-----------+    |        |    +-------+    |    |
- |      | |  +--------+        |       |  |   lsu     |    |        |    |  div  |    |    |
- |      | |  |  itlb  |        |       |  +------+    |    |        |    |       |    |    |
- |      | |  +--------+--------+       |  | dtlb |    |    +--------+    +-------+    |    |
- |      | |    | |                     |  +------+-----                               |    |
- |      | |    | |                     +-----|------|---------------------------------+    |
- |      | |    | |                           |      |                                      |
- |  +-------------------------------------------------+                                    |
- |  |                                                 |                                    |
- |  |                       BIU                       |                                    |
- |  |                                                 |                                    |
- |  +-------------------------------------------------+                                    |
- |                  |      |                                                               |
- +------------------|      |---------------------------------------------------------------+
-                    |      |
-
-
-`````
-
+More notes and articles: https://whensungoesdown.github.io
 
 ---
 
-## LoongArch32r Instruction Set
+## Contents
 
-### Integer Arithmetic
+- [Block Diagram](#block-diagram)
+- [Modules](#modules)
+- [Instruction Set](#instruction-set)
+- [CSR Registers](#csr-registers)
+- [Exceptions and Interrupts](#exceptions-and-interrupts)
+- [Memory Management](#memory-management)
+- [L1 Instruction Cache](#l1-instruction-cache)
+- [Repository Layout](#repository-layout)
+- [Build and Test](#build-and-test)
 
+---
 
-`````assembly
+## Block Diagram
 
-  ADD.W SUB.W ADDI.W 
+```text
+ +-CPU7B-------------------------------------------------------------------+
+ |  +-IFU (c7bifu)-----------------+     +-EXU (c7bexu)------------------+ |
+ |  |  fcl -> instr Q -> decode    | --> |  regfile  bypass  ecl         | |
+ |  |  itlb (c7btlb)               |     |  alu  bru  mul  div           | |
+ |  +------------------------------+     |  csr (c7bcsr)                 | |
+ |  +-ICU (c7bicu)-----------------+     |  lsu (c7blsu)  dtlb (c7btlb)  | |
+ |  |  L1 I-cache 16 KB, 2-way     |     +-------------------------------+ |
+ |  +------------------------------+                   |                   |
+ |           |                                         |                   |
+ |  +-BIU (c7bbiu)--------------------------------------------------------+ |
+ |  |  read arbiter (LSU > IFU > ICU)   write arbiter   AXI interface     | |
+ |  +---------------------------------------------------------------------+ |
+ +------------------------------------|------------------------------------+
+                                      | AXI4 master
+```
 
-  LU12I.W PCADDU12I 
+---
 
-  SLT[U] SLT[U]I 
+## Modules
 
-  AND OR NOR XOR
+Each module directory has its own design document with pipeline
+timelines, signal equations and a list of known limitations.
 
-  ANDI ORI XORI
+| Module | Directory | Description | Design notes |
+|---|---|---|---|
+| IFU | `rtl/c7bifu` | Fetch control, ITLB lookup, instruction queue, decode | [README](rtl/c7bifu/README.md) |
+| ICU | `rtl/c7bicu` | L1 instruction cache and linefill buffer | see [below](#l1-instruction-cache) |
+| EXU | `rtl/c7bexu` | Issue, bypass, ALU/BRU/MUL/DIV, stall and flush control, exception pipeline, interrupts | [README](rtl/c7bexu/README.md) |
+| LSU | `rtl/c7blsu` | Address generation, DTLB lookup, loads/stores, LL/SC, barriers | [README](rtl/c7blsu/README.md) |
+| TLB | `rtl/c7btlb` | 32-entry TLB, instantiated as ITLB and DTLB | [README](rtl/c7btlb/README.md) |
+| CSR | `rtl/c7bcsr` | Control and status registers, timer, counter | [README](rtl/c7bcsr/README.md) |
+| BIU | `rtl/c7bbiu` | Read/write arbitration and AXI4 interface | [README](rtl/c7bbiu/README.md) |
+| Top | `rtl/c7b.v`, `rtl/c7bcore.v` | Core top level and interconnect between units | |
 
-  NOP
-`````
-	
-### Bit-Shift
+---
 
-`````assembly
-  SLL.W SRL.W SRA.W SLL.W SRL.W SRA.W
+## Instruction Set
 
-  SLLI.W SRLI.W SRAI.W
-`````
+| Group | Instructions |
+|---|---|
+| Integer arithmetic | `ADD.W` `SUB.W` `ADDI.W` `LU12I.W` `PCADDU12I` `SLT[U]` `SLT[U]I` `AND` `OR` `NOR` `XOR` `ANDI` `ORI` `XORI` `NOP` |
+| Shift | `SLL.W` `SRL.W` `SRA.W` `SLLI.W` `SRLI.W` `SRAI.W` |
+| Branch and jump | `BEQ` `BNE` `BLT[U]` `BGE[U]` `B` `BL` `JIRL` |
+| Multiply | `MUL.W` `MULH.W[U]` |
+| Divide | `DIV.W[U]` `MOD.W[U]` |
+| Load / store | `LD.B` `LD.H` `LD.W` `LD.BU` `LD.HU` `ST.B` `ST.H` `ST.W` |
+| Atomic | `LL.W` `SC.W` |
+| Barrier | `DBAR` `IBAR` |
+| CSR | `CSRRD` `CSRWR` `CSRXCHG` |
+| TLB | `TLBSRCH` `TLBRD` `TLBWR` `TLBFILL` `INVTLB` |
+| Miscellaneous | `ERTN` `SYSCALL` `BREAK` `RDCNTVL.W` `RDCNTVH.W` |
+| Cache hint | `PRELD` (executes as a NOP) |
 
-### Branch and Jump
+### Not yet implemented
 
-`````assembly
-  BEQ BNE BLT[U] BGE[U]
-
-  B BL
-
-  JIRL
-`````
-
-### Integer Multiply
-
-`````assembly
-  MUL.W MULH.W[U]
-`````
-
-### Integer Divide
-
-`````assembly
-  DIV.W[U]  MOD.W[U]
-`````
-
-### Memory Access
-
-`````assembly
-  LD.B LD.H LD.W LD.BU LD.HU LD.HU
-
-  ST.B ST.H ST.W
-`````
-
-### CSR Access
-
-`````assembly
-  CSRRD CSRWR CSRXCHG
-`````
-
-### Atomic Memory Access
-
-`````assembly
-  LL.W SC.W
-`````
-
-### Barrier
-
-`````assembly
-  DBAR IBAR
-`````
-
-### TLB
-
-`````assembly
-  TLBSRCH TLBRD TLBWR TLBFILL INVTLB
-`````
-
-### Miscellaneous
-
-
-`````assembly
-  ERTN SYSCALL BREAK RDCNTV{L/H}.W
-`````
-
-## To Do
-
-- [ ] Memory access: `PRELD`
 - [ ] Floating-point instructions
-- [ ] Miscellaneous: `RDCNTID`, `IDLE`
+- [ ] `CACOP`
+- [ ] `RDCNTID`, `IDLE`
 
 ---
 
 ## CSR Registers
 
-| Address     | Register    | Description                         |
-|-------------|-------------|-------------------------------------|
-| 0x0         | CRMD        | Current Mode Information            |
-| 0x1         | PRMD        | Pre-exception Mode Information      |
-| 0x5         | ESTAT       | Exception Status                    |
-| 0x6         | ERA         | Exception Return Address            |
-| 0x7         | BADV        | Bad Virtual Address                 |
-| 0xc         | EENTRY      | Exception Entry Base Address        |
-| 0x10        | TLBIDX      | TLB InDeX                           | 
-| 0x11        | TLBEHI      | TLB Entry HIgh-order bits           |
-| 0x12        | TLBELO0     | TLB Entry LOw-order bits 0          |
-| 0x13        | TLBELO1     | TLB Entry LOw-order bits 1          |
-| 0x18        | ASID        | Address Space IDentifier            |
-| 0x19        | PGDL        | Page Global Directory base address for Lower half address space  |
-| 0x1a        | PGDH        | Page Global Directory base address for Higher half address space |
-| 0x1b        | PGD         | Page Global Directory base address  |
-| 0x30~0x33   | SAVE0~SAVE3 | Data Save Register                  |
-| 0x41        | TCFG        | Timer Configuration                 |
-| 0x42        | TVAL        | Timer Value                         |
-| 0x43        | TICLR       | Timer Interrupt Clearing            |
-| 0x60        | LLBCTL      | LLBit Controller                    |
-| 0x88        | TLBRENTRY   | TLB Refill exception ENTRY address  |
-| 0x180~0x181 | DMW0~DMW1   | Direct Mapping configuration Window |
+| Address | Register | Description |
+|---|---|---|
+| 0x0 | CRMD | Current mode information |
+| 0x1 | PRMD | Pre-exception mode information |
+| 0x5 | ESTAT | Exception status |
+| 0x6 | ERA | Exception return address |
+| 0x7 | BADV | Bad virtual address |
+| 0xC | EENTRY | Exception entry base address |
+| 0x10 | TLBIDX | TLB index |
+| 0x11 | TLBEHI | TLB entry high-order bits |
+| 0x12 | TLBELO0 | TLB entry low-order bits, even page |
+| 0x13 | TLBELO1 | TLB entry low-order bits, odd page |
+| 0x18 | ASID | Address space identifier |
+| 0x19 | PGDL | Page global directory base, lower half address space |
+| 0x1A | PGDH | Page global directory base, higher half address space |
+| 0x1B | PGD | Page global directory base (read only) |
+| 0x30–0x33 | SAVE0–SAVE3 | Data save registers |
+| 0x41 | TCFG | Timer configuration |
+| 0x42 | TVAL | Timer value |
+| 0x44 | TICLR | Timer interrupt clear |
+| 0x60 | LLBCTL | LLBit control |
+| 0x88 | TLBRENTRY | TLB refill exception entry address |
+| 0x100 | BSEC | Implementation specific |
+| 0x101 | COMPEN | Implementation specific: bit 0 enables the I-cache |
+| 0x180–0x181 | DMW0–DMW1 | Direct mapping configuration windows |
+
+Implementation-specific behaviour:
+
+- `TLBIDX.I_D` (bit 16) selects the target of `TLBRD`, `TLBWR`, `TLBFILL`,
+  `TLBSRCH` and `INVTLB`: 0 = iTLB, 1 = dTLB. The two TLBs are maintained
+  separately by software.
+- `ESTAT.IS`: the timer interrupt is bit 3 and the external interrupt is
+  bit 4 (the LA32R manual uses bits 11 and 2).
+- ECFG, EUEN, CPUID, TID, CNTC and the TLB refill save registers
+  (0x89–0x8F) are not implemented and read as 0.
+
+Field-level details and reset values are in
+[rtl/c7bcsr/README.md](rtl/c7bcsr/README.md).
 
 ---
 
-## Exceptions
+## Exceptions and Interrupts
 
-- 0x0 Timer Interrupt, Ext Interrupt
-- 0x1 Page Invalid exception for Load operation (PIL)
-- 0x2 Page Invalid exception for Store operation (PIS)
-- 0x3 Page Invalid exception for Fetch operation (PIF)
-- 0x4 Page Modification Exception (PME)
-- 0x7 Page Privilege level Illegal exception (PPI)
-- 0x8 ADdress error Exception for Fetching instructions (ADEF)
-- 0x8 ADdress error Exception for Memory access instructions (ADEM)
-- 0x9 Address aLignment fault Exception (ALE)
-- 0xB SYStem call exception (SYS)
-- 0xC BReaKpoint exception (BRK)
-- 0xD Instruction Non-defined Exception (INE)
+| Ecode | Name | Description |
+|---|---|---|
+| 0x0 | INT | Interrupt (timer, external) |
+| 0x1 | PIL | Page invalid, load |
+| 0x2 | PIS | Page invalid, store |
+| 0x3 | PIF | Page invalid, instruction fetch |
+| 0x4 | PME | Page modification |
+| 0x7 | PPI | Page privilege illegal |
+| 0x8 | ADEF | Address error, instruction fetch (subcode 0) |
+| 0x8 | ADEM | Address error, memory access (subcode 1) |
+| 0x9 | ALE | Address alignment fault |
+| 0xB | SYS | System call |
+| 0xC | BRK | Breakpoint |
+| 0xD | INE | Instruction not defined |
+| 0x3F | TLBR | TLB refill, enters at `TLBRENTRY` |
+
+Exceptions are taken at the W stage. ERA is the PC of the faulting
+instruction; for fetch exceptions ERA and BADV are both the faulting fetch
+address. Interrupts are gated by `CRMD.IE` and inserted on the instruction
+in decode.
+
+---
+
+## Memory Management
+
+- **Address modes:** direct address (`CRMD.DA`=1) and mapped
+  (`CRMD.PG`=1).
+- **Direct mapping windows:** DMW0 and DMW1 map a 512 MB virtual segment
+  (`VSEG`) to a physical segment (`PSEG`).
+- **TLB:** separate iTLB and dTLB, 32 entries each. Each entry maps an
+  even/odd pair of 4 KB pages, with ASID and global bit, and per-page V, D,
+  PLV and MAT fields.
+- **Software managed:** TLB misses raise TLBR; the refill handler fills the
+  TLB with `TLBFILL` or `TLBWR`. There is no hardware page table walker.
+- **TLB search latency:** one cycle. See
+  [rtl/c7btlb/README.md](rtl/c7btlb/README.md) for the entry format,
+  `INVTLB` operations and timing.
+
 ---
 
 ## L1 Instruction Cache
 
-The L1 instruction cache is organized as a 2-way set-associative structure with a 32-byte (256-bit) line size. It consists of 256 sets, each containing two ways, for a total capacity of 16KB (32 bytes × 256 sets × 2 ways). Linefill buffer is also 32-byte, fetched from memory using AXI burst transactions of four 64-bit quadwords per access.
+| | |
+|---|---|
+| Capacity | 16 KB |
+| Organisation | 2-way set associative, 256 sets |
+| Line size | 32 bytes, filled by a 4-beat 64-bit AXI burst |
+| Tag RAM | 22 bits per way: `[21]` valid, `[20:0]` address `[31:11]` |
+| Data RAM | 64 bits per word, 4 words per line |
+| Enable | `COMPEN.IC` (CSR 0x101) |
 
-Each way contains a 22-bit tag ram and 4 64-bit data ram.
+```text
+ tag RAM index    ifu_icu_addr_ic1[14:5]
+ data RAM index   {ic_lu_addr_ic2[14:5], al_cnt_q[1:0]}
 
+   tag RAM                            data RAM
+   +---+----------------------+       +----------------------------------+
+   | V |       tag [31:11]    |       |            data [63:0]           |
+   +---+----------------------+       +----------------------------------+
+    21  20                   0         63                               0
+```
 
-`````c
- 32-bit address
-
-    |____________________|___________|
-   31       tag        11 10         0
-`````
-
-
-`````c
-
- 8-bit index, 256 sets   (10-bit address in the code, but only 8 bits are actually used)
-
- tag ram index
-
- ifu_icu_addr_ic1[14:5]
-
-
- data ram index, last 2-bit addresses ram line
-
- {ic_lu_addr_ic2[14:5], al_cnt_q[1:0]}
-`````
-
-````c
-
- tag ram 22-bit, [21] v, [20:0] tag
-
-   v
-  |_|____________________|
- 21 20      tag          0
-
-
- data ram 64-bit
-
-    |______________________________________________________________________|
-   63                                data                                  0
-`````
+The index is 10 bits wide in the RTL, of which 8 select the 256 sets.
 
 ---
 
-## TLB (itlb & dtlb)
+## Repository Layout
 
-- 32 entries per TLB, 5-bit index (0..31).                           
+```text
+cpu7b/
+├── rtl/
+│   ├── c7b.v, c7bcore.v     Core top level
+│   ├── c7bifu/              Instruction fetch unit
+│   ├── c7bicu/              L1 instruction cache
+│   ├── c7bexu/              Execution unit
+│   ├── c7blsu/              Load/store unit
+│   ├── c7btlb/              TLB
+│   ├── c7bcsr/              Control and status registers
+│   ├── c7bbiu/              Bus interface unit
+│   ├── alu.v, branch.v,
+│   │   mul64x64.v, div.v    Functional units
+│   └── defines.vh           Shared definitions
+├── flist/                   File lists
+├── tb/                      Test benches
+├── simulation/              Directed and random tests (100+)
+└── systhesis/altera/        Quartus project
+```
 
-- Independent iTLB and dTLB, selected by TLBIDX.I_D (bit 16).        
-
-- Software-managed: all operations (TLBWR, TLBFILL, TLBSRCH, INVTLB) 
-  are performed by software. No hardware page table walk.            
-
-`````c
-
-
-+==============================================================================+
-|                             TLB Entry                                        |
-+==============================================================================+
-| VPPN  | Virtual Paired Page Number (19 bits). Each entry maps two adjacent   |
-|       | pages (odd/even). Effective VPN = VPPN << 1. Page offset is taken    |
-|       | from the faulting address (BADV).                                    |
-+-------+----------------------------------------------------------------------+
-| ASID  | Address Space ID (10 bits). Used to distinguish processes to avoid   |
-|       | TLB flushes on context switches. Ignored when G=1.                   |
-+-------+----------------------------------------------------------------------+
-| MAT   | Memory Access Type (2 bits). Controls cache attributes (e.g.,        |
-|       | strongly ordered, cached, write-back, etc.).                         |
-+-------+----------------------------------------------------------------------+
-| PLV   | Privilege Level (2 bits). Compared with current CRMD.PLV to detect   |
-|       | PPI (Privilege Violation). 0 = kernel, 3 = user.                     |
-+-------+----------------------------------------------------------------------+
-| G     | Global (1 bit). If 1, the ASID is ignored during lookup. Used for    |
-|       | kernel mappings that are shared across all address spaces.           |
-+-------+----------------------------------------------------------------------+
-| D     | Dirty (1 bit). Indicates the page has been written to. Used for      |
-|       | PME (Page Modification Exception) and swapping optimizations.        |
-+-------+----------------------------------------------------------------------+
-| V     | Valid (1 bit). If 0, the entry is invalid; accesses cause PIF/PIL/PIS|
-|       | exceptions (page invalid faults).                                    |
-+-------+----------------------------------------------------------------------+
-| E     | Entry Valid (1 bit). Software-maintained validity flag for the TLB   |
-|       | entry itself. Cleared by invalidation operations.                    |
-+-------+----------------------------------------------------------------------+
-| PPN   | Physical Page Number (20 bits). Combined with page offset from the   |
-|       | virtual address to form the physical address.                        |
-+-------+----------------------------------------------------------------------+
-
-+==============================================================================+
-|                          TLBIDX CONTROL REGISTER                             |
-+==============================================================================+
-|    Field    |  Bits  | Width | Description                                   |
-+-------------+--------+-------+-----------------------------------------------+
-| NE          |   31   |   1   | 0 = found/hit, 1 = not found (search result)  |
-| PS          |  29:24 |   6   | Page size (e.g., 12 for 4KB)                  |
-| I_D         |   16   |   1   | 0 = iTLB, 1 = dTLB                            |
-| INDEX       |   4:0  |   5   | Entry index (0..31) for read/write            |
-+-------------+--------+-------+-----------------------------------------------+
-
-+==============================================================================+
-|                         EXAMPLE: DTLB ENTRY                                  |
-+==============================================================================+
-| Virtual address:     0x20001000 (page offset 0x000)                          |
-| VPPN = 0x10008 (0x20001000 >> 13)                                            |
-| ASID = 0x123                                                                 |
-| MAT  = 0x3                                                                   |
-| PLV  = 0x0                                                                   |
-| G    = 1                                                                     |
-| D    = 1                                                                     |
-| V    = 0          ← invalid → PIS exception on store                         |
-| E    = 1                                                                     |
-| PPN  = 0x1c0001                                                              |
-| TLBIDX.I_D = 1 (dTLB), INDEX selected by TLBFILL.                            |
-+==============================================================================+
-`````
-
-----------
+---
 
 ## Build and Test
 
+### Synthesis
 
+```shell
+cd systhesis/altera
+make
+```
 
-### Build cpu7b
+### Regression
 
+```shell
+cd simulation
+./run_all_tests.sh           # all directed tests
+./run_all_random_cases.sh    # random tests
+./clean_all_tests.sh         # remove build outputs
+```
 
-`````shell
-u@uu:~/prjs/cpu7b$ cd systhesis/altera/
-u@uu:~/prjs/cpu7b/systhesis/altera$ make
-`````
+### Single test
 
-### Run tests
-
-`````shell
-u@unamed:~/prjs/cpu7b/simulation$ ./run_all_tests.sh 
-
-`````
-
-## Debug
-
-#### Test code
-
-`````shell
-u@uu:~/prjs/cpu7b/simulation/test0$ vim testcode/start.S
-`````
-
-#### Compile and Simulate
-
-`````shell
-u@uu:~/prjs/cpu7b/simulation/test0$ ./simulate.sh 
-`````
-
-#### View the Signals 
-
-`````shell
-u@uu:~/prjs/cpu7b/simulation/test0$ ./viewwave.sh
-`````
-
-
+```shell
+cd simulation/test0
+vim testcode/start.S         # test program
+./simulate.sh                # build and simulate
+./viewwave.sh                # open the waveform
+```
