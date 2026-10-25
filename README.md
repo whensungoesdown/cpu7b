@@ -104,6 +104,7 @@ timelines, signal equations and a list of known limitations.
 |---|---|---|
 | 0x0 | CRMD | Current mode information |
 | 0x1 | PRMD | Pre-exception mode information |
+| 0x4 | ECFG | Exception configuration (local interrupt enables) |
 | 0x5 | ESTAT | Exception status |
 | 0x6 | ERA | Exception return address |
 | 0x7 | BADV | Bad virtual address |
@@ -133,8 +134,12 @@ Implementation-specific behaviour:
   separately by software.
 - `ESTAT.IS`: the timer interrupt is bit 3 and the external interrupt is
   bit 4 (the LA32R manual uses bits 11 and 2).
-- ECFG, EUEN, CPUID, TID, CNTC and the TLB refill save registers
-  (0x89–0x8F) are not implemented and read as 0.
+- `ECFG.LIE` uses the same bit positions as `ESTAT.IS`, and resets to
+  0x18 (timer and external interrupt enabled) instead of 0, so software
+  that never writes ECFG still receives interrupts. `ECFG.VS` is not
+  implemented.
+- EUEN, CPUID, TID, CNTC and the TLB refill save registers (0x89–0x8F)
+  are not implemented and read as 0.
 
 Field-level details and reset values are in
 [rtl/c7bcsr/README.md](rtl/c7bcsr/README.md).
@@ -161,7 +166,7 @@ Field-level details and reset values are in
 
 Exceptions are taken at the W stage. ERA is the PC of the faulting
 instruction; for fetch exceptions ERA and BADV are both the faulting fetch
-address. Interrupts are gated by `CRMD.IE` and inserted on the instruction
+address. Interrupts are gated by `CRMD.IE` and `ECFG.LIE` and inserted on the instruction
 in decode.
 
 ---

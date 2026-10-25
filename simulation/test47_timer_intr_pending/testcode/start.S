@@ -30,7 +30,8 @@ start:
 	csrrd   $r12,0x2
 	csrrd   $r12,0x4
 	csrwr   $r12,0x2
-	csrwr   $r12,0x4
+	//csrwr   $r12,0x4   //why write ECFG? 
+	nop 
 
 	addi.w   $r6, $r0, 0xc           # 
 	csrwr    $r6, 0x0                # CRMD.ie = 1  CRMD.da = 1

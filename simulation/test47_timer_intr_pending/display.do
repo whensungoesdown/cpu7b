@@ -29,12 +29,6 @@ add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/clear_time
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/u_csr/csr_ecl_timer_intr
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_pulse
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/exc_vld_e
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_sync
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_insert_condition
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_pending
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_pulse
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_sync
-add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/intr_to_insert
 add wave -divider
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/flush
 add wave -position end  result:/top_tb/u_top/u_c7b/u_core/u_exu/stall_ifu
