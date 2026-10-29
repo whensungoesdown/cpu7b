@@ -1,5 +1,8 @@
-# Test: invtlb op4 (clear G=0 entries with ASID equal to rj, in TLB selected by TLBIDX.I_D)
+# Test: invtlb op4 (clear G=0 entries with ASID equal to rj, in both TLBs, TLBIDX.I_D is ignored)
 # This version selects DTLB (I_D=1) for the invalidation.
+# NOTE: INVTLB invalidates matching entries in both the ITLB and the DTLB,
+#       independent of TLBIDX.I_D (I_D only selects the TLB for tlbsrch).
+#       The checks on the other TLB expect the same op to apply there.
 # Steps:
 # 1) Write ITLB entries:
 #    - index0: G=1, ASID=0x123 (irrelevant), VPPN=0x10000000
@@ -15,7 +18,7 @@
 # 6) Verify DTLB G=0 entry with ASID=0x123 (index1) is cleared
 # 7) Verify DTLB G=0 entry with ASID=0x356 (index2) remains
 # 8) Verify DTLB G=1 entry (index0) remains
-# 9) Verify ITLB entries (all) remain unaffected
+# 9) Verify ITLB G=0 entry with ASID=0x123 (index1) is cleared too, index0 and index2 remain
 # On success: r5 = 0x5a, on failure: r5 = 0
 
 #define LOONGARCH_CSR_ASID 0x18
@@ -228,14 +231,14 @@ _start:
     andi    $t4, $t4, 0x1
     bnez    $t4, fail           # NE should be 0 for hit
 
-    # ---- ITLB entry 1 (G=0, ASID=0x123) should remain ----
+    # ---- ITLB entry 1 (G=0, ASID=0x123) is cleared too (INVTLB acts on both TLBs) ----
     li.w    $t0, 0x20000000
     csrwr   $t0, 0x11
     tlbsrch
     csrrd   $t3, 0x10
     srli.w  $t4, $t3, 31
     andi    $t4, $t4, 0x1
-    bnez    $t4, fail           # NE should be 0 for hit
+    beqz    $t4, fail           # NE should be 1 for miss
 
     # ---- ITLB entry 2 (G=0, ASID=0x356) should remain ----
     # Need to set ASID to 0x356 for this search

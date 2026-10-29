@@ -1,12 +1,15 @@
-# Test: invtlb op3 (clear G=0 entries in DTLB, selected by TLBIDX.I_D=1)
+# Test: invtlb op3 (clear G=0 entries in both TLBs, TLBIDX.I_D is ignored)
+# NOTE: INVTLB invalidates matching entries in both the ITLB and the DTLB,
+#       independent of TLBIDX.I_D (I_D only selects the TLB for tlbsrch).
+#       The checks on the other TLB expect the same op to apply there.
 # Steps:
 # 1) Write ITLB entries: index0 (G=1), index1 (G=0)
 # 2) Write DTLB entries: index2 (G=1), index3 (G=0)
 # 3) Verify all entries are present
 # 4) Set TLBIDX.I_D=1 (select DTLB)
-# 5) Execute invtlb 3, r0 (clear G=0 entries only in DTLB)
+# 5) Execute invtlb 3, r0 (clear G=0 entries in both TLBs)
 # 6) Verify DTLB G=0 entry (index3) is cleared, G=1 (index2) remains
-# 7) Verify ITLB entries (both G=1 and G=0) remain unaffected
+# 7) Verify ITLB G=0 entry (index1) is cleared too, G=1 (index0) remains
 # On success: r5 = 0x5a, on failure: r5 = 0
 
 #define LOONGARCH_CSR_ASID 0x18
@@ -122,7 +125,7 @@ _start:
     li.w    $t2, 0x0C010000     # I_D=1 (DTLB)
     csrwr   $t2, 0x10
 
-    # ---- Execute invtlb op3 (clear G=0 entries only in DTLB) ----
+    # ---- Execute invtlb op3 (clear G=0 entries in both TLBs) ----
     invtlb  3, $r0, $r0
 
     # ---- Set I_D=0 to search ITLB ----
@@ -138,14 +141,14 @@ _start:
     andi    $t4, $t4, 0x1
     bnez    $t4, fail           # NE should be 0 for hit
 
-    # ---- ITLB entry 1 (G=0) should remain (unaffected) ----
+    # ---- ITLB entry 1 (G=0) is cleared too (INVTLB acts on both TLBs) ----
     li.w    $t0, 0x20000000
     csrwr   $t0, 0x11
     tlbsrch
     csrrd   $t3, 0x10
     srli.w  $t4, $t3, 31
     andi    $t4, $t4, 0x1
-    bnez    $t4, fail
+    beqz    $t4, fail           # NE should be 1 for miss
 
     # ---- Set I_D=1 to search DTLB ----
     li.w    $t2, 0x0C010000

@@ -1,5 +1,8 @@
 # Test: invtlb op5 (clear G=0 entries with ASID equal to rj AND VA equal to rk,
-#                   in TLB selected by TLBIDX.I_D)
+#                   in both TLBs, TLBIDX.I_D is ignored)
+# NOTE: INVTLB invalidates matching entries in both the ITLB and the DTLB,
+#       independent of TLBIDX.I_D (I_D only selects the TLB for tlbsrch).
+#       The checks on the other TLB expect the same op to apply there.
 # Steps:
 # 1) Write ITLB entries:
 #    - index0: G=1, ASID=0x123, VPPN=0x10000000
@@ -15,7 +18,7 @@
 # 6) Execute invtlb 5, $t8, $t7  (clear G=0 entries with matching ASID and VA in ITLB)
 # 7) Verify ITLB target entry (index1, VPPN=0x20000000) is cleared
 # 8) Verify ITLB other entries (index0, index2) remain
-# 9) Verify all DTLB entries remain unaffected
+# 9) Verify all DTLB entries remain (no DTLB entry has VPPN=0x20000000)
 # On success: r5 = 0x5a, on failure: r5 = 0
 
 #define LOONGARCH_CSR_ASID 0x18
